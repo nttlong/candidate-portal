@@ -1,0 +1,313 @@
+﻿<div class="col-xs-12 col-sm-12 col-md-9" id="postRequisitionRightPanel">
+    <div class="header_right" ng-show="!isPrint">
+        <div class="col-md-12" style="min-height: 60px;
+                        border-radius: 4px;
+                        background: white;
+                        box-shadow: 0 1px 2px #ccc; margin-bottom: 10px;">
+            <div class="col-xs-12 col-sm-6 col-md-6 box_right_left tabbable-line">
+                <ul class="nav nav-tabs">
+                    <li class="active" ng-click="doChangeTab($event,'requisition')" id="requisition"><a data-toggle="tab" href="#tabMoTaCV" style="border-right: 1px solid #c1c1c1;">res:(Mô tả công việc)</a></li>
+                    <li ng-click="doChangeTab($event,'candidate')" id="candidate"><a data-toggle="tab" href="#tabUngVien">res:(Ứng viên)</a></li>
+                </ul>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6 box_right_right" >
+                <a class="btn btn-default" ng-click="$root.doNew()" title="res:(Thêm mới)" ng-show="isHidden">
+                    <span class="fa fa-plus"></span>
+                </a>
+                <a class="btn btn-default" ng-click="$root.doSave()" title="res:(Lưu)" ng-show="isHidden">
+                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                </a>
+                <a class="btn btn-default btnPopup" title="res:(Xóa)" ng-show="isHidden">
+                    <i class="fa fa-times" ng-click="" aria-hidden="true"></i>
+                </a>
+                <a class="btn btn-default" title="res:(Xuất khẩu)" ng-click="$root.doExportExcel()" ng-if="$root.isCandidate">
+                    <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                </a>
+                <a class="btn btn-default" title="res:(In)" ng-show="isHidden" ng-click="doPrint()">
+                    <i class="fa fa-print" aria-hidden="true"></i>
+                </a>
+                <!--<a class="btn btn-default" title="res:(Nhập khẩu)" ng-show="isHidden">
+                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                </a>-->
+            </div>
+        </div>
+    </div>
+
+    <!--///-->
+    <div class="body_right tab-content" >
+        <div id="tabMoTaCV" class="tab-pane fade in active" c-template url="${tabUrl}">
+            
+        </div>
+        <!--///-->
+        <!--<div id="tabUngVien" class="tab-pane fade tabuv">
+
+            
+        </div>-->
+    </div>
+    
+    <div class="cd-popup" role="alert">
+        <div class="cd-popup-container">
+            <p>res:(Bạn có muốn xóa công việc đã chọn)?</p>
+            <ul class="cd-buttons">
+                <li ng-click="$root.doDelete()">res:(Đồng ý)</li>
+                <li ng-click="cancelRequition()">res:(Hủy bỏ)</li>
+            </ul>
+            <a href="#0" class="cd-popup-close img-replace">Close</a>
+        </div> <!-- cd-popup-container -->
+    </div> <!-- cd-popup -->
+</div>
+<script>
+    (function (scope) {
+        jQuery(document).ready(function ($) {
+            //open popup
+            $('.btnPopup').on('click', function (event) {
+                event.preventDefault();
+                $('.cd-popup').addClass('is-visible');
+            });
+
+            //close popup
+            $('.cd-popup').on('click', function (event) {
+                if ($(event.target).is('.cd-popup-close') || $(event.target).is('.cd-popup')) {
+                    event.preventDefault();
+                    $(this).removeClass('is-visible');
+                }
+            });
+            //close popup when clicking the esc keyboard button
+            $(document).keyup(function (event) {
+                if (event.which == '27') {
+                    $('.cd-popup').removeClass('is-visible');
+                }
+            });
+        });
+    })
+</script>
+<script>
+  
+        (function (scope) {
+            scope.data = {};
+            scope.lookup = {};
+            scope.isPrint = scope.$root.isPrint == 'true'
+            scope.isShowRequsition = true;
+            scope.isHidden = true;
+
+            scope.cancelRequition = function () {
+                $('.cd-popup').removeClass('is-visible');
+            }
+
+            scope.currentTab = 'requisition';
+            scope.tabUrl = "company/widgets/post-requisition-detail";
+            scope.doChangeTab = function (evt, key) {
+                if (key == "requisition") {
+                    scope.tabUrl = "company/widgets/post-requisition-detail";
+                    scope.isHidden = true;
+                }
+                else {
+                    scope.tabUrl = "company/widgets/post-requisition-candidates";
+                    scope.isHidden = false;
+                }
+                scope.$applyAsync();
+            }
+
+            scope.$root.$apply();
+       
+            //var ajaxLoadlevel = "server.page://doLoadLeval";
+            //ajaxLoadlevel.done(function (res) {
+
+            //    scope.lookup.listOfLevels = res;
+            //    scope.$apply();
+            //});
+            //var ajax_doLoad_group_jobs = "server.page://doLoad_group_jobs";
+            //ajax_doLoad_group_jobs.done(function (res) {
+
+            //    scope.lookup.listOf_group_jobs = res;
+            //    scope.$apply();
+            //});
+            //var ajaxLoad_listOf_locations = "server.page://doLoad_locations";
+            //ajaxLoad_listOf_locations.done(function (res) {
+            //    scope.lookup.listOf_locations = res;
+            //    scope.$apply();
+            //});
+
+            scope.doNew = function () {
+                setTimeout(function () {
+                    $(".item_left_box").removeClass("active_item");
+                }, 100);
+                scope.data = {};
+                scope.$root.currentRequisitionID = undefined;
+                scope.$applyAsync();
+            }
+            scope.doSave = function () {
+               
+                var ajax = "server.api://(nodejs)modules/requisition@saveRequisition";
+
+                ajax.data({
+                    data: scope.data
+                }).done(function (res) {
+                    if (res.apiError) {
+                        if (res.apiError.errorType == "NumOfStaffIsEmpty") {
+                            toastr.error("res:(Xin nhập số lượng cần tuyển)", "res:(Lỗi)");
+                            $("[ng-model='data.NumOfStaff']").focus();
+                            $("[ng-model='data.NumOfStaff']").select();
+                        }
+                        if (res.apiError.errorType == "ReceiveFromIsEmpty") {
+                            toastr.error("res:(Xin nhập ngày bắt đầu nhận hồ sơ)", "res:(Lỗi)");
+                            $("[ng-model='data.ReceiveFrom']").find('input').focus();
+                            $("[ng-model='data.ReceiveFrom']").find('input').select();
+                        }
+                        if (res.apiError.errorType == "ReceiveToIsEmpty") {
+                            toastr.error("res:(Xin nhập ngày kết thúc nhận hồ sơ)", "res:(Lỗi)");
+                            $("[ng-model='data.ReceiveTo']").find('input').focus();
+                            $("[ng-model='data.ReceiveTo']").find('input').select();
+                        }
+                        if (res.apiError.errorType == "LocationWasNotFound") {
+                            toastr.error("res:(Xin nhập 'Nơi làm việc')", "res:(Lỗi)");
+                           
+                        }
+                        if (res.apiError.errorType == "JobWasNotFound") {
+                           
+                        }
+                        
+                    }
+                    else {
+                        scope.data.RequisitionID = res._id;
+                        toastr.success("res:(Đã lưu xong)");
+                        scope.$root.loadList();
+                    }
+
+                })
+            }
+           
+            //    var w = window.open();
+            //    // tạo biến lưu toàn bộ html
+            //    var htmlAppend = document.createElement("div");
+            //    // lấy toàn bộ class form-group
+            //    var dataForm = document.getElementsByClassName('form-group');
+            //    for (var i = 0; i < dataForm.length; i++) {
+            //        var div, _p, _span, value;
+            //        var x = document.getElementsByClassName('form-group')[i];
+            //        if (x.className == 'form-group') {
+            //            // lưu text label
+            //            var text = "";
+            //            text = x.getElementsByTagName('label')[0].textContent;
+            //            // lấy giá trị của text label đó
+            //            if (x.getElementsByClassName('select2-container').length > 0) {
+            //                div = document.createElement("div");
+            //                _p = document.createElement('p');
+            //                _span = document.createElement('span');
+            //                //
+            //                _p.textContent = text.replace(' *', '') + ': ';
+            //                //
+            //                if (x.getElementsByClassName('select2-choices').length > 0) {
+            //                    var _v = x.getElementsByTagName('ul');
+            //                    var _li = _v[0].getElementsByTagName('li');
+            //                    var str = "";
+            //                    for (var j = 0; j < _li.length; j++) {
+            //                        if (_li[j].textContent.trim()) {
+            //                            str += _li[j].textContent.trim() + ', ';
+            //                        }
+            //                    }
+            //                    _span.textContent = str.trim().slice(0, -1);
+            //                    _p.appendChild(_span);
+            //                } else {
+            //                    var _v = x.getElementsByTagName('a');
+            //                    value = _v[0].getElementsByTagName('span')[0].textContent;
+            //                    _span.textContent = value;
+            //                    _p.appendChild(_span);
+            //                }
+            //                //
+            //                div.appendChild(_p);
+            //            } else if (x.getElementsByClassName('note-editor').length > 0) {
+            //                div = document.createElement("div");
+            //                _p = document.createElement('p');
+            //                _span = document.createElement('span');
+            //                //
+            //                _p.textContent = text.replace(' *', '') + ': ';
+            //                //
+            //                var _v = x.getElementsByClassName('note-editable')[0];
+            //                _span.appendChild(_v);
+            //                _p.appendChild(_span);
+            //                //
+            //                div.appendChild(_p);
+                            
+            //            } else {
+            //                div = document.createElement("div");
+            //                _p = document.createElement('p');
+            //                _span = document.createElement('span');
+            //                if (x.getElementsByTagName('input').length > 0 && x.getElementsByTagName('input')[0].type == 'text') {
+            //                    value = x.getElementsByTagName('input')[0].value;
+            //                    //
+            //                    _p.textContent = text.replace(' *', '') + ': ';
+            //                    //
+            //                    _span.textContent = value;
+            //                    _p.appendChild(_span);
+            //                    //
+            //                    div.appendChild(_p);
+            //                } else if (x.getElementsByTagName('select').length > 0) {
+            //                    var _select = x.getElementsByTagName('select')[0];
+            //                    var dataOption = _select.getElementsByTagName('option');
+            //                    for (var z = 0; z < dataOption.length; z++) {
+            //                        if (dataOption[z].getAttribute('selected')) {
+            //                            value = dataOption[z].text;
+            //                        }
+            //                    }
+            //                    //
+            //                    _p.textContent = text.replace(' *', '') + ': ';
+            //                    //
+            //                    _span.textContent = value;
+            //                    _p.appendChild(_span);
+            //                    //
+            //                    div.appendChild(_p);
+            //                } else if (x.getElementsByTagName('img').length > 0) {
+            //                    var _img = x.getElementsByTagName('img')[0];
+
+            //                    //
+            //                    _p.textContent = text.replace(' *', '') + ': ';
+            //                    //
+            //                    _p.appendChild(_img);
+            //                    //
+            //                    div.appendChild(_p);
+            //                }
+            //            }
+            //            htmlAppend.appendChild(div);
+            //        }
+            //    }
+            //    console.log(htmlAppend);
+            //    //
+            //    w.document.write(htmlAppend.innerHTML);
+            //    w.print();
+            //    w.close();
+            //}
+        })
+</script>
+<!--<script>
+        (function (scope) {
+             scope.doPrint = function () {
+
+                async function asyncCall() {
+                    var w = await doOpenUrl();
+                    await doPrint(w);
+                }
+
+                function doOpenUrl() {
+                    return new Promise(resolve => {
+                        var url = window.location.href + "?print=1";
+                        var w = window.open(url);
+                        resolve(w);
+                    });
+                }
+
+                function doPrint(w) {
+                    return new Promise(resolve => {
+                        setTimeout(function () { 
+                            resolve(w.print());
+                        }, 0);
+                    });
+                }
+
+                asyncCall();
+            }
+        })
+</script>-->
+
+
+

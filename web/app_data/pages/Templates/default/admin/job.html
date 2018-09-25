@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <form role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Code)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Code)" v-model="data.Code">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Name)" v-model="data.Name">
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="button" value="res:(Save)" v-on:click="doSaveData" class="btn btn-primary pull-right" />
+                <input type="button" value="res:(Delete)" v-on:click="doDeleteData" class="btn btn-primary pull-right" />
+            </div>
+        </div>
+    </div>
+    <script>
+        (app=> {
+            app.data = {};
+            window.getText = (obj) => {
+                if (obj["$oid"]) return obj["$oid"];
+                else return obj;
+            }
+            app.items = [];
+
+            app.doLoadData = () => {
+                var ajax = "ajax.store.st_admin_load_job";
+                if ($history.data().id) {
+                    ajax.data({
+                        id: $history.data().id,
+                        language: window.currentLanguage
+                    }).done(res=> {
+                        console.log(res);
+                        app.data = res;
+                    });
+                }
+                else {
+                    app.data = {};
+                }
+            };
+            app.doSaveData = () => {
+                var ajax = "ajax.store.st_admin_category_save_item";
+                ajax.data({
+                    id: $history.data().id,
+                    language: window.currentLanguage,
+                    category: "ls_group_jobs",
+                    data:app.data
+                }).done(res=> {
+                    window.location.href = "#view=jobs";
+                });
+            }
+            app.doDeleteData = () => {
+                var ajax = "ajax.store.st_admin_category_delete_item";
+                ajax.data({
+                    id: $history.data().id,
+                    language: window.currentLanguage,
+                    category: "ls_group_jobs",
+                    data: app.data
+                }).done(res=> {
+                    window.location.href = "#view=jobs";
+                });
+            }
+            app.doLoadData();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+﻿{
+  "connection": "mongodb://172.16.20.100:27017/candidate"
+}

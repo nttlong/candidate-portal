@@ -1,0 +1,169 @@
+﻿<div class="myresume-profile" id="myresume-profile">
+    <div class="box border-success">
+        <fieldset class="form-view">
+            <legend class="box-md" data-toggle="tooltip" data-placement="top" data-original-title="" title="">
+                <i class="glyphicon glyphicon-th-list"></i> res:(Giới thiệu chung)
+            </legend>
+           
+            <div id="myresume-profile-edit" class="relative">
+                <form class="form-horizontal box-md infor-wrapper" id="frmProfile" method="post" action="" ng-click="doEdit($event)">
+                    <div ng-if="!isEdit">
+                        <p ng-if="data.Overview" c-html-content ng-model="data.Overview">
+                            
+                        </p>
+                        <p ng-if="!data.Overview">
+                            res:(Chưa có nội dung)
+                        </p>
+                    </div>
+                  
+                    <input type="hidden" name="resume_id">
+                    <div class="row" id="error-message-update-profile" hidden="hidden">
+                        <div>
+                            <div class="cls-error"><strong>Oops! </strong> res:(Có lỗi đã xảy ra, vui lòng thử lại.)</div>
+                            <br>
+                        </div>
+                    </div>
+                    <span class="edit-btn">
+                        <button type="button" class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </button>
+                    </span>
+                    <div class="mg-bt">
+                        <div class="field-view" style="display:block">
+                            <div class="field-view">
+                                <div c-html ng-model="data.Overview" class="view-control font-text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field-edit" style="display:none">
+                            <p>
+                                <label class="font-text">
+                                    res:(Giới thiệu bản thân và miêu tả mục tiêu nghề nghiệp của bạn)
+                                </label>
+                            </p>
+                            <div c-html-box  ng-model="data.Overview" style="height:200px">
+
+                            </div>
+                            
+                           
+                            <em class="countdown text-gray-light" data-text="res:(ký tự có thể nhập thêm)"></em><br>
+                            <span class="msg-profile-required cls-error" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                            <span class="msg-profile-limit-max cls-error" hidden="hidden">res:(Bạn đã nhập quá ký tự cho phép)</span>
+                            <span class="msg-profile-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+                        </div>
+                    </div>
+                    <!-- Buttons-->
+                    <div class="field-edit" style="display: none;">
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6 text-right">
+                                <button type="button" ng-click="doCancel($event)" class="btn btn-cancel btn-default" id="btnCancelSaveProfile">res:(Hủy)</button>
+                                <button type="button" ng-click="doUpdate($event)" class="btn btn-save btn-primary" id="btnSaveProfile">res:(Lưu)</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+<script server>
+    [
+        "./../modules/node.sys.categories",
+        "./../libs/lv.utils",
+        "./../modules/node.candidate.profiles",
+        "./../libs/lv.authenticate",
+        "./../modules/lv.db",
+        "./../modules/lv.model",
+        (categories, utils, profiles, aut, Data, models, app) => {
+            app.doLoadData = (event) => {
+                utils._try(() => {
+                    try {
+                        var user = aut.getUser(event.req);
+                        var clientData = utils.readData(event);
+                        if (clientData.candidateId) {
+                            user = models.sys_Users()
+                                .where("UserId==candidateId", clientData)
+                                .toItem.sync();
+
+                        }
+                        var data = models.ls_candidate()
+                            .where("UserEmail==Email", user)
+                            .select({ Overview: 1 })
+                            .toItem.sync();
+                        utils.writeData(event, data);
+                        event.done();
+                    }
+                    catch (ex) {
+                        event.done(ex);
+                    }
+                }, event);
+            }
+            app.doUpdate = (event) => {
+                utils._try(() => {
+                    try {
+                        var user = aut.getUser(event.req);
+                        var clientData = utils.readData(event);
+                        if (clientData.candidateId) {
+                            utils.writeData(event, {});
+                            event.done();
+                            return;
+                        }
+                        models.ls_candidate()
+                            .where("UserEmail==Email", user)
+                            .set({
+                                Overview: clientData.Overview,
+                                LatestUpdateOn: new Date(),
+                                LatestUpdateOnUTC: utils.getUTCDate(new Date()),
+                                LatestModifiedOn: new Date(),
+                                LatestModifiedOnUTC: utils.getUTCDate(new Date())
+                            }).commit.sync();
+                        utils.writeData(event, {});
+                        event.done();
+                    } catch (ex) {
+                        event.done(ex);
+                    }
+                }, event);
+            }
+        }]
+</script>
+
+<script>
+        (function (scope) {
+            scope.Lang = "{{{Language.Current.Code}}}";
+            
+            scope.doEdit = function (event) {
+                if (window.candidateId) return;
+                scope.isEdit = true;
+                window.doEditWebPart(event);
+                scope.$applyAsync();
+            };
+            scope.doLoadData = function () {
+                
+                var ajax = "server.page://doLoadData";
+                ajax.data({ candidateId: window.candidateId }).done(function (res) {
+                    scope.data = res;
+                })
+            };
+            scope.doUpdate = function (e) {
+                var ajax = "server.page://doUpdate";
+              
+                ajax.data(scope.data)
+                    .done(function (res) {
+                        toastr.success("res:(Hồ sơ của bạn đã cập nhật xong)");
+                        window.changeToViewMode(e);
+                        scope.isEdit = false;
+                        scope.$applyAsync();
+                    })
+            };
+            scope.doCancel = function (e) {
+                scope.isEdit = false;
+                window.changeToViewMode(e);
+                scope.$applyAsync();
+            };
+            scope.doLoadData();
+        });
+   
+      
+</script>

@@ -1,0 +1,29 @@
+{
+  "main": {
+    "compress": false,
+    "version": "1.0.0",
+    "files": [
+      "public/Scripts/jquery-3.2.1.min.js",
+      "public/Content/bootstrap/js/bootstrap.min.js",
+      "public/Scripts/summernote/summernote.js",
+      "public/Scripts/bootstrap-datepicker.js",
+      "public/Scripts/moment.min.js",
+      "public/Scripts/toastr.min.js",
+      "public/Scripts/postback.js",
+      "public/Scripts/select2.min.js",
+      {
+        "path": "public/Scripts/ajax_call.js",
+        "obfuscator": true
+      },
+      "public/Scripts/angular.min.js",
+     
+     
+      "public/Scripts/jquery.twbsPagination.min.js",
+      "public/Scripts/Dialogs.js",
+      "public/Scripts/toastr.js",
+      "public/Scripts/bootstrap-timepicker.js",
+      "public/Scripts/ngDirectives.js"
+
+    ]
+  }
+}

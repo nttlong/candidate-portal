@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="app">
+<head>
+    <meta charset="utf-8" />
+    <title>page-caption:(Candidate syncronize service)</title>
+    <render>header.html</render>
+</head>
+<body ng-controller="app">
+    <render>navbar.html</render>
+    <div class="container">
+        <div c-template url="${$root.currentPage}">
+            
+        </div>
+    </div>
+   
+    <script>
+        appDirectiveSetRootUrl("{{{Config.RootUrl}}}");
+        ng_app([], function (scope) {
+			scope.$root.menuItems = [{
+				page: "Database",
+				caption: "res:(Database)"
+			}, {
+				page: "app",
+				caption: "Candidate portal application"
+			}, {
+				page: "requisition",
+				caption: "List of requisition"
+			}, {
+				page: "post-requisition",
+				caption: "Post requisition"
+			}, {
+				page: "manage_services",
+				caption: "Quản lý Services"
+			}];
+           
+            history_navigator(scope.$root);
+            console.log(scope.$root);
+            scope.$root.currentPage = "pages/home"
+            scope.$applyAsync();
+			scope.$root.$history.change(function (data) {
+                if (data.view) {
+                    scope.$root.currentPage = "pages/" + data.view;
+                    scope.$applyAsync();
+                }
+                else {
+                    scope.$root.currentPage = "pages/home";
+                    scope.$applyAsync();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

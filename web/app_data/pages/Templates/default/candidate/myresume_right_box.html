@@ -1,0 +1,233 @@
+﻿<div class="col-xs-12 col-sm-12 col-md-3">
+    <div class="right-box" id="right-box">
+        <div id="profileLevel" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Mức độ hoàn chỉnh)
+                <span id="spPercentComplete" class="pull-right">60%</span>
+            </div>
+        </div>
+        <div id="allowSearchProfile" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading" ng-if="$root.isHiddenCv">
+                res:(Cho phép tìm kiếm)
+                <span class="pull-right togger-switch">
+                    <label class="switch">
+                        {{#if candidate.AllowSearch}}
+                        <input type="checkbox" ng-click="$root.onChangeAllowSearch($event)" checked="checked">
+                        {{else}}
+                        <input type="checkbox" ng-click="$root.onChangeAllowSearch($event)">
+                        {{/if}}
+                        <span class="slider round"></span>
+                    </label>
+                </span>
+            </div>
+            <div class="panel-content box-sm" ng-if="!$root.isHiddenCv">
+                <fieldset>
+                    <div class="attached-cv">
+                        <div>
+                            res:(Hồ sơ đính kèm)
+                            <div class="well well-sm dash mg-tp relative attached-cv-update">
+                                <form class="m-b-none relative">
+                                    <div class="messages no-margin">
+                                        <div id="upload-status">
+                                            <small class="have-resume" style="display: block;overflow: hidden;text-overflow: ellipsis;" ng-if="$root.CvFileName == null">
+                                                <span class="text-clip">res:(Hồ sơ của bạn)</span>
+                                                {{#if candidate.CV_Attachment}}
+                                                    <a target="_blank" href="{{Config.RootUrl}}attachments/candidate/cv/{{User.UserId}}">
+                                                        <i class="glyphicon glyphicon-arrow-down"></i> <span class="resume-name text-clip">{{candidate.CV_Attachment.FileName}}</span>
+                                                    </a>
+                                                {{/if}}
+                                                <br />
+                                                <span class="gray-light text-clip">
+                                                    res:(được cập nhật ngày)
+                                                    <span class="resume-date">{{dateFormat candidate.LatestModifiedOn 'dd/MM/yyyy'}}</span>
+                                                </span>
+                                            </small>
+                                            <small class="have-resume" style="display: block;overflow: hidden;text-overflow: ellipsis;" ng-if="$root.CvFileName != null">
+                                                <span class="text-clip">res:(Hồ sơ của bạn)</span>
+                                                <a target="_blank" href="{{Config.RootUrl}}attachments/candidate/cv/{{User.UserId}}">
+                                                    <i class="glyphicon glyphicon-arrow-down"></i> <span class="resume-name text-clip">${$root.CvFileName}</span>
+                                                </a>
+                                                <br />
+                                                <span class="gray-light text-clip">
+                                                    res:(được cập nhật ngày)
+                                                    <span class="resume-date">${$root.DateUpdateCv | date: "dd/MM/yyyy"}</span>
+                                                </span>
+                                            </small>
+                                        </div>
+                                     
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <hr class="divider no-margin">
+                <fieldset class="mg-tp" ng-if="$root.AllowEdit()">
+                    <div class="searchable-setting">
+                        <div class="strong-tooltip">
+                            res:(Cho phép tìm kiếm) 
+                        </div>
+                        <span class="pull-right togger-switch">
+                            <label class="switch">
+                                {{#if candidate.AllowSearch}}
+                                <input type="checkbox" ng-click="$root.onChangeAllowSearch($event)" checked="checked">
+                                {{else}}
+                                <input type="checkbox" ng-click="$root.onChangeAllowSearch($event)">
+                                {{/if}}
+                                <span class="slider round"></span>
+                            </label>
+                        </span>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div id="whoViewProfile" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Tổng số lượt xem hồ sơ của bạn) 
+                <span style="float: right; color: #f7941d;">{{candidate.TotalRecruiterReviews}}</span>
+            </div>
+            <!--<div class="panel-content box-sm">
+                <fieldset class="mg-tp">
+                    <div class="searchable-setting">
+                        <span ><i class='fa fa-times-circle'></i>
+                            res:(Tổng lượt xem)
+                        </span>
+                        <span class="pull-right total-view-profile">{{candidate.TotalRecruiterReviews}}</span>
+                    </div>
+                </fieldset>
+            </div>-->
+            <!--<hr class="divider no-margin">-->
+            {{#each recruiterreviews}}
+            <div class="panel-content box-sm panel-company">
+                <fieldset class="mg-tp">
+                    <div class="view-company">
+                        <div class="view-company-content">
+                            <span>
+                                <img src="{{../Config.RootUrl}}/photo/logo/{{RecruiterReviews.RecruiterCode}}.png"
+                                     />
+                            </span>
+                            <span title="{{RecruiterReviews.RecruiterName}}">
+                                {{RecruiterReviews.RecruiterName}}
+                            </span>
+                        </div>
+                        <div class="date-and-num-view">
+                            <span class="pull-left">{{dateFormat RecruiterReviews.ViewDate 'dd/MM/yyyy'}}</span>
+                            <span class="pull-right">{{RecruiterReviews.TotalReviews}}</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.db",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            (utils, Data, auth,models, app) => {
+                app.onLoad = (event) => {
+                    utils._try(() => {
+                        Data.cnn((err, db) => {
+                            var loadByEmail = (email) => {
+                                utils.paralellCaller()
+                                    .call(emit => {
+                                        models.ls_candidate()
+                                            .where("UserEmail", email)
+                                            .select({
+                                                CV_Attachment: 1,
+                                                LatestModifiedOn: 1,
+                                                AllowSearch: 1,
+                                                TotalRecruiterReviews: 1,
+                                                ModifiedOn: 1,
+                                                CreatedOn: 1
+                                            })
+                                            .toItem((err, result) => {
+                                                if (!err) {
+                                                    if (result) {
+                                                        result.LatestModifiedOn = result.ModifiedOn || result.CreatedOn;
+                                                        event.setModel("candidate", result);
+                                                    }
+                                                }
+                                                emit();
+                                            })
+                                            .catch(ex => {
+                                                emit(ex);
+                                            })
+                                    })
+                                    .call(emit => {
+                                        models.ls_candidate()
+                                            .where("UserEmail", email)
+                                            .unwind("RecruiterReviews")
+                                            .sort("RecruiterReviews.ViewDate", -1)
+                                            .select({
+                                                RecruiterReviews: 1
+                                            })
+                                            .toArray((err, result) => {
+                                                if (!err) {
+                                                    if (result) {
+                                                        event.setModel("recruiterreviews", result);
+                                                    }
+                                                }
+                                                emit();
+                                            })
+                                            .catch(ex => {
+                                                emit(ex);
+                                            })
+                                    })
+                                    .done(ex => {
+                                        event.done(ex);
+                                    })
+                            }
+                            if (event.req.routeInfo && event.req.routeInfo.params && event.req.routeInfo.params.userId) {
+                                var userId = event.req.routeInfo.params.userId;
+                                models.sys_Users()
+                                    .where("UserId", userId)
+                                    .toItem((err, result) => {
+                                        if (err) event.done(err);
+                                        else
+                                            event.setModel("User", result);
+                                            loadByEmail(result.Email);
+                                    })
+                            }
+                            else {
+                                loadByEmail(auth.getUser(event.req).Email);
+                            }
+                        });
+
+                    }, event);
+
+
+                }
+            }]
+    </script>
+    <script>
+            (function (app) {
+                app.$root.CvFileName = null;
+                app.$root.DateUpdateCv = null;
+                app.isThisUser = function () {
+                    return window.candidateId == "";
+                }
+                alert(app.isThisUser());
+                app.data = {
+                    CVFile: {},
+                    Users: {
+                        Settings: { DefaultDateFormat: "DD/MM/YYYY" }
+                    },
+                    totalView: 0,
+                    lstRecruiterReview: []
+                };
+               
+                app.uploadCVFile = function () {
+
+                };
+                app.formatDate = function (value, format) {
+                    return moment(String(value)).format(format)
+                }
+                app.onChangeAllowSearch = function () {
+
+                }
+                app.$applyAsync();
+            })
+    </script>

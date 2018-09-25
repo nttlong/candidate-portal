@@ -1,0 +1,386 @@
+﻿<div class="myresume-contact collapse" id="myresume-contact">
+    <form id="frmContact" name="frmContact"  ng-click="doEdit($event)">
+        <input type="hidden" name="resumeId">
+        <div class="box">
+            <fieldset class="">
+                <div id="myresume-contact-edit" class="infor-wrapper form-view relative box-md">
+                    <span class="edit-btn" ng-if="$root.AllowEdit()">
+                        <button type="button" class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </button>
+                    </span>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="txtEmail">res:(Email)</label>
+                                <div class="field-view" style="display:block">
+                                    <p class="form-control-static view-control">${data.Info.UserEmail}</p>
+                                </div>
+                                <div class="field-edit" style="display:none">
+                                    <input type="email" autofocus="" class="form-control edit-control" id="txtEmail" readonly="readonly"  ng-model="data.Info.UserEmail">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="txtPhoneNumber">
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Điện Thoại)
+                                </label>
+                                <div class="field-view clearfix" style="display: block;">
+                                    <p class="form-control-static view-control pull-left">${data.Info.Mobile}</p>
+
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <input type="tel" class="form-control edit-control" name="txtPhoneNumber" id="txtPhoneNumber" placeholder="Ví dụ: 0903012825" ng-model="data.Info.Mobile">
+                                    <span class="msg-phone-required cls-error" id="err_phone" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                    <span class="msg-phone-valid cls-error" id="err_valid_phone" hidden="hidden">res:(Thông tin không hợp lệ)</span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="txtBirthday">
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Ngày sinh)
+                                </label>
+                                <div class="field-view" style="display: block;">
+                                    <p class="form-control-static view-control">${data.Info.BirthDate | date: "dd/MM/yyyy"}</p>
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <div c-date-picker ng-model="data.Info.BirthDate"></div>
+                                    
+                                </div>
+                                <span class="msg-birthday-required cls-error" id="err_birthday" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="nationality">
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Quốc Tịch)
+                                </label>
+                                <div class="field-view" style="display: block;">
+                                    <p class="form-control-static view-control" data-type="select">${data.Info.Nationality.Name[lang]}</p>
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <div>
+                                        <input c-select2 data-source="data.lookup.ListOfNations" ng-model="data.Info.Nationality.Code" placeholder="res:(Nhập vào quốc tịch)" />
+
+                                    </div>
+                                    <span class="msg-nation-required cls-error" id="err_location" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Giới tính)
+                                </label>
+                                <div class="field-view" style="display: block;">
+                                    <p class="form-control-static view-control" data-type="radio">${getSexName(data.Info.Sex)}</p>
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <label class="radio-inline" for="txtMale">
+                                        <input class="edit-control" type="radio" name="gender" ng-model="data.Info.Sex" id="txtMale" value="true" data-text-value="res:(Nam)">
+                                        <span>res:(Nam)</span>
+                                    </label>
+                                    <label class="radio-inline" for="txtFemale">
+                                        <input class="edit-control" type="radio" name="gender" ng-model="data.Info.Sex" id="txtFemale" value="false" data-text-value="res:(Nữ)">
+                                        <span>res:(Nữ)</span>
+                                    </label>
+                                    <span class="msg-sex-required cls-error" id="err_sex" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Tình Trạng Hôn Nhân)
+                                </label>
+                                <div class="field-view" style="display: block;">
+                                    <p class="form-control-static view-control" data-type="radio">${data.Info.MarriageStatus.Name[lang]}</p>
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <div>
+                                        <input c-select2 data-source="data.lookup.ListOfMarriageStatus" ng-model="data.Info.MarriageStatus.Code" placeholder="res:(Nhập vào tình trạng hôn nhân)" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin-top: 0px">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="city">
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Tỉnh/Thành Phố)
+                                </label>
+                                <div class="field-view" style="display: block;">
+                                    <p class="form-control-static view-control" data-type="select">${data.Info.Location.Province.Name[lang]} (${data.Info.Location.Name[lang]})</p>
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <div class="">
+                                        <input c-select2 data-source="data.lookup.ListOfLocations" ng-model="data.Info.Location.FullCode" placeholder="res:(Tỉnh thành phố, nơi đăng ký HKTT)" />
+                                    </div>
+                                    <span class="msg-province-required cls-error" id="err_city" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="txtAddress">
+                                    <strong class="red-text field-edit" style="display: none;">*</strong>
+                                    res:(Địa Chỉ)
+                                </label>
+                                <div class="field-view" style="display: block;">
+                                    <p class="form-control-static view-control">${data.Info.FullAddress}</p>
+                                </div>
+                                <div class="field-edit" style="display: none;">
+                                    <input type="text" class="form-control edit-control" id="txtAddress" name="txtAddress" placeholder="Ví dụ: 130 Sương Nguyệt Ánh" ng-model="data.Info.FullAddress">
+                                    <span class="msg-address-required cls-error" id="err_address" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mg-tp field-edit" style="display: none;">
+                        <div class="col-sm-6">
+                            (<strong class="red-text">*</strong>) res:(Thông tin bắt buộc)
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <button ng-click="doCancel($event)" type="button" class="btn btn-default btn-cancel" id="btnCancelContact">res:(Hủy)</button>
+                            <button ng-click="doSaveContact($event)" type="button" class="btn btn-primary btn-save" id="btnSaveContect">res:(Lưu)</button>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </form>
+</div>
+<script server>
+    [
+        "./../modules/node.sys.categories",
+        "./../libs/lv.utils",
+        "./../modules/node.candidate.profiles",
+        "./../libs/lv.authenticate",
+        (categories, utils, profiles, aut, app) => {
+            app.doLoadData = (event) => {
+                var loadData = (email) => {
+                    
+                    profiles.getContactInfo(email,
+                        utils.getCurrentLanguageCode(event),
+                        (err, data) => {
+                            if (err) event.done(err);
+                            else {
+                                utils.writeData(event, data);
+                                event.done();
+                            }
+                        })
+                };
+                var clientData = utils.readData(event);
+                if ((clientData.candidateId)&&(clientData.candidateId != "")) {
+                    profiles.getUserInfoByUserId(clientData.candidateId, (err, user) => {
+                        if (err) handler(err);
+                        else {
+                            if (user == null) {
+                                utils.writeData(event, {});
+                                event.done();
+                            }
+                            else {
+                                loadData(user.Email);
+                            }
+                        }
+                    })
+                }
+                else {
+                    loadData(aut.getUser(event.req).Email);
+                }
+            }
+            app.doLoadNations = (event) => {
+                categories.get_ls_nations(utils.getCurrentLanguageCode(event), (err, lst) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, lst);
+                        event.done();
+                    }
+                });
+            }
+            app.doLoadMarriageStatus = (event) => {
+                categories.get_ls_marriage_status(utils.getCurrentLanguageCode(event), (err, lst) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, lst);
+                        event.done();
+                    }
+                })
+            }
+            app.doLoadLocations = (event) => {
+                categories.getListOfLocations(utils.getCurrentLanguageCode(event), (err, lst) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, lst);
+                        event.done();
+                    }
+                })
+            }
+            app.doSaveContact = (event) => {
+                var clientData = utils.readData(event);
+                clientData.LatestModifiedOnUTC = utils.getUTCDate(new Date());
+                clientData.LatestModifiedOn = new Date();
+                profiles.saveContact(aut.getUser(event.req).Email, utils.getCurrentLanguageCode(event), clientData, (err, result) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, result);
+                        event.done();
+                    }
+                })
+            }
+        }]
+</script>
+<script>
+    (function (app) {
+        app.lang = "{{Language.Current.Code}}";
+        app.data = {
+
+            Users: {
+                Settings: {
+                    DefaultDateFormat: "DD/MM/YYYY"
+                }
+            },
+            Info: {
+                
+            },
+            lookup: {
+                ListOfNations: [],
+                ListOfMarriageStatus: [],
+                ListOfLocations:[]
+            }
+        };
+        app.doLoadData = function () {
+            
+            var ajax = "server.page://doLoadData";
+            ajax.data({ candidateId: window.candidateId })
+                .done(function (res) {
+                    app.data.Info = res;
+                    app.$applyAsync();
+                })
+
+        }
+        app.doLoadNations = function () {
+            var me = app
+            var ajax = "server.page://doLoadNations";
+            ajax
+                .done(function (res) {
+                    me.data.lookup.ListOfNations = res;
+                })
+        }
+        
+
+        app.doLoadMarriageStatus = function () {
+            var ajax = "server.page://doLoadMarriageStatus";
+            var me = app
+            ajax
+                .done(function (res) {
+                    me.data.lookup.ListOfMarriageStatus = res;
+                })
+        }
+        app.doLoadLocations = function () {
+            var ajax = "server.page://doLoadLocations";
+            var me = app
+            ajax
+                .done(function (res) {
+                    me.data.lookup.ListOfLocations = res;
+                })
+        }
+        app.doEdit = function (event) {
+            if (!app.$root.AllowEdit()) return;
+            var me = app
+            if (!me.hasInitComboboxData) {
+                me.hasInitComboboxData = true;
+            }
+            window.doEditWebPart(event)
+        }
+        app.doLoadNations();
+        app.doLoadMarriageStatus();
+        app.doLoadLocations();
+        setTimeout(function () {
+            app.doLoadData();
+        }, 200);
+        app.doSaveContact = function (event) {
+            toastrError = function (error, model) {
+                toastr.error(error);
+                $("[ng-model='" + model + "']").focus(
+                    function () {
+                        $(this).css({ "border-color": "red" })
+                    }
+                );
+                $("[ng-model='" + model + "']").blur(
+                    function () {
+                        $(this).css({ "border-color": "#ccc" })
+                    }
+                );
+                $("[ng-model='" + model + "']").trigger("click");
+                $("[ng-model='" + model + "']").select();
+            }
+            var ajax = "server.page://doSaveContact";
+            ajax.data(app.data.Info)
+                .done(function (res) {
+                    if (res && res.apiError) {
+                        if (res.apiError.errorType == "MobileIsEmpty") {
+                            toastrError("res:(Xin nhập vào số điện thoại)", "data.Info.Mobile");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").focus();
+                        }
+                        else if (res.apiError.errorType == "BirthDateIsEmpty") {
+                            toastrError("res:(Xin nhập vào ngày sinh của bạn)", "data.Info.BirthDate");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").find("input").focus();
+                        }
+                        else if (res.apiError.errorType == "Location.FullCodeIsEmpty") {
+                            toastrError("res:(Xin chọn tỉnh/thành phố)", "data.Info.Location.FullCode");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                        }
+                        else if (res.apiError.errorType == "Nationality.CodeIsEmpty") {
+                            toastrError("res:(Xin chọn quốc tịch)", "data.Info.Nationality.Code");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                        }
+                        else if (res.apiError.errorType == "MarriageStatus.CodeIsEmpty") {
+                            toastrError("res:(Xin chọn tình trạng hôn nhân)", "data.Info.MarriageStatus.Code");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                        }
+                        else if (res.apiError.errorType == "FullAddressIsEmpty") {
+                            toastrError("res:(Xin nhập vào địa chỉ)", "data.Info.FullAddress");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").focus();
+                        }
+                        else if (res.apiError.errorType == "SexIsEmpty") {
+                            toastrError("res:(Xin chọn giới tính)", "data.Info.Sex");
+                            app.$element.find("[ng-model='data.Info." + res.apiError.field + "']").focus();
+                        }
+                        //MarriageStatus.CodeIsEmpty)
+                    }
+                    else {
+                        toastr.success("res:(Đã cập nhật thành công 'Thông tin liên hệ')");
+                        window.changeToViewMode(event);
+                        app.doLoadData();
+                    }
+                });
+        }
+        app.getSexName = function (x) {
+            if (!x) return "res:(Chưa xác định)";
+            if (x == 'true')
+                return "res:(Nam)"
+            else
+                return "res:(Nữ)"
+        }
+        app.doCancel = function (e) {
+            window.changeToViewMode(e);
+        }
+    })
+</script>

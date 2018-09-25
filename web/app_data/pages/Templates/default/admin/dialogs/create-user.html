@@ -1,0 +1,97 @@
+<html>
+<body>
+    <form role="form">
+        <div class="form-group">
+            <label class="control-label">res:(Firstname)</label>
+            <input type="text" class="form-control" placeholder="res:(Enter Firstname)" ng-model="FirstName">
+        </div>
+        <div class="form-group">
+            <label class="control-label">res:(Lastname)</label>
+            <input type="text" class="form-control" placeholder="res:(Enter Lastname)" ng-model="LastName">
+        </div>
+        <div class="form-group">
+            <label class="control-label">res:(Email)</label>
+            <input type="text" class="form-control" placeholder="res:(Enter email)" ng-model="Username">
+        </div>
+        <div class="form-group">
+            <label class="control-label">res:(Password)</label>
+            <input type="password" class="form-control" placeholder="res:(Enter Password)" ng-model="Password">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-default pull-right" ng-click="$doClose()">res:(Close)</button>
+            <button type="submit" class="btn btn-default pull-right" ng-click="doCreateUser()">res:(Create)</button>
+
+        </div>
+
+    </form>
+    <script server>
+        [
+            "./../libs/lv.utils",/*Tien ich*/
+            "./../modules/node.sys.customer" /*Quan ly khac hang*/,
+            "./../libs/lv.authenticate" /*Dung de lay User hien tai*/,
+            (utils, cust, aut, page) => {
+                page.doCreateUser = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var user = aut.getUser(event.req);
+                        cust.createUser(clientData.Username, clientData.Password, clientData.FirstName, clientData.LastName, user.Email, clientData.id, (err, result) => {
+                            if (err) event.done(err);
+                            else {
+                                utils.writeData(event, result);
+                                event.done();
+                            }
+                        })
+                    }, event);
+                }
+
+            }]
+    </script>
+    <script>
+            (function (scope) {
+                scope.$applyAsync();
+                scope.doCreateUser = function () {
+                    var ajax = "server.page://doCreateUser";
+                    console.log(scope.$parent.data)
+                    ajax.data({
+                        id: scope.$parent.data._id,
+                        Username: scope.Username,
+                        Password: scope.Password,
+                        FirstName: scope.FirstName,
+                        LastName: scope.LastName
+                    })
+                        .done(function (res) {
+                            if (res.apiError) {
+                                if (res.apiError.errorType == "UsernameIsEmpty") {
+                                    toastr.error("res:(Please enter Username or Email)")
+                                }
+                                if (res.apiError.errorType == "PasswordIsEmpty") {
+                                    toastr.error("res:(Please enter password)")
+                                }
+                                if (res.apiError.errorType == "FirstNameIsEmpty") {
+                                    toastr.error("res:(Please enter FirstName)")
+                                }
+                                if (res.apiError.errorType == "LastNameIsEmpty") {
+                                    toastr.error("res:(Please enter LastName)")
+                                }
+                                if (res.apiError.errorType == "RecruiterEmailIsNotEmpty") {
+                                    toastr.error("res:(This customer alreay has admin account)")
+                                }
+                                if (res.apiError.errorType == "RecruiterWasNotFound") {
+                                    toastr.error("res:(This customer was not found)")
+                                }
+                                //RecruiterWasNotFound
+                                console.log(res.apiError);
+                            }
+                        
+                        else {
+                                toastr.success("res:(Create user is successfull)", "res:(Message)");
+                                
+                                scope.$parent.data.UserEmail = scope.Username;
+                                scope.$doClose();
+                        }
+                    })
+            }
+        })
+    </script>
+</body>
+</html>

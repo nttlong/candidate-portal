@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <script server>
+        [
+            "fs",
+            "path",
+            "./../libs/lv.utils",
+            "./../modules/node.sys.content_manage",
+            "./../modules/lv.model",
+            "./../libs/hcs.cache",
+            (fs, path, utils, contentManage, models, cache, page) => {
+                page.loadData = (event) => {
+                    utils._try(() => {
+                        
+                        var langs = models.sys_global_language_setting().toItem.sync();
+                        var langSupports = langs.LanguageSupports;
+
+                        var postData = utils.readData(event);
+                        try {
+                            var page = postData.path;
+                            var lan = postData.language;
+                            if (!postData.isResourceFile) {
+                                var _path = "./app_data/language";
+                                var compareKeys = {};
+                                var retData = {}
+                                var retTitle = {};
+                                var langs = [];
+                                var _fPath;
+                                langSupports.forEach(item => {
+                                    langs.push(item.Code);
+                                    
+                                    _fPath = page.replace(".html", "." + item.Code + ".json");
+                                    while (_fPath.indexOf("\\") > -1) {
+                                        _fPath = _fPath.replace("\\", ".");
+                                    }
+                                    var localPath = path.join(_path, _fPath);
+                                    var hasFile = fs.existsSync(localPath);
+                                    if (!hasFile) {
+                                        var writeData = JSON.stringify({
+                                            title: _fPath,
+                                            res: {}
+                                        });
+                                        fs.writeFile.sync(null, localPath, writeData, "utf-8");
+                                    }
+                                    var dataContent = fs.readFile.sync(null, localPath, "utf-8");
+                                    var data = Function("return " + dataContent)();
+                                    retTitle[item.Code] = data.title;
+                                    Object.keys(data.res).forEach(key => {
+                                        if (!retData[key]) {
+                                            retData[key] = {};
+                                        }
+                                        retData[key][item.Code] = data.res[key];
+                                    });
+                                });
+                                var res = [];
+                                Object.keys(retData).forEach(key => {
+                                    res.push({
+                                        key: key,
+                                        value: retData[key]
+                                    });
+                                });
+                                var fx = "";
+                                var items = _fPath.split('.');
+                                for (var i = 0; i < items.length - 2; i++) {
+                                    fx += items[i] + ".";
+                                }
+                                utils.writeData(event, {
+                                    langs: langs,
+                                    res: res,
+                                    title: retTitle,
+                                    file: fx
+                                });
+                                event.done();
+                            }
+                            else {
+                              
+                                var retData = {}
+                                var retTitle = {};
+                                var langs = [];
+                                var items = page.split('.');
+                                var _file = "";
+                                for (var i = 0; i < items.length - 2; i++) {
+                                    _file += items[i] + ".";
+                                }
+                                var _path = "./app_data/language";
+                                langSupports.forEach(item => {
+                                    langs.push(item.Code);
+                                    var localPath = path.join(_path, _file + item.Code + ".json");
+                                    var hasFile = fs.existsSync(localPath);
+                                    if (!hasFile) {
+                                        var writeData = JSON.stringify({
+                                            title: _file + item.Code + ".json",
+                                            res: {}
+                                        });
+                                        fs.writeFile.sync(null, localPath, writeData, "utf-8");
+                                    }
+                                    var dataContent = fs.readFile.sync(null, localPath, "utf-8");
+                                    var data = Function("return " + dataContent)();
+                                    retTitle[item.Code] = data.title;
+                                    Object.keys(data.res).forEach(key => {
+                                        if (!retData[key]) {
+                                            retData[key] = {};
+                                        }
+                                        retData[key][item.Code] = data.res[key];
+                                    });
+                                });
+                                var res = [];
+                                Object.keys(retData).forEach(key => {
+                                    res.push({
+                                        key: key,
+                                        value: retData[key]
+                                    });
+                                });
+                                utils.writeData(event, {
+                                    langs: langs,
+                                    res: res,
+                                    title: retTitle,
+                                    file: _file
+                                });
+                                event.done();
+                               
+                               
+                            }
+
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex });
+                            event.done();
+                        }
+
+
+                    }, event);
+                    
+
+
+                }
+                page.saveData = (event) => {
+                    utils._try(() => {
+                       
+                        var postData = utils.readData(event);
+                        try {
+
+                            var langs = models.sys_global_language_setting().toItem.sync();
+                            var langSupports = langs.LanguageSupports;
+                            langSupports.forEach(item => {
+                                var data = {};
+                                data.title = postData.title[item.Code];
+                                data.res = {};
+                                postData.res.forEach(resItem => {
+                                    data.res[resItem.key] = resItem.value[item.Code];
+
+                                });
+                                var _path = path.join("./app_data/language", postData.file + item.Code + ".json");
+                                var ret = fs.writeFile.sync(null, _path, JSON.stringify(data), "utf-8");
+                            });
+                         
+                            utils.writeData(event, {});
+                            event.done();
+                            //var page = postData.path;
+                            //var lan = postData.language;
+                            //var data = postData.data;
+                            //contentManage.savePageLangRes(page, lan,data, (err, data) => {
+                            //    if (err) {
+                            //        utils.writeData(event, { error: err });
+                            //        event.done();
+                            //    }
+                            //    else {
+                            //        utils.writeData(event, data);
+                            //        event.done();
+                            //    }
+                            //});
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex });
+                            event.done();
+                        }
+                    }, event);
+
+                };
+                page.doClearCache = (event) => {
+                    cache.clear_page_content_cache();
+                    utils.writeData(event, {});
+                    event.done();
+                }
+            }];
+    </script>
+    <div>
+        <section>
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>
+                        ${data.file}
+                    </h1>
+                </div>
+            </div>
+           
+        </section>
+        {{#each Language.Support}}
+       
+        <section>
+            <div class="form-group row" >
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Tiêu đề) ({{Code}})</label>
+                <div class="col-sm-10">
+                   
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Tiêu đề)" ng-model="data.title['{{{Code}}}']">
+                </div>
+            </div>
+        </section>
+        {{/each}}
+        
+      <section>&nbsp;</section>
+        <section>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                       {{#each Language.Support}}
+                        <th>
+                            res:(Caption)({{Code}})
+                        </th>
+                        {{/each}}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in data.res">
+                       {{#each Language.Support}}
+                        <td>
+                            <textarea ng-model="item.value['{{{Code}}}']" class="form-control"></textarea>
+                            
+                        </td>
+                        {{/each}}
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        <section>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <input type="button" class="btn btn-primary pull-right" value="res:(Update)" ng-click="doSaveData()" />
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Second group">
+                            <input type="button" class="btn btn-primary pull-right" value="res:(Clear cache)" ng-click="doClearCache()" />
+                        </div>
+                       
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        
+    </div>
+
+    <script>
+        (function (app) {
+            app.doLoadData = () => {
+                var ajax = "server.page://loadData";
+                app.data = {
+                    res: []
+                };
+                ajax.data({
+                    path: app.$root.$history.data().path,
+                    language: window.currentLanguage,
+                    isResourceFile: app.$root.$history.data().resource
+                })
+                    .done((res) => {
+                        console.log(res);
+                        app.data = res;
+                        app.$applyAsync();
+                    });
+            };
+            app.doSaveData = () => {
+                var ajax = "server.page://saveData";
+                ajax.data(app.data)
+                    .done(res => {
+                        toastr.success("res:(Update complete. The system will be affected after 'clear cache' )");
+                        console.log(res);
+                    });
+            };
+            app.doClearCache = () => {
+                var a = "server.page://doClearCache";
+                a.done((res) => {
+                    window.location.reload(true);
+                });
+            }
+            window.onChangeLanguage(() => {
+                
+                app.doLoadData();
+            });
+            app.doLoadData();
+            app.getKeys = function () {
+                return Object.keys(app.data.res);
+            }
+        });
+    </script>
+</body>
+</html>

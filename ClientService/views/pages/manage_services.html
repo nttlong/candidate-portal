@@ -1,0 +1,274 @@
+﻿<body>
+	<script server>
+		["./../libs/lv.utils",
+			"./../libs/CandidatePortalClient.js",
+			"./../libs/lv.mysql.controllers.js",
+			"./../libs/lv.services.js",
+			(utils, client, sqlController, servicesCtr, page) => {
+				page.doLoadData = (event) => {
+					utils._try(() => {
+						try {
+							var dbConfig = sqlController.getDbConfig.sync();
+							var req = sqlController.getConectionSql.sync(null, dbConfig);
+							var data = sqlController.execData.sync(null, req, "SELECT RecID, ServiceName, Description, Script, Status, CreatedBy, CreatedOn FROM dbo.OData_Services");
+
+							utils.writeData(event, { data: data });
+							event.done();
+						}
+						catch (ex) {
+							utils.writeData(event, { error: ex.message || ex });
+							event.done();
+						}
+					}, event);
+				}
+
+				page.doInstallService = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var dbConfig = sqlController.getDbConfig.sync();
+							var req = sqlController.getConectionSql.sync(null, dbConfig);
+							var data = sqlController.execData.sync(null, req, "UPDATE OData_Services SET Status = 1 WHERE ServiceName = N'" + clientData.name + "'");
+							servicesCtr.install(clientData);
+							utils.writeData(event, {});
+							event.done();
+						}
+						catch (ex) {
+							utils.writeData(event, { error: ex.message || ex });
+							event.done();
+						}
+					}, event);
+				}
+
+				page.doUninstallService = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var dbConfig = sqlController.getDbConfig.sync();
+							var req = sqlController.getConectionSql.sync(null, dbConfig);
+							var data = sqlController.execData.sync(null, req, "UPDATE OData_Services SET Status = 0 WHERE ServiceName = N'" + clientData.name + "'");
+							servicesCtr.uninstall(clientData);
+							utils.writeData(event, {});
+							event.done();
+						}
+						catch (ex) {
+							utils.writeData(event, { error: ex.message || ex });
+							event.done();
+						}
+					}, event);
+				}
+
+				page.doStartService = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var dbConfig = sqlController.getDbConfig.sync();
+							var req = sqlController.getConectionSql.sync(null, dbConfig);
+							var data = sqlController.execData.sync(null, req, "UPDATE OData_Services SET Status = 2 WHERE ServiceName = N'" + clientData.name + "'");
+							servicesCtr.start(clientData);
+							utils.writeData(event, {});
+							event.done();
+						}
+						catch (ex) {
+							utils.writeData(event, { error: ex.message || ex });
+							event.done();
+						}
+					}, event);
+				}
+				page.doStopService = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var dbConfig = sqlController.getDbConfig.sync();
+							var req = sqlController.getConectionSql.sync(null, dbConfig);
+							var data = sqlController.execData.sync(null, req, "UPDATE OData_Services SET Status = 3 WHERE ServiceName = N'" + clientData.name + "'");
+							servicesCtr.stop(clientData);
+							utils.writeData(event, {});
+							event.done();
+						}
+						catch (ex) {
+							utils.writeData(event, { error: ex.message || ex });
+							event.done();
+						}
+					}, event); 
+				}
+				page.doSaveService = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var dbConfig = sqlController.getDbConfig.sync();
+							var req = sqlController.getConectionSql.sync(null, dbConfig);
+							var data = sqlController.execData.sync(null, req, "UPDATE OData_Services SET ServiceName = '" + clientData.name +
+								"', Description = '" + clientData.description +
+								"', Script = '" + clientData.script + "' WHERE RecID = " + clientData.recId);
+							utils.writeData(event, {});
+							event.done();
+						}
+						catch (ex) {
+							utils.writeData(event, { error: ex.message || ex });
+							event.done();
+						}
+					}, event);
+				}
+			}]
+	</script>
+	<div class="col-sm-12">
+		<table class="table table-bordered table-responsive">
+			<thead>
+				<tr>
+					<th ng-repeat="item in key" ng-if="item != 'Status'">${item}</th>
+					<th>
+						Trạng thái
+					</th>
+					<th>
+						Hành động
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="item in data">
+					<td ng-repeat="i in key" ng-if="i != 'Status'">${item[i]}</td>
+					<td>
+						<span ng-if="item.Status == 0">Not installed</span>
+						<span ng-if="item.Status == 1">Installed</span>
+						<span ng-if="item.Status == 2">Started</span>
+						<span ng-if="item.Status == 3">Stoped</span>
+					</td>
+					<td>
+						<button type="button" class="btn" ng-click="doInstall(item)">Install</button>
+						<button type="button" class="btn" ng-click="doStart(item)">Start</button>
+						<button type="button" class="btn" ng-click="doStop(item)">Stop</button>
+						<button type="button" class="btn" ng-click="doUninstall(item)">Uninstall</button>
+						<button type="button" class="btn" data-toggle="modal" data-target="#myModal" ng-click="doEdit(item)">Edit</button>
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+	<div id="myModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Edit services</h4>
+				</div>
+				<div class="modal-body">
+					<form action="/action_page.php">
+						<div class="form-group">
+							<label for="email">Services Name</label>
+							<input type="text" class="form-control" id="email" placeholder="Services name" ng-model="detail.ServiceName">
+						</div>
+						<div class="form-group">
+							<label for="pwd">Descreption</label>
+							<input type="text" class="form-control" id="pwd" placeholder="Descreption" ng-model="detail.Description">
+						</div>
+						<div class="form-group">
+							<label for="script">Script</label>
+							<input type="text" class="form-control" id="script" placeholder="Descreption" ng-model="detail.Script">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" ng-click="doSave(item)" data-dismiss="modal">Save</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<script>
+		(function (scope) {
+			scope.doLoadData = function () {
+				var a = "server.page://doLoadData";
+				a.data({
+					pageIndex: 0,
+					pageSize: 50
+				})
+					.done(function (res) {
+						console.log(res);
+						scope.key = Object.keys(res.data.recordset[0]);
+						scope.data = res.data.recordset;
+						scope.$applyAsync();
+					});
+			}
+
+			scope.doLoadData();
+
+			scope.doInstall = function (data) {
+				var a = "server.page://doInstallService";
+				a.data({
+					name: data.ServiceName,
+					description: data.Description,
+					script: data.Script
+				})
+					.done(function (res) {
+						console.log(res);
+						scope.doLoadData();
+						scope.$applyAsync();
+					});
+			}
+
+			scope.doStart = function (data) {
+				var a = "server.page://doStartService";
+				a.data({
+					name: data.ServiceName,
+					description: data.Description,
+					script: data.Script
+				})
+					.done(function (res) {
+						console.log(res);
+						scope.doLoadData();
+						scope.$applyAsync();
+					});
+			}
+			scope.doStop = function (data) {
+				var a = "server.page://doStopService";
+				a.data({
+					name: data.ServiceName,
+					description: data.Description,
+					script: data.Script
+				})
+					.done(function (res) {
+						console.log(res);
+						scope.doLoadData();
+						scope.$applyAsync();
+					});
+			}
+			scope.doUninstall = function (data) {
+				var a = "server.page://doUninstallService";
+				a.data({
+					name: data.ServiceName,
+					description: data.Description,
+					script: data.Script
+				})
+				.done(function (res) {
+					console.log(res);
+					scope.doLoadData();
+					scope.$applyAsync();
+				});
+			}
+			scope.doEdit = function (data) {
+				scope.detail = data;
+				scope.$applyAsync();
+			}
+			scope.doSave = function () {
+				var a = "server.page://doSaveService";
+				var data = scope.detail;
+				a.data({
+					name: data.ServiceName,
+					description: data.Description,
+					script: data.Script,
+					recId: data.RecID
+				})
+				.done(function (res) {
+					console.log(res);
+					scope.doLoadData();
+					scope.$applyAsync();
+				});
+			}
+		})
+	</script>
+</body>

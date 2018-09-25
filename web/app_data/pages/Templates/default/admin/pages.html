@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <script server>
+        ["fs",
+            "path",
+            "./../libs/lv.utils",
+            (fs,
+                path,
+                utils,
+                page) => {
+                utils.debug();
+                var searchContent = (content) => {
+                    
+                    var ret = [];
+                    var _path = "./app_data/language";
+                    var dirs = fs.readdir.sync(null, _path);
+                    dirs.forEach(f => {
+                        var localPath = path.join(_path, f);
+                        var stat = fs.lstat.sync(null, localPath);
+                        if (stat.isFile) {
+                           
+                            var dataContent = fs.readFile.sync(null, localPath, "utf-8");
+                            var i = dataContent.toLowerCase().indexOf(content.toLowerCase());
+                            if (i>-1) {
+                                ret.push({
+                                    dir: f,
+                                    isFile: true,
+                                    name: f,
+                                    modifiedOn: stat.mtime,
+                                    createdOn: stat.birthtime,
+                                    isResourceFile:true
+                                })
+                            }
+                        }
+                    });
+                    return ret;
+                }
+                /**
+                /* Lấy danh sách các trang
+                */
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            
+                            var ret = [];
+                            var clientData = utils.readData(event);
+                            if (utils.isNull(clientData.content)) {
+                                var localPath = (clientData.path) ? path.join("./app_data/pages/templates/default", clientData.path) : "./app_data/pages/templates/default";
+                                var dirs = fs.readdir.sync(null, localPath);
+                                dirs.forEach(dir => {
+                                    var info = path.parse(path.join(localPath, dir));
+                                    var _dir = info.dir.substring("app_data".length, info.dir.length);
+                                    var dirPath = (clientData.path) ? path.join(clientData.path, dir) : dir;
+                                    var stat = fs.stat.sync(null, path.join("./app_data/pages/templates/default", dirPath))
+                                    if (dir.indexOf(".") > -1) {
+                                        ret.push({
+                                            dir: dirPath,
+                                            isFile: true,
+                                            name: dir,
+                                            modifiedOn: stat.mtime,
+                                            createdOn: stat.birthtime
+
+                                        });
+                                    }
+                                    else {
+                                        ret.push({
+                                            dir: dirPath,
+                                            isFile: false,
+                                            name: dir,
+                                            modifiedOn: stat.mtime,
+                                            createdOn: stat.birthtime
+                                        });
+                                    }
+                                })
+                                if (clientData.sorting.name) {
+                                    ret = ret.sort((a, b) => {
+                                        if (clientData.sorting.name == 1) {
+                                            return a.name > b.name
+                                        }
+                                        else {
+                                            return b.name > a.name
+                                        }
+                                    })
+                                }
+                                if (clientData.sorting.time) {
+                                    ret = ret.sort((a, b) => {
+                                        if (clientData.sorting.name == 1) {
+                                            return a.modifiedOn > b.modifiedOn
+                                        }
+                                        else {
+                                            return b.modifiedOn > a.modifiedOn
+                                        }
+                                    })
+                                }
+                                utils.writeData(event, ret);
+                                event.done();
+                            }
+                            else {
+                                
+                                var ret = searchContent(clientData.content)
+                                utils.writeData(event, ret);
+                                event.done();
+                            }
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                        
+                    }, event);
+                    
+                }
+                page.clearCache = (event) => {
+                    global.argo.cache.pages = {};
+                    global.argo.lv_cacher = {};
+                    utils.writeData(event, {});
+                    event.done();
+                }
+            }];
+    </script>
+    <div>
+     <style>
+         .row{
+             padding:10px;
+         }
+     </style>
+       <div class="container-fluid">
+           <div class="row">
+               <div class="col-sm-12">
+                   <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                       <div class="btn-group" role="group" aria-label="First group">
+                           <div c-search-box ng-model="txtSearch" on-search="doSearch()"></div>
+                       </div>
+                      
+                   </div>
+               </div>
+           </div>
+           <div class="row">
+               <div class="col-sm-12">
+                   <table class="table table-bordered" style="font:24pt">
+                       <thead>
+                           <tr>
+                               <th c-header-sort caption="res:(Page)" 
+                                   caption-asc="res:(Sort asc)" 
+                                   caption-desc="res:(Sort desc)" 
+                                   caption-remove-sort="res:(Remove sorting)" 
+                                   field="name"
+                                   ng-model="sorting"
+                                   ng-change="doLoadData()">
+                                   
+                               </th>
+                              
+                               <th c-header-sort caption="res:(Time)"
+                                   caption-asc="res:(Sort asc)"
+                                   caption-desc="res:(Sort desc)"
+                                   caption-remove-sort="res:(Remove sorting)"
+                                   field="name"
+                                   ng-model="sorting"
+                                   ng-change="doLoadData()">
+
+                               </th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           <tr ng-if="$root.$history.data().path">
+
+                               <td>
+                                   <a href="${getUrlParent()}">..</a>
+                               </td>
+                               <td></td>
+                           </tr>
+                           <tr ng-repeat="item in items">
+
+                               <td>
+                                   <a ng-if="item.isResourceFile" href="#view=page-detail&path=${item.dir}&resource=1">
+                                       <i class="fa fa-file-o" aria-hidden="true"></i>
+                                       ${item.name}
+                                   </a>
+                                   <a ng-if="item.isFile&&(!item.isResourceFile)" href="#view=page-detail&path=${item.dir}">
+                                       <i class="fa fa-file-o" aria-hidden="true"></i>
+                                       ${item.name}
+                                   </a>
+                                   <a ng-if="(!item.isFile)&&(!item.isResourceFile)" href="#view=pages&path=${item.dir}">
+                                       <i class="fa fa-folder" aria-hidden="true"></i>
+                                       ${item.name}
+                                   </a>
+                               </td>
+                               <td>
+                                   ${(item.modifiedOn||item.createdOn)|date:'dd-MM-yyyy hh:mm:ss'}
+                               </td>
+                           </tr>
+                       </tbody>
+                   </table>
+               </div>
+           </div>
+       </div>
+        
+     <section>
+         <!--<input type="button" value="res:(Clear cache)" v-on:click="doClearCache" />-->
+     </section>
+    </div>
+    <script>
+        (function (app) {
+           
+            app.items = [];
+            app.sorting = {};
+            app.doLoadData = function () {
+                
+                
+                var ajax = "server.page://doLoadData";
+                ajax
+                    .data({
+                        path: app.$root.$history.data().path,
+                        sorting: app.sorting,
+                        content: app.txtSearch
+                    })
+                    .done(res => {
+                        console.log(res);
+                    app.items = res;
+                    app.$applyAsync();
+                });
+            };
+            app.doClearCache = () => {
+                var ajax = "server.page://clearCache";
+                ajax.done();
+            }
+           // app.doLoadData();
+            app.getParentPath = function () {
+                if (!app.$root.$history) return;
+                if (!app.$root.$history.data()) return;
+                if (!app.$root.$history.data().path) return;
+                var items = app.$root.$history.data().path.split('\\');
+                if (items.length == 1) return;
+                var ret = "";
+                for (var i = 0; i < items.length - 1; i++) {
+                    ret += items[i] + '\\';
+                }
+                ret = ret.substring(0, ret.length - 1);
+                return ret;
+            };
+            app.getUrlParent = function () {
+                var ret = app.getParentPath();
+                if (!ret) {
+                    return "#view=pages";
+                }
+                else {
+                    return "#view=pages&path="+ret;
+                }
+            }
+            app.$root.$history.onChange(app, function (data) {
+                
+                app.txtSearch = data.content;
+                app.doLoadData();
+            });
+            app.doSearch = function () {
+                window.location.href = "#view=pages&content=" + app.txtSearch;
+                
+            };
+        });
+    </script>
+</body>
+</html>

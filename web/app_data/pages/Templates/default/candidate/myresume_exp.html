@@ -1,0 +1,281 @@
+﻿<div class="myresume-exp">
+    <div>
+        <div class="box">
+            <fieldset>
+                <legend class="box-md">
+                    <i class="glyphicon glyphicon-signal"></i> res:(Kinh Nghiệm Làm Việc)
+                </legend>
+                <div class="placeholder-section box-md" v-if="arrExperience.length < 1">
+                    <p class="placeholder">
+                        res:(Mô tả kinh nghiệm làm việc của bạn càng chi tiết càng tốt, điều đó giúp bạn có cơ hội hiển thị nhiều hơn trong kết quả tìm kiếm)
+                    </p>
+                </div>
+                <div class="content-exp">
+                    <form hidden="" id="frmAddExp" class="sample form-view infor-wrapper box-md relative" data-order="0" method="post" action="">
+                        <input type="hidden" name="resume_id">
+                        <input type="hidden" name="entry_id">
+                        <div class="error-message-update-employment row" hidden="hidden">
+                            <div>
+                                <div class="cls-error"><strong>Oops! </strong> res:(Có lỗi đã xảy ra, vui lòng thử lại.)</div>
+                                <br>
+                            </div>
+                        </div>
+                        <span class="edit-btn">
+                            <button type="button" class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                        </span>
+                        <div>
+                            <div class="field-view">
+                                <h4 class="view-control placeholder">Ví dụ: UI/UX Designer</h4>
+                            </div>
+                            <div class="field-edit">
+                                <div class="form-group">
+                                    <label>
+                                        <strong class="red-text">*</strong> res:(Chức danh)
+                                    </label>
+                                    <select class="lv-select2-cus" id="slExpGroupJob" placeholder="res:(Vui lòng chọn...)" name="GroupJobAddNew" style="width:100%">
+                                        <option value="$pleasechosse">res:(Vui lòng chọn...)</option>
+                                        <optgroup v-for="itm in lstGroupjob" v-bind:label="itm.Name[Lang]">
+                                            <option v-for="itms in itm.Jobs" v-model="itms.Code">${itms.Name[Lang]}</option>
+                                        </optgroup>
+                                    </select>
+                                    <span class="msg-position-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                    <span class="msg-position-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field-view">
+                                <strong class="view-control placeholder">Ví dụ: VietnamWorks</strong>
+                            </div>
+                            <div class="field-edit">
+                                <div class="form-group">
+                                    <label>
+                                        <strong class="red-text">*</strong> res:(Công ty)
+                                    </label>
+                                    <input type="text" id="txtExpCompanyName" class="form-control edit-control company-name" name="companyName" placeholder="Ví dụ: VietnamWorks" value="" maxlength="150">
+                                    <span class="msg-company-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                    <span class="msg-company-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field-view">
+                                <p>
+                                    <span class="view-control placeholder" data-control="from-date">Ví dụ: 09/2008</span>
+                                    -
+                                    <span class="view-control placeholder" data-control="to-date" data-type="manual">Ví dụ: 12/2014</span>
+                                    <span class="total-time placeholder">
+                                        (
+                                        <span class="years">
+                                            <span class="number-of-years">6</span>
+                                            <span class="lbl">res:(years)</span>
+                                        </span>
+                                        <span class="months">
+                                            <span class="number-of-months">4</span>
+                                            <span class="lbl">res:(months)</span>
+                                        </span>
+                                        )
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field-edit">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>res:(Từ tháng)</label>
+                                            <input class="form-control edit-control datepicker" id="txtExpFromDate" name="fromDate" placeholder="Ví dụ: 09/2008" data-control="from-date">
+                                            <span class="msg-from-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                            <span class="msg-from-date-valid cls-error" hidden="hidden">res:(Tháng kết thúc phải lớn hơn tháng bắt đầu)</span>
+                                            <span class="msg-from-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>
+                                                res:(Đến tháng)
+                                            </label>
+                                            <input class="form-control edit-control datepicker" id="txtExpToDate" name="toDate" placeholder="Ví dụ: 12/2014" data-control="to-date">
+                                            <span class="msg-to-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                            <span class="msg-to-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+                                            <span class="msg-to-date-valid cls-error" hidden="hidden">res:(Tháng kết thúc phải lớn hơn tháng bắt đầu)</span>
+                                        </div>
+                                    </div>
+                                    <!--<div class="col-sm-4">
+                                        <div class="form-group">
+                                            <div class="m-t-lg hidden-xs"></div>
+                                            <label class="control-label">
+                                                <input type="checkbox" name="currentExp" value="1" class="to-present-checkbox edit-control" data-text-value="Hiện tại">
+                                                <em>res:(Công việc hiện tại)</em>
+                                            </label>
+                                        </div>
+                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field-view">
+                                <div class="view-control placeholder">res:(Mô tả ngắn về vai trò, nhiệm vụ và những thành tựu đạt được)</div>
+                            </div>
+                            <div class="field-edit">
+                                <div class="form-group">
+                                    <label>Mô tả</label>
+                                    <textarea rows="3" id="txtExpDesciption" name="description" class="form-control edit-control emp-description countdown-target" placeholder="res:(Mô tả ngắn về vai trò, nhiệm vụ và những thành tựu đạt được)"></textarea>
+                                    <em class="countdown gray-light" data-text="res:(ký tự có thể nhập thêm)"></em>
+                                    <p class="msg-description-limit-min cls-error" hidden="hidden">res:(Vui lòng nhập thêm thông tin)</p>
+                                    <p class="msg-description-limit-max cls-error" hidden="hidden">res:(Bạn đã nhập quá ký tự cho phép)</p>
+                                    <p class="msg-description-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</p>
+                                    <p class="msg-description-suggestion text-info" hidden="hidden">res:(Thêm thông tin để nâng mức độ hoàn thành hồ sơ của bạn)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group push-top-md field-edit">
+                            <div class="row">
+                                <div class="col-sm-6">(<strong class="red-text">*</strong>) res:(Thông tin bắt buộc)</div>
+                                <div class="col-sm-6 text-right">
+                                    <button type="button" id="btnCancelAddExp" class="btn-cancel btn btn-default" v-on:click="doCancelAddNewExp($event)">Hủy</button>
+                                    <button type="button" id="btnSaveAddExp" class="btn-save btn btn-primary" v-on:click="doSaveEditExp('')">Lưu</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form v-for="item in arrExperience" class="form-view infor-wrapper box-md relative" v-bind:id="'frmEditExp_' + item._id" data-order="10" data-title="Công ty cổ phần công nghệ Lạc Việt" name="frmExp" method="post" action="" v-on:click="doEdit($event)">
+                        <input type="hidden" name="resume_id">
+                        <input type="hidden" name="entry_id">
+                        <div class="error-message-update-employment row" hidden="hidden">
+                            <div>
+                                <div class="cls-error" style="display: none;"><strong>Oops! </strong> res:(Có lỗi đã xảy ra, vui lòng thử lại.)</div>
+                                <br>
+                            </div>
+                        </div>
+                        <span class="edit-btn">
+                            <button type="button" class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                        </span>
+                        <div>
+                            <div class="field-view" style="display: block;">
+                                <h4 class="view-control">${item.JobName.en}</h4>
+                            </div>
+                            <div class="field-edit" style="display: none;">
+                                <div class="form-group">
+                                    <label>
+                                        <strong class="red-text">*</strong>
+                                        res:(Chức danh)
+                                    </label>
+                                    <select v-bind:id="'slExpGroupJob_' + item._id" class="lv-select2-cus" placeholder="res:(Vui lòng chọn...)" name="GroupJob" style="width:100%" v-bind:value="item.JobCode">
+                                        <option value="">res:(Vui lòng chọn...)</option>
+                                        <optgroup v-for="itm in lstGroupjob" v-bind:label="itm.Name[Lang]">
+                                            <option v-for="itms in itm.Jobs" v-model="itms.Code">${itms.Name[Lang]}</option>
+                                        </optgroup>
+                                    </select>
+                                    <span class="msg-job-required cls-error" hidden="hidden">res:(Vui lòng chọn thông tin)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field-view" style="display: block;">
+                                <p class="view-control">${item.Company}</p>
+                            </div>
+                            <div class="field-edit" style="display: none;">
+                                <div class="form-group">
+                                    <label>
+                                        <strong class="red-text">*</strong>
+                                        res:(Công ty)
+                                    </label>
+                                    <input type="text" v-bind:id="'txtExpCompanyName_' + item._id" class="form-control edit-control" name="companyName" placeholder="Ví dụ: VietnamWorks" v-model="item.Company" maxlength="150">
+                                    <span class="msg-company-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                    <span class="msg-company-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field-view" style="display: block;">
+                                <p>
+                                    <span class="view-control" data-control="from-date">${formatDate(item.FromMonth, data.Users.Settings.DefaultDateFormat)}</span>
+                                    -
+                                    <span class="view-control" data-control="to-date" data-type="manual">${formatDate(item.ToMonth, data.Users.Settings.DefaultDateFormat)}</span>
+                                    <span class="total-time" v-if="calculatorExpYearItem(item.FromMonth, item.ToMonth) > 0 && calculatorExpMonthItem(item.FromMonth, item.ToMonth) > 0">
+                                        (
+                                        <span class="years" v-if="calculatorExpYearItem(item.FromMonth, item.ToMonth) > 0">
+                                            <span class="number-of-years">${calculatorExpYearItem(item.FromMonth, item.ToMonth)}</span>
+                                            <span class="lbl">res:(years)</span>
+                                        </span>
+                                        <span class="months" v-if="calculatorExpMonthItem(item.FromMonth, item.ToMonth) > 0">
+                                            <span class="number-of-months">${calculatorExpMonthItem(item.FromMonth, item.ToMonth)}</span>
+                                            <span class="lbl">res:(months)</span>
+                                        </span>
+                                        )
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field-edit" style="display: none;">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>res:(Từ tháng)</label>
+                                            <input class="form-control edit-control datepicker" v-bind:id="'txtExpFromDate_' + item._id" name="fromDate" placeholder="Ví dụ: 09/2008" v-model="formatDate(item.FromMonth, data.Users.Settings.DefaultDateFormat)" data-control="from-date">
+                                            <span class="msg-from-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                            <span class="msg-from-date-valid cls-error" hidden="hidden">res:(Tháng kết thúc phải lớn hơn tháng bắt đầu)</span>
+                                            <span class="msg-from-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>res:(Đến tháng)</label>
+                                            <input class="form-control edit-control datepicker" v-bind:id="'txtExpToDate_' + item._id" name="toDate" placeholder="Ví dụ: 12/2014" v-model="formatDate(item.ToMonth, data.Users.Settings.DefaultDateFormat)" data-control="to-date">
+                                            <span class="msg-to-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                            <span class="msg-to-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+                                            <span class="msg-to-date-valid cls-error" hidden="hidden">res:(Tháng kết thúc phải lớn hơn tháng bắt đầu)</span>
+                                        </div>
+                                    </div>
+                                    <!--<div class="col-sm-4">
+                                        <div class="form-group">
+                                            <div class="mg-tp hidden-xs"></div>
+                                            <label>
+                                                <input type="checkbox" name="currentExp" value="false" class="to-present-checkbox edit-control" data-text-value="Hiện tại">
+                                                <em>res:(Công việc hiện tại)</em>
+                                            </label>
+                                        </div>
+                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field-view" style="display: block;">
+                                <div v-html="item.Description"> </div>
+                            </div>
+                            <div class="field-edit" style="display: none;">
+                                <div class="form-group">
+                                    <label>Mô tả</label>
+                                    <textarea rows="5" v-bind:id="'txtExpDesciption_' + item._id" name="description" class="form-control edit-control emp-description achievement-textarea countdown-target" placeholder="" maxlength="5000">
+                                                                ${item.Description}
+                                                            </textarea>
+                                    <em class="countdown gray-light" data-text="ký tự có thể nhập thêm">4122 res:(ký tự có thể nhập thêm)</em>
+                                    <p class="msg-description-limit-min cls-error" hidden="hidden">res:(Vui lòng nhập thêm thông tin)</p>
+                                    <p class="msg-description-limit-max cls-error" hidden="hidden">res:(Bạn đã nhập quá ký tự cho phép)</p>
+                                    <p class="msg-description-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</p>
+                                    <p class="msg-description-suggestion text-info" hidden="hidden">res:(Thêm thông tin để nâng mức độ hoàn thành hồ sơ của bạn)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row field-edit" style="display: none;">
+                            <div class="col-sm-6">(<strong class="red-text">*</strong>) res:(Thông tin bắt buộc)</div>
+                            <div class="col-sm-6 text-right">
+                                <button type="button" class="btn-remove-this-section btn btn-link" v-on:click="doShowRemoveExp(item._id)">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                                <button type="button" id="btnCancelEditExp" class="btn-cancel btn btn-default" v-on:click="doCancel($event)">res:(Hủy)</button>
+                                <button type="button" id="btnSaveEditExp" class="btn-save btn btn-primary" v-on:click="doSaveEditExp(item._id)">res:(Lưu)</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <button type="button" class="btn btn-default btn-block no-border add-one-more-section" id="btnAddExp" style="display: block;" v-on:click="doAddNewExp($event)">
+                    <strong>res:(Bổ sung)</strong>
+                </button>
+            </fieldset>
+        </div>
+    </div>
+</div>

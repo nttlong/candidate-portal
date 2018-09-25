@@ -1,0 +1,363 @@
+﻿@import "main_site/variables.less";
+@import "main_site/main_search_company_widget";
+@import "main_site/main_content.less";
+body {
+    background: #eee;
+}
+
+.header {
+
+}
+
+h1, h2, h3 {
+  margin: 0 0 10px 0;
+  color: #1d97bf;
+}
+
+h1 {
+  font-size: 25px;
+  line-height: 30px;
+}
+
+h2 {
+  font-size: 20px;
+  line-height: 25px;
+}
+
+h3 {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+table {
+  margin-bottom: 30px;
+}
+
+a {
+  color: #ff6680;
+}
+
+code {
+  background: #fffbcc;
+  font-size: 12px;
+}
+
+section {
+    padding: 30px 0 ;
+}
+
+.checkbox {
+    margin-bottom: -5px;
+}
+
+.checkbox label {
+    padding-left: 0;
+}
+
+.checkbox label:after, 
+.radio label:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.checkbox .cr,
+.radio .cr {
+    position: relative;
+    display: inline-block;
+    border: 1px solid #a9a9a9;
+    border-radius: .25em;
+    width: 1.3em;
+    height: 1.3em;
+    float: left;
+    margin-right: .5em;
+}
+
+.radio .cr {
+    border-radius: 50%;
+}
+
+.checkbox .cr .cr-icon,
+.radio .cr .cr-icon {
+    position: absolute;
+    font-size: .8em;
+    line-height: 0;
+    top: 50%;
+    left: 20%;
+}
+
+.radio .cr .cr-icon {
+    margin-left: 0.04em;
+}
+
+.checkbox label input[type="checkbox"],
+.radio label input[type="radio"] {
+    display: none;
+}
+
+.checkbox label input[type="checkbox"] + .cr > .cr-icon,
+.radio label input[type="radio"] + .cr > .cr-icon {
+    transform: scale(3) rotateZ(-20deg);
+    opacity: 0;
+    transition: all .3s ease-in;
+}
+
+.checkbox label input[type="checkbox"]:checked + .cr > .cr-icon,
+.radio label input[type="radio"]:checked + .cr > .cr-icon {
+    transform: scale(1) rotateZ(0deg);
+    opacity: 1;
+}
+
+.checkbox label input[type="checkbox"]:disabled + .cr,
+.radio label input[type="radio"]:disabled + .cr {
+    opacity: .5;
+}
+
+
+.wrapper {
+    margin-top: 30px;
+    margin-bottom: 30px;
+
+    .myresume-content {
+        background: #fff;
+
+        .lv-table-content {
+
+            .lv-table-content-header {
+                text-transform: capitalize;
+
+                h1 {
+                    float: left;
+                    color: #969696;
+                    font-weight: 300;
+
+                    span {
+                        font-weight: 500;
+                        color: #5f5f5f;
+                    }
+                }
+
+                button {
+                    float: right;
+                }
+
+                .btn-default {
+                }
+            }
+
+            table {
+                width: 100%;
+
+                tbody tr td p:first-child {
+                    font-size: 16px;
+                    color: #00b9f2;
+                }
+
+                tbody tr td p {
+                    font-size: 13px;
+                    color: #9d9d9d;
+                }
+
+                tbody tr td {
+                    border-top: 0;
+                }
+
+                tbody tr td:last-child {
+                    font-weight: 500;
+                }
+            }
+
+            .no-bottom-line a:hover, a:focus {
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+.lv-search-container {
+    background: transparent;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.lv-search-widget {
+    border-radius: 2px;
+    box-shadow: none;
+    background: rgba(0,0,0,.65);
+    color: #fff;
+    padding: 20px;
+    position: relative;
+    top: 55%;
+    margin-bottom: 3%;
+    transform: translateX(-50%);
+    left: 50%;
+    width: 100%;
+}
+
+@media only screen and (min-width: 1024px) {
+    .table-horizontal {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .table-vertical {
+        display: none;
+    }
+
+    .table-horizontal {
+        tbody tr th {
+            border-top: 0;
+        }
+        tbody tr td {
+            border-top: 0;
+        }
+    }
+
+    .lv-table-content {
+        table{
+            border: 0 !important;
+        }
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .container {
+        width: 710px;
+    }
+}
+ 
+@media only screen and (max-width: 780px) {
+    
+}
+ 
+@media only screen and (max-width: 768px) {
+    .container {
+        width: 670px;
+    }
+}
+ 
+@media only screen and (max-width: 720px) {
+   .container {
+        width: 630px;
+    }
+}
+ 
+@media only screen and (max-width: 680px) {
+    .container {
+        width: 590px;
+    }
+}
+
+@media only screen and (max-width: 640px) {
+    .container {
+        width: 550px;
+    }
+}
+ 
+@media only screen and (max-width: 600px) {
+   .container {
+        width: 510px;
+    }
+}
+ 
+@media only screen and (max-width: 568px) {
+    .container {
+        width: 470px;
+    }
+}
+ 
+@media only screen and (max-width: 563px) {
+   
+}
+ 
+@media only screen and (max-width: 549px) {
+    
+}
+ 
+@media only screen and (max-width: 534px) {
+    .container {
+        width: 430px;
+    }
+}
+ 
+@media only screen and (max-width: 480px) {
+    .container {
+        width: 390px;
+    }
+}
+@media only screen and (max-width: 450px) {
+    .container {
+        width: 350px;
+    }
+}
+@media only screen and (max-width: 400px) {
+    .container {
+        width: 310px;
+    }
+}
+@media only screen and (max-width: 360px) {
+    
+}
+ 
+@media only screen and (max-width: 338px) {
+    
+}
+ 
+@media only screen and (max-width: 330px) {
+    
+}
+ 
+@media only screen and (max-width: 320px) {
+    
+}
+
+// End css cho right box khi màn hình nhỏ
+@media only screen and (max-width: 768px) {
+    .select2-drop {
+        border: 0;
+        border-radius: 0 !important;
+    }
+
+    .lv-search-container .lv-search-widget .lv-search-controls > form > div {
+        height: 44px;
+        margin: 10px 0;
+    }
+
+    .lv-dropdown-list {
+        span.lv-icon {
+            height: 44px;
+            position: absolute;
+            //top: 15px !important;
+            bottom: 0;
+            //padding: 0 10px;
+            line-height: 44px;
+            z-index: 2;
+            color: #666;
+            opacity: 0.5;
+            font-size: 20px;
+        }
+        .lv-search-list {
+            height: 44px;
+            background: #fff !important;
+
+            a {
+                height: 44px !important;
+                border-radius: 0 !important;
+                border: 0 !important;
+                background: #fff;
+                line-height: 44px !important;
+                font-size: 15px;
+                padding-left: 40px !important;
+            }
+
+            .select2-arrow {
+                background: transparent;
+                border: 0;
+                line-height: 44px;
+                padding-top: 7px;
+            }
+        }
+    }
+}

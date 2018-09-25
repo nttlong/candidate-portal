@@ -1,0 +1,112 @@
+﻿<body>
+    <div class="container-fluid" title="res:(Cập nhật hình ảnh cho profile của bạn)">
+        <div c-photo-upload ng-model="Photo" file-name="Filename"></div>
+        <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-primary" ng-click="doUpdatePhoto()">res:(Cập nhật)</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="Second group">
+                <button type="button" class="btn btn-default" data-dismiss="modal">res:(Đóng)</button>
+            </div>
+        </div>
+    </div>
+    
+    <script server>
+        [
+            "./../modules/node.sys.categories",
+            "./../libs/lv.utils",
+            "./../modules/node.candidate.profiles",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.db",
+            (categories, utils, profiles, aut,data, app) => {
+                app.savePhoto = (event) => {
+                    utils._try(() => {
+                        data.cnn((err, db) => {
+                            var candidate;
+                            var email = aut.getUser(event.req).Email;
+                            var clientData = utils.readData(event);
+                            utils.sequences()
+                                .then(next => {
+                                    db.collection("ls_candidate")
+                                        .findOne({
+                                            UserEmail: {
+                                                $regex: new RegExp("^" + email + "$", "i")
+                                            }
+                                        }, (err, item) => {
+                                            candidate = item;
+                                            next(err);
+                                        })
+                                })
+                                .then(next => {
+                                    if (candidate == null) {
+                                        db.collection("ls_candidate")
+                                            .insertOne({
+                                                UserEmail: email,
+                                                Photo: clientData.Photo,
+                                                PhotoFilePath: clientData.Filename,
+                                                CreatedOn: new Date(),
+                                                CreatedBy: email,
+                                                CreatedOnUTC: utils.getUTCDate(new Date())
+                                            }, (err, result) => {
+                                                next(err);
+                                            })
+                                    }
+                                    else {
+                                        db.collection("ls_candidate")
+                                            .updateOne({
+                                                UserEmail: {
+                                                    $regex: new RegExp("^" + email + "$", "i")
+                                                }
+                                            }, {
+                                                $set: {
+                                                    Photo: clientData.Photo,
+                                                    PhotoFilePath: clientData.Filename,
+                                                    ModifiedOn: new Date(),
+                                                    ModifiedBy: email,
+                                                    ModifiedOnUTC: utils.getUTCDate(new Date())
+                                                }
+                                            }, (err, result) => {
+                                                next(err);
+                                            })
+                                    }
+                                })
+                                .done((err, result) => {
+                                    if (err) event.done(err);
+                                    else {
+                                        utils.writeData(event, {})
+                                        event.done();
+                                    }
+                                })
+                        })
+                       
+
+                    }, event);
+                }
+            }];
+    </script>
+    <script>
+        (function (scope) {
+            scope.doUpdatePhoto = function (e) {
+                if (scope.Photo.Error) {
+                    if (scope.Photo.Error == "nameError") {
+                        toastr.error('res:(Vui lòng chọn file có định dạng png, jpg)');
+                    } else if (scope.Photo.Error == "sizeError") {
+                        toastr.error('res:(Vui lòng chọn file nhỏ hơn 200 KB)');
+                    }
+                    return
+                }
+                var ajax = "server.page://savePhoto";
+                ajax.data({
+                    Photo: scope.Photo,
+                    Filename: scope.Filename
+                }).done(function (res) {
+                    toastr.success("res:(Cập nhật ảnh đại hiện thành công)");
+                    scope.$parent.data.Photo = scope.Photo;
+                    scope.$applyAsync();
+                    scope.$doClose();
+                })
+            }
+        });
+    </script>
+    
+</body>

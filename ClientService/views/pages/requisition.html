@@ -1,0 +1,63 @@
+﻿<body>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/CandidatePortalClient.js",
+            (utils, client, page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var data = client.loadInfo.sync();
+                            var retData = client.postRequest.sync(null, "get_list_of_requistion", {
+                                pageIndex: 0,
+                                pageSize:50
+                            });
+
+                            utils.writeData(event, retData);
+                            event.done();
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex.message || ex });
+                            event.done();
+                        }
+                    }, event);
+                }
+            }]
+    </script>
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">Get list of requisition</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="p in data.data.items">${p}</li>
+                </ul>
+            </div>
+            <div class="panel-footer">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <button type="button" class="btn btn-default" ng-click="doLoadData()">Invoke</button>
+                       
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+       
+    </div>
+    
+    <script>
+            (function (scope) {
+                scope.doLoadData = function () {
+                    var a = "server.page://doLoadData";
+                    a.data({
+                        pageIndex: 0,
+                        pageSize: 50
+                    })
+                        .done(function (res) {
+                            console.log(res);
+                            scope.data = res;
+                            scope.$applyAsync();
+                        });
+                }
+            })
+    </script>
+</body>

@@ -1,0 +1,442 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Đăng ký thành viên)</title>
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}/Content/toastr.min.css" rel="stylesheet" />
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_mainui_login_employer.min.css" rel="stylesheet" />
+</head>
+
+<body ng-controller="app" ng-cloak>
+    <render>../commons/navbar.html</render>
+    <div class="wrapper">
+        <div class="container box animated fadeInDown" ng-if="!hasRegistered">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="text-center box_header">
+                        <a href="{{Config.RootUrl}}">
+                            <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/surehcs_lg.png" alt="LacVietHCS" height="80">
+                        </a>
+                    </div>
+                    <div class="box_body">
+                        <div class="box_body_content fadeInRight animated">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row section-form em-log-in">
+                                        <div class="col-sm-10 col-sm-offset-1">
+                                            <div class="box_body_content_header">
+                                                <h1>res:(Đăng ký thành viên)</h1>
+                                            </div>
+                                            <div id="loginForm" role="form" name="company-login">
+                                                <div class="form-group">
+                                                    <label class="control-label" for="FirstName"><span style="color: red">*</span> res:(Họ)</label>
+                                                    <input type="text" class="form-control" id="FirstName" placeholder="res:(Họ)" name="FirstName" ng-model="data.LastName">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label" for="FirstName"><span style="color: red">*</span> res:(Tên)</label>
+                                                    <input type="text" class="form-control" id="LastName" placeholder="res:(Tên)" name="LastName" ng-model="data.FirstName">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label" for="Email"><span style="color: red">*</span> res:(Email)</label>
+                                                    <input type="text" class="form-control" id="Email" placeholder="res:(Email)" name="Email" ng-model="data.Email">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label class="control-label" for="Password"><span style="color: red">*</span> res:(Mật khẩu)</label>
+                                                    <input type="password" class="form-control" id="Password" placeholder="res:(Password)" name="Password" ng-model="data.Password">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label" for="ConfirmPassword"><span style="color: red">*</span> res:(Xác nhận lại mật khẩu)</label>
+                                                    <input type="password" class="form-control" placeholder="res:(Xác nhận lại mật khẩu)" name="ConfirmPassword" ng-model="data.ConfirmPassword">
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 control-label" for="form-group-input">res:(Mã nhận dạng)</label>
+                                                    <div class="col-sm-9">
+                                                        <div class="input-group">
+                                                            <div>
+                                                                <img ng-src="${captchaData}" ng-click="getCaptcha()" style="height:40px;float:left" ng-if="captchaData" />
+                                                            </div>
+                                                            <span class="input-group-addon" style="border:none !important;background:none !important">
+                                                                <button class="btn btn-default" ng-click="getCaptcha()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                                            </span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 control-label" for="form-group-input">res:(Nhập vào mã nhận dạng)</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="form-group-input" placeholder="res:(Nhập vào mã nhận dạng)" ng-model="data.Captcha">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                        <input id="checkbox" type="checkbox" ng-model="data.isAgreeTerms">
+                                                        <label for="checkbox">
+                                                            res:(Tôi đã đọc và đồng ý với các)
+                                                            <a href="{{Config.RootUrl}}PrivacyPolicy" class="link" target="_blank">res:(Quy định bảo mật)</a>
+                                                            res:(và )
+                                                            <a href="{{Config.RootUrl}}TermsOfUse" class="link" target="_blank">res:(Thỏa thuận sử dụng)</a>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button id="btnLogin" class="btn btn-primary block full-width" type="button" ng-click="doRegist()">res:(Đăng ký)</button>
+                                                </div>
+                                                <div class="form-group">
+                                                    <p style="font-size: 15px; margin-top: 10px;">
+                                                        res:(Bạn đã có tài khoản SureHCS?)
+                                                        <a class="login" href="{{Config.RootUrl}}/account/login?retUrl=/">res:(Đăng nhập ngay!)</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <a id="link_login_google">
+                                                        <i class="fa fa-google-plus-square" style="font-size:48px;color:red"></i>
+                                                    </a>
+                                                    <a id="link_login_linkedin">
+                                                        <i class="fa fa-linkedin-square" style="font-size:48px;color:#0077b5"></i>
+                                                    </a>
+                                                    <a id="link_login_facebook">
+                                                        <i class="fa fa-facebook-square" style="font-size:48px;color:#4867aa"></i>
+                                                    </a>
+                                                    <a id="link_login_twitter">
+                                                        <i class="fa fa-twitter-square" style="font-size:48px;color:#1da1f2"></i>
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container box animated fadeInDown" ng-if="hasRegistered">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="text-center box_header">
+                        <a href="{{Config.RootUrl}}">
+                            <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/surehcs_lg.png" alt="LacVietHCS" height="80">
+                        </a>
+                    </div>
+                    <div class="box_body_content fadeInRight animated">
+                        <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row section-form em-log-in">
+                                        <div class="col-sm-10 col-sm-offset-1">
+                                            <h4>res:(Tài khoản của bạn đã được tạo, tuy nhiên để sử dụng tài khoản này bạn cần phải kích hoạt tài khoản. Một email hướng dẫn kích hoạt tài khoản đã được gởi đến bạn, hãy kiểm tra email vào làm theo hướng dẫn)</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/lv.model",
+            "./../modules/node.Email",
+            "./../modules/resource",
+            (utils, models, EMAIL, resource, page) => {
+                page.doRegist = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var lang = utils.getCurrentLanguageCode(event);
+                        var reg_email = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/i;
+                        var retError = {
+                            errorType: "",
+                            message: "",
+                            field: ""
+                        };
+                        var err = false;
+                        var FirstName = clientData["FirstName"];
+                        var LastName = clientData["LastName"];
+                        var Password = clientData["Password"];
+                        var ConfirmPassword = clientData["ConfirmPassword"];
+                        var Captcha = clientData["Captcha"];
+                        var isAgreeTerms = clientData["isAgreeTerms"];
+                        var Email = clientData.Email;
+                        if ((!LastName) || (LastName == "")) {
+                            retError.errorType = "LastNameIsEmpty";
+                            retError.message = "Please enter lastname";
+                            retError.field = "LastName";
+                            err = true;
+                        }
+                        else {
+                            if ((!FirstName) || (FirstName == "")) {
+                                retError.errorType = "FirstNameIsEmpty";
+                                retError.message = "Please enter firstname";
+                                retError.field = "FirstName";
+                                err = true;
+                            } 
+                            else {
+                                if ((!Email) || (Email == "")) {
+                                    retError.errorType = "EmailIsEmpty";
+                                    retError.message = "Please enter email";
+                                    retError.field = "Email";
+                                    err = true;
+                                }
+                                else {
+                                    if (!reg_email.test(Email)) {
+                                        retError.errorType = "EmailIsInvalid";
+                                        retError.message = "The email is invalid";
+                                        retError.field = "Email";
+                                        err = true;
+                                    }
+                                    else {
+                                        if ((!Password) || (Password == "")) {
+                                            retError.errorType = "PasswordIsEmpty";
+                                            retError.message = "Please enter password";
+                                            retError.field = "Password";
+                                            err = true;
+                                        }
+                                        else {
+                                            if (Password != ConfirmPassword) {
+                                                retError.errorType = "PasswordIsNotEqualConfirmPassword";
+                                                retError.message = "Password and confirm password is not match";
+                                                retError.field = "Password";
+                                                err = true;
+                                            } else {
+                                                if ((!Captcha) || (Captcha == "")) {
+                                                    retError.errorType = "CaptchaIsEmpty";
+                                                    retError.message = "Please enter Captcha";
+                                                    retError.field = "Captcha";
+                                                    err = true;
+                                                } else {
+                                                    var captchaContent = resource.getCaptchaContent(event.req);
+                                                    if (clientData.Captcha != captchaContent) {
+                                                        retError.errorType = "CaptchaInvalid";
+                                                        retError.message = "Captcha is invalid";
+                                                        retError.field = "Captcha";
+                                                        err = true;
+                                                    } else {
+                                                        if ((!isAgreeTerms) || (isAgreeTerms == "")) {
+                                                            retError.errorType = "isAgreeTermsIsEmpty";
+                                                            retError.message = "Please enter isAgreeTerms";
+                                                            retError.field = "isAgreeTerms";
+                                                            err = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                        if (err) {
+                            utils.writeData(event, {
+                                formError: retError
+                            })
+
+                            event.done();
+                        }
+                        else {
+                            var count=models.sys_Users()
+                                .where("(Email==email)or" +
+                                "(LinkToGoogle.Email==email)or" +
+                                "(LinkToFacebook.Email==email)or" +
+                                "(LinkToLinkedIn.Email==email)or" +
+                                "(LinkToTwitter.Email==email)" , { email: Email })
+                                .count.sync();
+                            if (count > 0) {
+                                retError.errorType = "EmailIsExist";
+                                retError.message = "'Email' is existing";
+                                retError.field = "Email";
+                                err = true;
+                                utils.writeData(event, {
+                                    formError: retError
+                                })
+
+                                event.done();
+                                return;
+                            }
+                            else {
+                                try {
+                                    var hasPassword = utils.sha("uid=" + Email.toLowerCase() + ";pwd=" + Password);
+                                    var ret = models.sys_Users()
+                                        .insert({
+                                            FirstName: FirstName,
+                                            LastName: LastName,
+                                            UserId: utils.newGuid(),
+                                            UserName: Email,
+                                            UsernameLowerCase: Email.toLowerCase(),
+                                            Email: Email.toLowerCase(),
+                                            LoginCount: 0,
+                                            ChangedPasswordCount: 0,
+                                            LastestChangePassword: null,
+                                            LoginFailCount: 0,
+                                            LatestLoginTime: null,
+                                            Password: hasPassword,
+                                            Settings: {
+                                                DefaultDateFormat: "dd/MM/yyyy",
+                                                DefaultLanguage: "vn",
+                                                DefaultCurrency: {
+                                                    Code: "VNĐ"
+                                                }
+                                            }
+                                        })
+                                        .commit.sync();
+                                    var candidate = models.ls_candidate()
+                                        .insert({
+                                            UserEmail: Email.toLowerCase(),
+                                            AllowSearch: true
+                                        }).commit.sync();
+                                    var activeToken = utils.newGuid();
+                                    models.sys_activation()
+                                        .insert({
+                                            Type: "AccountActivation",
+                                            Token: activeToken,
+                                            Email: Email.toLowerCase()
+                                        })
+                                        .commit.sync();
+                                    var registon = new Date();
+                                    var actionlink = utils.getRootUrl(event.reg) + "account/active/" + activeToken;
+                                    var dataEmail = {
+                                        FirstName: FirstName,
+                                        LastName: LastName,
+                                        RootUrl: utils.getRootUrl(event.req),
+                                        Token: activeToken,
+                                        ActivationLink: actionlink.replace('http://', ''),
+                                        RegisteredOn: ("0" + registon.getDate()).slice(-2) + '/' + 
+                                        ("0" + (registon.getMonth() + 1)).slice(-2) + '/' +
+                                        (registon.getFullYear()) + ' ' + registon.getHours() + ':' + registon.getMinutes()
+
+                                    }
+                                    var schema = utils.getSchema(dataEmail);
+                                    var Subject = "v/v kích hoạt tài khoản";
+                                    var Body = "Thân chào bạn {{FirstName}} {{LastName}},<br/>" +
+                                        "Bạn vừa đăng ký sử dụng dịch vụ tìm việc tại website {{RootUrl}} vào lúc {{RegisteredOn}} .<br/>" +
+                                        "Để kích hoạt tài khoản sử dụng xin hãy bấm vào <a href=\"{{ActivationLink}}\">{{ActivationLink}}<a>," +
+                                        "hoặc sao chép nội dung {{ActivationLink}} dán vào thanh địa chỉ của trình duyệt và làm theo hướng dẫn.<br/>" +
+                                        "Chân thành cảm ơn bạn đã đăng ký sử dụng dịch vụ";
+                                    var ret = EMAIL.getTemplate.sync(null, "AccountActivation", lang, Subject, Body, schema, "Template email báo active");
+                                    var ret = EMAIL.sendEmail.sync(null, Email, ret.Subject, ret.Body, null, dataEmail);
+                                    utils.writeData(event, {});
+                                    event.done();
+                                }
+                                catch (ex) {
+                                    event.done(ex);
+                                }
+
+
+                            }
+
+                        }
+
+
+                    }, event);
+                }
+
+                page.getCaptcha = (event) => {
+                    utils._try(() => {
+                        try {
+                            resource.captcha(event);
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+        }]
+    </script>
+    <script>
+    $(document).ready(function () {
+        $("#link_login_google").attr("href", "{{Config.RootUrl}}account/reg_by_google");
+        $("#link_login_facebook").attr("href", "{{Config.RootUrl}}account/reg_by_facebook");
+        $("#link_login_linkedin").attr("href", "{{Config.RootUrl}}account/reg_by_linkedin");
+        $("#link_login_twitter").attr("href", "{{Config.RootUrl}}account/reg_by_twitter");
+       
+    });
+
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            scope.data = {};
+            scope.doRegist = function () {
+                toastrError = function (error, model) {
+                    toastr.error(error);
+                    $("[ng-model='" + model + "']").focus(
+                        function () {
+                            $(this).css({ "border-color": "red" })
+                        }
+                    );
+                    $("[ng-model='" + model + "']").blur(
+                        function () {
+                            $(this).css({ "border-color": "#ccc" })
+                        }
+                    );
+                    $("[ng-model='" + model + "']").trigger("click");
+                    $("[ng-model='" + model + "']").select();
+                }
+                var aPost = "server.page://doRegist";
+                aPost.data(scope.data)
+                    .done(function (res) {
+                        var data = res;
+                        console.log(res);
+                        if (data.formError) {
+                            if (data.formError.errorType == "PasswordIsEmpty") {
+                                toastrError("res:(Xin nhập vào mật khẩu)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType == "PasswordIsNotEqualConfirmPassword") {
+                                toastrError("res:(Mật khẩu và phần xác nhận lại mật khẩu không giống nhau)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType == "EmailIsInvalid") {
+                                toastrError("res:(Địa chỉ Email không hợp lệ)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType == "LastNameIsEmpty") {
+                                toastrError("res:(Xin nhập vào Họ)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType == "FirstNameIsEmpty") {
+                                toastrError("res:(Xin nhập vào Tên)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType == "EmailIsEmpty") {
+                                toastrError("res:(Xin nhập vào Email)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType === "EmailIsExist") {
+                                toastrError("res:(Địa chỉ email này đã được sử dụng)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType === "CaptchaIsEmpty") {
+                                toastrError("res:(Xin nhập vào Mã nhận dạng)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType === "isAgreeTermsIsEmpty") {
+                                toastrError("res:(Bạn chưa đồng ý Quy định bảo mật và Thỏa thuận sử dụng của chúng tôi)", "data." + data.formError.field);
+                            }
+                            if (data.formError.errorType === "CaptchaInvalid") {
+                                toastrError("res:(Không đúng mã nhận dạng)", "data." + data.formError.field);
+                            }
+                        }
+                        else {
+                            scope.hasRegistered = true;
+                            scope.$apply();
+                        }
+                    })
+            }
+            scope.getCaptcha = function () {
+                var a = "server.page://getCaptcha";
+                a.done(function (res) {
+                    scope.captchaData = res.data;
+
+                    scope.$applyAsync();
+                });
+            };
+            scope.getCaptcha();
+        })
+    </script>
+</body>
+</html>

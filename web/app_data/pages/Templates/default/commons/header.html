@@ -1,0 +1,72 @@
+﻿<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="Description"
+      content="Tuyển Dụng, Mạng Tuyển Dụng, Tìm Kiếm Nhân Sự Online | Nhà Tuyển Dụng - Lacviet Employer Services. Mạng Tuyển Dụng, Tìm Kiếm Nhân Sự Trực Tuyến tại Việt Nam." />
+<meta name="Keywords"
+      content="tuyen dung, mang tuyen dung, nha tuyen dung, tim kiem nhan su, tuyen dung online, nhan su online, tuyển dụng, mạng tuyển dụng, tìm kiếm nhân sự, nhà tuyển dụng, tìm kiếm tuyển dụng, tuyen, dung" />
+{{#Config}}
+
+<link href="{{RootUrl}}Content/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}Content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}templates/{{Customer}}/resources/css/main_header.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}templates/{{Customer}}/resources/css/commons.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}Scripts/summernote/summernote.css" rel="stylesheet" />
+<link href="{{RootUrl}}Content/css/select2.css" rel="stylesheet" />
+<link href="{{RootUrl}}templates/{{Customer}}/resources/css/main_site.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}Content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+<link href="{{RootUrl}}Content/bootstrap-timepicker.css" rel="stylesheet" />
+
+
+{{/Config}}
+{{#if bundleJS.isCompress}}
+<script src="{{Config.RootUrl}}scripts-bundles/main.js"></script>
+{{else}}
+{{#each bundleJS.files}}
+<script src="{{../Config.RootUrl}}{{this}}"></script>
+{{/each}}
+{{/if}}
+<script src="{{Config.RootUrl}}Scripts/moment-with-locales.js"></script>
+<script src="{{Config.RootUrl}}Scripts/vi.js"></script>
+<script server>
+    [
+        "./../libs/lv.bundle",
+        (bundle, app) => {
+            app.onLoad = (event) => {
+                bundle.getConfig("main", (err, data) => {
+                    if (err) event.done(err);
+                    else {
+                        var list = [];
+                        data.files.forEach(f => {
+                            var file = f;
+                            if (file.obfuscator) {
+                                file = f.path;
+                            }
+                            list.push(file.substring("public/".length, f.length));
+                        })
+                        event.setModel("bundleJS.files", list);
+                        if (data.compress) {
+                            event.setModel("bundleJS.isCompress",true);
+                        }
+                        event.done();
+                    }
+                })
+            }
+    }]
+</script>
+<script>
+    ajax_call_set_url("{{RootUrl}}/api_process");
+    appDirectiveSetRootUrl("{{RootUrl}}");
+</script>
+
+<script>
+    rootUrl = '{{RootUrl}}';
+</script>
+
+
+
+
+
+
+
+

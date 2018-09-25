@@ -1,0 +1,72 @@
+// @font-face{
+//     font-family: hcsFont001;
+//     src: url('fonts\\Roboto-Regular.ttf');
+// }
+// @hcs-font: hcsFont001,Helvetica,Verdana,Arial,sans-serif!important;
+@hcs-font: Segoe UI~'!important';
+@orange: #faa916;
+@orange-dark: #eda219;
+@blue: #00b9f2;
+@blue-dark: #08b2e6;
+
+
+
+/*input[type=checkbox]
+{
+  -ms-transform: scale(1.5);
+  -moz-transform: scale(1.5);
+  -webkit-transform: scale(1.5);
+  -o-transform: scale(1.5);
+  transform: scale(1.5);
+}*/
+.lv-background-gray {
+    background: #eee;
+}
+
+.lv-background-white {
+    background: #fff;
+}
+
+.lv-checkbox-custom {
+    input[type="checkbox"] {
+        display: none;
+    }
+
+    span {
+        cursor: pointer;
+    }
+
+    label {
+        font-weight: 100;
+    }
+
+    input[type="checkbox"] + label span.check {
+        display: inline-block;
+        width: 19px;
+        height: 19px;
+        margin: -3px 5px 0 0;
+        vertical-align: middle;
+        background: #fff;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
+
+    input[type="checkbox"]:checked + label span.check {
+        border: 2px solid @blue;
+        background: @orange;
+    }
+}
+
+@media(min-width: 768px) {
+    .sm-col-padding {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+}
+
+@media(max-width: 767px) {
+    .sm-col-padding {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}

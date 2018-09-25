@@ -1,0 +1,230 @@
+﻿<div class="myresume-user-infor">
+    <div class="row">
+        <div class="center-block col-xs-4 col-sm-3">
+            <div class="img-wrapper">
+                <div class="img-content">
+                    <form id="avartar">
+                        <input type="hidden" name="myresume-id" />
+                        <span class="img-edit hidden-xs">
+                            <button type="button" class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                        </span>
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" id="img-avartar">
+                                <div class="avatar img-circle">
+                                    {{#if candidate.Photo}}
+                                    <img src="{{candidate.Photo}}" class="img-circle img-responsive" />
+                                    {{else}}
+                                    <img src="{{{Config.RootUrl}}}photo/candidate/{{user.UserId}}.png" class="img-circle img-responsive" />
+                                    {{/if}}
+                                </div>
+                            </a>
+                            <span class="avatar-error"></span>
+                            <!--<ul class="dropdown-menu hidden-xs" role="menu" aria-labelledby="img-avartar"></ul>-->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-8 col-sm-9 myresume-header">
+            <form class="infor-wrapper">
+                <input type="hidden" name="myresume-id" />
+                <div class="box-info">
+                    <span class="info-edit">
+                        <button type="button" class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </button>
+                    </span>
+                    <div class="clearfix user-info mar-left">
+                        <div class="name pull-left">
+                            <div class="field-view" style="display:block">
+                                <h3 class="name-profile">{{user.LastName}}</h3>
+                            </div>
+                        </div>
+                        <div class="last-name pull-left">
+                            <div class="field-view" style="display:block">
+                                <h3 class="name-profile">{{user.FirstName}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-info col-md-6">
+                        <div class="user-poisition">
+                            <div class="field-view" style="display:block">
+                                <span class="position-text" data-update-tip="Hồ sơ của bạn đã hơn một năm tuổi!!!<br/> Đã đến lúc cần cập nhật rồi.<i class='fa fa-times-circle'></i>">
+                                    {{getName candidate.RecentInfo.Job.JobName}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="user-exp">
+                            <div class="field-view" style="display:block">
+                                <span class="exp-year">
+                                    res:(Số năm kinh nghiệm): <span class="exp-year-text">{{candidate.TotalExpYear}}</span> năm
+                                </span>
+                            </div>
+                        </div>
+                        <div class="field-view" style="display: block;">
+                            <p>
+                                <span class="text-gray-light">res:(Công ty gần đây nhất):</span>
+                                <a class="current-company clickable">{{candidate.RecentInfo.CompanyName}}</a>
+                                <br>
+                                <span class="text-gray-light">res:(Bằng cấp cao nhất):</span>
+                                <a class="current-highest-education clickable">{{candidate.TopDegree}}</a>
+                            </p>
+                        </div>
+                        <div class="row field-edit" style="display: none;">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6 text-right">
+                                <button type="button" class="btn-cancel btn btn-sm btn-default" id="btnCancelSaveInfo">res:(Hủy)</button>
+                                <button type="button" class="btn-save btn btn-sm btn-primary" id="btnSaveInfo">res:(Lưu)</button>
+                            </div>
+                        </div>
+                        <render>attach-file.html</render>
+                    </div>
+                    <div class="col-md-6" style="margin-bottom: 30px" ng-if="$root.isHiddenInfoJob">
+                        <div>
+                            <span style="color: #f7941d;"><strong>res:(Ứng tuyển): 
+                                <span id="tsj"> {{job.JobTitle}}</span></strong></span>
+                        </div>
+                        <div>
+                            <span><strong>res:(Công ty): </strong>
+                            <span id="lpvn">{{recruiter.RecruiterName}}</span></span>
+                        </div>
+                        <div>
+                            <span><strong>res:(Ngày ứng tuyển): </strong>
+                            <span id="lpvt">{{dateFormat job.AppliedDate 'dd/MM/yyyy'}}</span></span>
+                        </div>
+                        <div>
+                            <span><strong>res:(Số người ứng tuyển): </strong>
+                            <span id="lpvth">{{job.TotalApplyCandidate}} res:(người)</span></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!--<div class="absolute-right mg-rt mg-tp visible-xs">
+                <a href="#" class="btn btn-block btn-sm btn-default no-border box-gray-lighter info-togger">
+                    <i class="glyphicon glyphicon-briefcase"></i>
+                    <span class="hidden-xs">res:(Thông Tin Cá Nhân)</span>
+                </a>
+            </div>-->
+        </div>
+    </div>
+    <!--<div class="row hidden-xs">
+        <div class="col-sm-12">
+            <div class="text-right bg-color">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-4 pull-right">
+                        <a href="#" class="btn btn-block btn-sm btn-default no-border info-togger">
+                            <i class="glyphicon glyphicon-briefcase"></i>
+                            <span>res:(Thông Tin Cá Nhân)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+</div>
+<script server>
+    ["./../modules/lv.model",
+        "./../libs/lv.utils",
+        "./../libs/lv.authenticate",
+        (models, utils, aut, page) => {
+            page.onLoad = (event) => {
+                utils._try(() => {
+                    var user = aut.getUser(event.req);
+                    var req = event.req.routeParams;
+                    
+                    utils.paralellCaller()
+                        .call(emit => {
+                            models.ls_candidate()
+                                .where("UserEmail", user.Email)
+                                .lookup("sys_Users", "UserEmail", "Email", "user")
+                                .unwind("user")
+                                .select({
+                                    UserId: "user.UserId",
+                                    FirstName: "user.FirstName",
+                                    LastName: "user.LastName",
+                                }).toItem()
+                                .then(item => {
+                                    event.setModel("user", item);
+                                    emit();
+                                }).catch(ex => {
+                                    emit(ex);
+                                });
+                        })
+                        .call(emit => {
+                            models.ls_candidate()
+                                .where("UserEmail", user.Email)
+                                .toItem((err, result) => {
+                                    if (!err) {
+                                        if (result) {
+                                            event.setModel("candidate", result);
+                                        }
+                                    }
+                                    emit();
+                                })
+                        })
+                        .call(emit => {
+                            if (req && req.RecruiterCode) {
+                                models.ls_recruiters()
+                                    .where("RecruiterCode", req.RecruiterCode)
+                                    .select({
+                                        RecruiterName: 1
+                                    })
+                                    .toItem((err, result) => {
+                                        if (!err) {
+                                            if (result) {
+                                                event.setModel("recruiter", result);
+                                            }
+                                        }
+                                        emit();
+                                    })
+                                    .catch(ex => {
+                                        emit(ex);
+                                    })
+                            } else {
+                                emit();
+                            }
+                        })
+                        .call(emit => {
+                            if (req && req.RequisitionID) {
+                                models.ls_requisition()
+                                    .where("_id", req.RequisitionID.toObjectID())
+                                    .unwind("CandidateApplyList")
+                                    .where("CandidateApplyList.CandidateEmail", user.Email)
+                                    .select({
+                                        TotalApplyCandidate: 1,
+                                        AppliedDate: "CandidateApplyList.AppliedDate",
+                                        AppliedDateUTC: "CandidateApplyList.AppliedDateUTC",
+                                        RecruiterName: 1,
+                                        JobTitle: 1
+                                    })
+                                    .toItem((err, result) => {
+                                        if (!err) {
+                                            if (result) {
+                                                event.setModel("job", result);
+                                            }
+                                        }
+                                        emit();
+                                    })
+                                    .catch(ex => {
+                                        emit(ex);
+                                    })
+                            } else {
+                                emit();
+                            }
+                        })
+                        .done(ex => {
+                            event.done(ex);
+                        })
+                    
+                }, event)
+            }
+        }
+    ]
+</script>
+<script>
+    ng_app([], function (scope) {
+
+    })
+</script>

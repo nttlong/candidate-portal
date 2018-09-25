@@ -1,0 +1,24 @@
+md-toast {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    height: 100px;
+}
+
+.mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 11000;
+}
+
+mask md-progress-circular {
+    position: fixed !important;
+    border: solid 4px red !important;
+}
+
+md-progress-circular svg {
+    z-index: 11000;
+}

@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Đăng tuyển)</title>
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_jobopen.min.css" rel="stylesheet" />
+    
+</head>
+<body style="padding:0;overflow-x:hidden" class="post-requisition" ng-controller="app">
+    {{^printMode}}
+    <render>navbar.html</render>
+    {{/printMode}}
+    <div class="container-fluid wrapper">
+        <section class="myresume-content">
+            <div class="row">
+                <div id="boxleft" data-c-template url="company/widgets/post-requisition-left-list"></div>
+                <div data-c-template url="company/widgets/post-requisition-right-panel"></div>
+                <!--<render>widgets/post-requisition-left-list.html</render>
+                <render>widgets/post-requisition-right-panel.html</render>-->
+            </div>
+        </section>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.categories",
+            "./../modules/node.sys.customer",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            (utils, categories, customer, aut, model, app) => {
+                app.onLoad = (event) => {
+                    utils._try(() => {
+                        if (event.req.query && event.req.query.print == "1") {
+                            event.setModel("printMode", true);
+                        }
+                        event.done();
+                    }, event);
+                }
+                app.doChangeLanguage = (event) => {
+                    var clientData = utils.readData(event);
+                    event.res.cookie('language', event.form.lang || clientData.lang || 'vn');
+                    //event.res.end(JSON.stringify({
+                    //    action: {
+                    //        refresh: true
+                    //    }
+                    //}));
+                    utils.writeData(event, {});
+                    event.done();
+                };
+            }
+        ]
+    </script>
+    <script>
+        ng_app([], function ($scope) {
+            $scope.$root.isPrint = '{{{printMode}}}'
+            $scope.$root.isFirst = true;
+            $scope.$root.lstCandidate = [];
+            $scope.$root.CandidateList = [];
+            $scope.$root.doSelectRequisition = function (id, _this) {
+                $(".item_left_box").removeClass("active_item");
+                if (_this && _this.currentTarget) {
+                    $(_this.currentTarget).addClass("active_item");
+                } else {
+                    $(_this).addClass("active_item");
+                }
+                $scope.$root.isFirst = false;
+                if ($scope.$root.onSelectRequsitionHandler) {
+                    $scope.$root.currentRequisitionID = id;
+                    $scope.$root.onSelectRequsitionHandler(id);
+                }
+            }
+            $scope.$root.onSelectRequisition = function (handler) {
+                $scope.$root.onSelectRequsitionHandler = handler;
+            }
+            $scope.$root.onNew = function (handler) {
+                $scope.$root.onDoNewHandler = handler;
+            };
+            $scope.$root.onSave = function (handler) {
+                $scope.$root.onDoSaveHandler = handler;
+            }
+
+            $scope.$root.onExportExcel = function (handler) {
+                $scope.$root.onDoExportExcelHandler = handler;
+            }
+            $scope.$root.doExportExcel = function () {
+                if ($scope.$root.onDoExportExcelHandler) {
+                    $scope.$root.onDoExportExcelHandler($scope.$root.lstCandidate, $scope.$root.currentRequisitionID);
+                }
+            }
+
+            $scope.$root.doNew = function () {
+
+                if ($scope.$root.onDoNewHandler) {
+                    $scope.$root.onDoNewHandler();
+                }
+            };
+            $scope.$root.doSave = function () {
+
+                if ($scope.$root.onDoSaveHandler) {
+                    $scope.$root.onDoSaveHandler();
+                }
+            }
+
+            $scope.$root.onDelete = function (handler) {
+                $scope.$root.onDoDelHandler = handler;
+            }
+
+            $scope.$root.doDelete = function () {
+                if ($scope.$root.onDoDelHandler) {
+                    $scope.$root.onDoDelHandler();
+                }
+            }
+            $scope.$root.doChangeLanguage = function (code) {
+                var ajax = "server.page://doChangeLanguage";
+                ajax.data({
+                    lang: $scope.$root.lang
+                }).done(function (res) {
+                    location.reload();
+                })
+            }
+
+            $scope.$root.doCheckAllCandidate = function () {
+                var ckb = $("#selectall");
+                if (ckb[0].checked) {
+                    $(':checkbox').each(function () {
+                        this.checked = true;
+                    });
+                    $scope.$root.lstCandidate = $scope.$root.CandidateList;
+                } else {
+                    $(':checkbox').each(function () {
+                        this.checked = false;
+                    });
+                    $scope.$root.lstCandidate = [];
+                }
+            }
+
+            $scope.$root.doCheckCandidate = function (candidate) {
+                if ($scope.$root.lstCandidate.length > 0) {
+                    var data = $scope.$root.lstCandidate.filter(function (el) {
+                        return el.UserId === candidate.UserId;
+                    });
+                    if (data.length > 0) {
+                        $scope.$root.lstCandidate = $scope.$root.lstCandidate.filter(function (el) {
+                            return el.UserId !== candidate.UserId;
+                        });
+                    } else {
+                        $scope.$root.lstCandidate.push(candidate);
+                    }
+                } else {
+                    $scope.$root.lstCandidate.push(candidate);
+                }
+                if ($scope.$root.CandidateList.length == $scope.$root.lstCandidate.length) {
+                    $("#selectall").prop('checked', true);
+                } else {
+                    $("#selectall").prop('checked', false);
+                }
+            }
+        })
+
+        setTimeout(function () {
+            $("#dangtuyen").css({ "fontWeight": "bold", "color": "black" });
+        }, 200);
+
+    </script>
+</body>
+</html>

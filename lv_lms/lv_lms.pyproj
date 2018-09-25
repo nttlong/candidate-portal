@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <Name>lv_lms</Name>
+    <RootNamespace>lv_lms</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <InterpreterId>
+    </InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>46d586ff-9f73-4dfd-8bf5-101f31545d0c</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <ProjectTypeGuids>{5F0BE9CA-D677-4A4D-8806-6076C0FAAD37};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <StartupFile>manage.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <LaunchProvider>Django launcher</LaunchProvider>
+    <DjangoSettingsModule>lv_lms.settings</DjangoSettingsModule>
+    <OutputPath>.</OutputPath>
+    <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="admin_tools\apps.py" />
+    <Compile Include="admin_tools\checks.py" />
+    <Compile Include="admin_tools\dashboard\apps.py" />
+    <Compile Include="admin_tools\dashboard\dashboards.py" />
+    <Compile Include="admin_tools\dashboard\forms.py" />
+    <Compile Include="admin_tools\dashboard\management\commands\clear_dashboard_preferences.py" />
+    <Compile Include="admin_tools\dashboard\management\commands\customdashboard.py" />
+    <Compile Include="admin_tools\dashboard\management\commands\__init__.py" />
+    <Compile Include="admin_tools\dashboard\management\__init__.py" />
+    <Compile Include="admin_tools\dashboard\migrations\0001_initial.py" />
+    <Compile Include="admin_tools\dashboard\migrations\__init__.py" />
+    <Compile Include="admin_tools\dashboard\models.py" />
+    <Compile Include="admin_tools\dashboard\modules.py" />
+    <Compile Include="admin_tools\dashboard\registry.py" />
+    <Compile Include="admin_tools\dashboard\south_migrations\0001_initial.py" />
+    <Compile Include="admin_tools\dashboard\south_migrations\0002_auto__add_field_dashboardpreferences_dashboard_id.py" />
+    <Compile Include="admin_tools\dashboard\south_migrations\0003_auto__add_unique_dashboardpreferences_dashboard_id_user.py" />
+    <Compile Include="admin_tools\dashboard\south_migrations\__init__.py" />
+    <Compile Include="admin_tools\dashboard\templatetags\admin_tools_dashboard_tags.py" />
+    <Compile Include="admin_tools\dashboard\templatetags\__init__.py" />
+    <Compile Include="admin_tools\dashboard\tests.py" />
+    <Compile Include="admin_tools\dashboard\urls.py" />
+    <Compile Include="admin_tools\dashboard\utils.py" />
+    <Compile Include="admin_tools\dashboard\views.py" />
+    <Compile Include="admin_tools\dashboard\__init__.py" />
+    <Compile Include="admin_tools\deprecate_utils.py" />
+    <Compile Include="admin_tools\menu\apps.py" />
+    <Compile Include="admin_tools\menu\forms.py" />
+    <Compile Include="admin_tools\menu\items.py" />
+    <Compile Include="admin_tools\menu\management\commands\custommenu.py" />
+    <Compile Include="admin_tools\menu\management\commands\__init__.py" />
+    <Compile Include="admin_tools\menu\management\__init__.py" />
+    <Compile Include="admin_tools\menu\menus.py" />
+    <Compile Include="admin_tools\menu\migrations\0001_initial.py" />
+    <Compile Include="admin_tools\menu\migrations\__init__.py" />
+    <Compile Include="admin_tools\menu\models.py" />
+    <Compile Include="admin_tools\menu\south_migrations\0001_initial.py" />
+    <Compile Include="admin_tools\menu\south_migrations\__init__.py" />
+    <Compile Include="admin_tools\menu\templatetags\admin_tools_menu_tags.py" />
+    <Compile Include="admin_tools\menu\templatetags\__init__.py" />
+    <Compile Include="admin_tools\menu\tests.py" />
+    <Compile Include="admin_tools\menu\urls.py" />
+    <Compile Include="admin_tools\menu\utils.py" />
+    <Compile Include="admin_tools\menu\views.py" />
+    <Compile Include="admin_tools\menu\__init__.py" />
+    <Compile Include="admin_tools\models.py" />
+    <Compile Include="admin_tools\template_loaders.py" />
+    <Compile Include="admin_tools\tests.py" />
+    <Compile Include="admin_tools\theming\apps.py" />
+    <Compile Include="admin_tools\theming\models.py" />
+    <Compile Include="admin_tools\theming\templatetags\theming_tags.py" />
+    <Compile Include="admin_tools\theming\templatetags\__init__.py" />
+    <Compile Include="admin_tools\theming\tests.py" />
+    <Compile Include="admin_tools\theming\__init__.py" />
+    <Compile Include="admin_tools\urls.py" />
+    <Compile Include="admin_tools\utils.py" />
+    <Compile Include="admin_tools\__init__.py" />
+    <Compile Include="app\forms.py" />
+    <Compile Include="app\models.py" />
+    <Compile Include="app\templatetags\admin_extras.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\templatetags\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\tests.py" />
+    <Compile Include="app\views.py" />
+    <Compile Include="app\__init__.py" />
+    <Compile Include="app\migrations\__init__.py" />
+    <Compile Include="lv_admin\admin.py" />
+    <Compile Include="lv_admin\apps.py" />
+    <Compile Include="lv_admin\migrations\__init__.py" />
+    <Compile Include="lv_admin\models.py" />
+    <Compile Include="lv_admin\tests.py" />
+    <Compile Include="lv_admin\views.py" />
+    <Compile Include="lv_admin\__init__.py" />
+    <Compile Include="manage.py" />
+    <Compile Include="lv_lms\__init__.py" />
+    <Compile Include="lv_lms\settings.py" />
+    <Compile Include="lv_lms\urls.py" />
+    <Compile Include="lv_lms\wsgi.py" />
+    <Compile Include="MySQLdb\compat.py" />
+    <Compile Include="MySQLdb\connections.py" />
+    <Compile Include="MySQLdb\constants\CLIENT.py" />
+    <Compile Include="MySQLdb\constants\CR.py" />
+    <Compile Include="MySQLdb\constants\ER.py" />
+    <Compile Include="MySQLdb\constants\FIELD_TYPE.py" />
+    <Compile Include="MySQLdb\constants\FLAG.py" />
+    <Compile Include="MySQLdb\constants\REFRESH.py" />
+    <Compile Include="MySQLdb\constants\__init__.py" />
+    <Compile Include="MySQLdb\converters.py" />
+    <Compile Include="MySQLdb\cursors.py" />
+    <Compile Include="MySQLdb\release.py" />
+    <Compile Include="MySQLdb\times.py" />
+    <Compile Include="MySQLdb\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="admin_tools\" />
+    <Folder Include="admin_tools\dashboard\" />
+    <Folder Include="admin_tools\dashboard\management\" />
+    <Folder Include="admin_tools\dashboard\management\commands\" />
+    <Folder Include="admin_tools\dashboard\migrations\" />
+    <Folder Include="admin_tools\dashboard\south_migrations\" />
+    <Folder Include="admin_tools\dashboard\static\" />
+    <Folder Include="admin_tools\dashboard\static\admin_tools\" />
+    <Folder Include="admin_tools\dashboard\static\admin_tools\css\" />
+    <Folder Include="admin_tools\dashboard\static\admin_tools\css\jquery\" />
+    <Folder Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\" />
+    <Folder Include="admin_tools\dashboard\static\admin_tools\js\" />
+    <Folder Include="admin_tools\dashboard\static\admin_tools\js\jquery\" />
+    <Folder Include="admin_tools\dashboard\templates\" />
+    <Folder Include="admin_tools\dashboard\templates\admin\" />
+    <Folder Include="admin_tools\dashboard\templates\admin_tools\" />
+    <Folder Include="admin_tools\dashboard\templates\admin_tools\dashboard\" />
+    <Folder Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\" />
+    <Folder Include="admin_tools\dashboard\templatetags\" />
+    <Folder Include="admin_tools\locale\" />
+    <Folder Include="admin_tools\locale\ar\" />
+    <Folder Include="admin_tools\locale\ar\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\bg\" />
+    <Folder Include="admin_tools\locale\bg\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\bn\" />
+    <Folder Include="admin_tools\locale\bn\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\ca\" />
+    <Folder Include="admin_tools\locale\ca\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\cs\" />
+    <Folder Include="admin_tools\locale\cs\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\da\" />
+    <Folder Include="admin_tools\locale\da\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\de\" />
+    <Folder Include="admin_tools\locale\de\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\el\" />
+    <Folder Include="admin_tools\locale\el\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\en\" />
+    <Folder Include="admin_tools\locale\en\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\es\" />
+    <Folder Include="admin_tools\locale\es\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\es_AR\" />
+    <Folder Include="admin_tools\locale\es_AR\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\fi\" />
+    <Folder Include="admin_tools\locale\fi\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\fr\" />
+    <Folder Include="admin_tools\locale\fr\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\he\" />
+    <Folder Include="admin_tools\locale\he\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\hu\" />
+    <Folder Include="admin_tools\locale\hu\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\it\" />
+    <Folder Include="admin_tools\locale\it\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\ja\" />
+    <Folder Include="admin_tools\locale\ja\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\nl\" />
+    <Folder Include="admin_tools\locale\nl\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\pl\" />
+    <Folder Include="admin_tools\locale\pl\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\pt\" />
+    <Folder Include="admin_tools\locale\pt\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\pt_BR\" />
+    <Folder Include="admin_tools\locale\pt_BR\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\ru\" />
+    <Folder Include="admin_tools\locale\ru\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\sk\" />
+    <Folder Include="admin_tools\locale\sk\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\sv\" />
+    <Folder Include="admin_tools\locale\sv\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\tr\" />
+    <Folder Include="admin_tools\locale\tr\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\uk\" />
+    <Folder Include="admin_tools\locale\uk\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\zh_CN\" />
+    <Folder Include="admin_tools\locale\zh_CN\LC_MESSAGES\" />
+    <Folder Include="admin_tools\locale\zh_TW\" />
+    <Folder Include="admin_tools\locale\zh_TW\LC_MESSAGES\" />
+    <Folder Include="admin_tools\menu\" />
+    <Folder Include="admin_tools\menu\management\" />
+    <Folder Include="admin_tools\menu\management\commands\" />
+    <Folder Include="admin_tools\menu\migrations\" />
+    <Folder Include="admin_tools\menu\south_migrations\" />
+    <Folder Include="admin_tools\menu\static\" />
+    <Folder Include="admin_tools\menu\static\admin_tools\" />
+    <Folder Include="admin_tools\menu\static\admin_tools\css\" />
+    <Folder Include="admin_tools\menu\static\admin_tools\js\" />
+    <Folder Include="admin_tools\menu\templates\" />
+    <Folder Include="admin_tools\menu\templates\admin\" />
+    <Folder Include="admin_tools\menu\templates\admin_tools\" />
+    <Folder Include="admin_tools\menu\templates\admin_tools\menu\" />
+    <Folder Include="admin_tools\menu\templatetags\" />
+    <Folder Include="admin_tools\static\" />
+    <Folder Include="admin_tools\static\admin_tools\" />
+    <Folder Include="admin_tools\static\admin_tools\images\" />
+    <Folder Include="admin_tools\static\admin_tools\js\" />
+    <Folder Include="admin_tools\static\admin_tools\js\jquery\" />
+    <Folder Include="admin_tools\theming\" />
+    <Folder Include="admin_tools\theming\static\" />
+    <Folder Include="admin_tools\theming\static\admin_tools\" />
+    <Folder Include="admin_tools\theming\static\admin_tools\css\" />
+    <Folder Include="admin_tools\theming\static\admin_tools\images\" />
+    <Folder Include="admin_tools\theming\templates\" />
+    <Folder Include="admin_tools\theming\templates\admin\" />
+    <Folder Include="admin_tools\theming\templatetags\" />
+    <Folder Include="app\" />
+    <Folder Include="app\migrations\" />
+    <Folder Include="app\static\" />
+    <Folder Include="app\static\app\" />
+    <Folder Include="app\static\app\content\" />
+    <Folder Include="app\static\app\fonts\" />
+    <Folder Include="app\static\app\scripts\" />
+    <Folder Include="app\templates\" />
+    <Folder Include="app\templates\admin1\" />
+    <Folder Include="app\templates\admin\" />
+    <Folder Include="app\templates\admin\auth\" />
+    <Folder Include="app\templates\admin\auth\user\" />
+    <Folder Include="app\templates\admin\edit_inline\" />
+    <Folder Include="app\templates\admin\includes\" />
+    <Folder Include="app\templates\admin\widgets\" />
+    <Folder Include="app\templates\app\" />
+    <Folder Include="app\templates\registration\" />
+    <Folder Include="C:\SC\2016\NCP\NJS\NodejsCandidate\lv_lms\app\templates\admin1\" />
+    <Folder Include="app\templatetags\" />
+    <Folder Include="lv_admin\" />
+    <Folder Include="lv_admin\migrations\" />
+    <Folder Include="lv_admin\templates\" />
+    <Folder Include="lv_lms\" />
+    <Folder Include="MySQLdb\" />
+    <Folder Include="MySQLdb\constants\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\dashboard-ie.css" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\dashboard.css" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\animated-overlay.gif" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-icons_222222_256x240.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-icons_454545_256x240.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-icons_888888_256x240.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\css\jquery\jquery-ui.css" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\js\dashboard.js" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\js\jquery\jquery-ui.min.js" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\js\jquery\jquery.cookie.min.js" />
+    <Content Include="admin_tools\dashboard\static\admin_tools\js\jquery\jquery.dashboard.js" />
+    <Content Include="admin_tools\dashboard\templates\admin\app_index.html" />
+    <Content Include="admin_tools\dashboard\templates\admin\index.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\css.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\dashboard.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\dashboard.txt" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\dashboard_app_index.txt" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\dummy.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\module.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\app_list.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\feed.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\group.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\link_list.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\model_list.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\modules\recent_actions.html" />
+    <Content Include="admin_tools\dashboard\templates\admin_tools\dashboard\preferences_form.html" />
+    <Content Include="admin_tools\locale\ar\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\ar\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\bg\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\bg\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\bn\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\bn\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\ca\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\ca\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\cs\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\cs\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\da\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\da\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\de\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\de\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\el\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\el\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\en\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\en\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\es\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\es\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\es_AR\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\es_AR\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\fi\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\fi\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\fr\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\fr\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\he\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\he\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\hu\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\hu\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\it\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\it\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\ja\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\ja\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\nl\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\nl\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\pl\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\pl\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\pt\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\pt\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\pt_BR\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\pt_BR\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\ru\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\ru\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\sk\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\sk\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\sv\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\sv\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\tr\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\tr\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\uk\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\uk\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\zh_CN\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\zh_CN\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\locale\zh_TW\LC_MESSAGES\django.mo" />
+    <Content Include="admin_tools\locale\zh_TW\LC_MESSAGES\django.po" />
+    <Content Include="admin_tools\menu\static\admin_tools\css\menu-ie.css" />
+    <Content Include="admin_tools\menu\static\admin_tools\css\menu.css" />
+    <Content Include="admin_tools\menu\static\admin_tools\js\menu.js" />
+    <Content Include="admin_tools\menu\templates\admin\base_site.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\add_bookmark_form.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\css.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\delete_confirm.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\dummy.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\form.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\item.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\menu.html" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\menu.txt" />
+    <Content Include="admin_tools\menu\templates\admin_tools\menu\remove_bookmark_form.html" />
+    <Content Include="admin_tools\static\admin_tools\images\admin-tools.png" />
+    <Content Include="admin_tools\static\admin_tools\js\jquery\jquery.min.js" />
+    <Content Include="admin_tools\static\admin_tools\js\json.min.js" />
+    <Content Include="admin_tools\static\admin_tools\js\utils.js" />
+    <Content Include="admin_tools\theming\static\admin_tools\css\theming.css" />
+    <Content Include="admin_tools\theming\static\admin_tools\images\django.png" />
+    <Content Include="admin_tools\theming\templates\admin\base.html" />
+    <Content Include="app\templates\admin1\base.html" />
+    <Content Include="app\templates\admin1\index.html" />
+    <Content Include="app\templates\admin1\login.html" />
+    <Content Include="app\templates\admin\404.html" />
+    <Content Include="app\templates\admin\500.html" />
+    <Content Include="app\templates\admin\actions.html" />
+    <Content Include="app\templates\admin\app_index.html" />
+    <Content Include="app\templates\admin\auth\user\add_form.html" />
+    <Content Include="app\templates\admin\auth\user\change_password.html" />
+    <Content Include="app\templates\admin\base.html" />
+    <Content Include="app\templates\admin\base_site.html" />
+    <Content Include="app\templates\admin\change_form.html" />
+    <Content Include="app\templates\admin\change_list.html" />
+    <Content Include="app\templates\admin\change_list_results.html" />
+    <Content Include="app\templates\admin\date_hierarchy.html" />
+    <Content Include="app\templates\admin\delete_confirmation.html" />
+    <Content Include="app\templates\admin\delete_selected_confirmation.html" />
+    <Content Include="app\templates\admin\edit_inline\stacked.html" />
+    <Content Include="app\templates\admin\edit_inline\tabular.html" />
+    <Content Include="app\templates\admin\filter.html" />
+    <Content Include="app\templates\admin\includes\fieldset.html" />
+    <Content Include="app\templates\admin\includes\object_delete_summary.html" />
+    <Content Include="app\templates\admin\index.html" />
+    <Content Include="app\templates\admin\invalid_setup.html" />
+    <Content Include="app\templates\admin\login.html" />
+    <Content Include="app\templates\admin\object_history.html" />
+    <Content Include="app\templates\admin\pagination.html" />
+    <Content Include="app\templates\admin\popup_response.html" />
+    <Content Include="app\templates\admin\prepopulated_fields_js.html" />
+    <Content Include="app\templates\admin\related_widget_wrapper.html" />
+    <Content Include="app\templates\admin\search_form.html" />
+    <Content Include="app\templates\admin\submit_line.html" />
+    <Content Include="app\templates\admin\widgets\clearable_file_input.html" />
+    <Content Include="app\templates\admin\widgets\foreign_key_raw_id.html" />
+    <Content Include="app\templates\admin\widgets\many_to_many_raw_id.html" />
+    <Content Include="app\templates\admin\widgets\radio.html" />
+    <Content Include="app\templates\admin\widgets\related_widget_wrapper.html" />
+    <Content Include="app\templates\admin\widgets\split_datetime.html" />
+    <Content Include="app\templates\admin\widgets\url.html" />
+    <Content Include="app\templates\registration\logged_out.html" />
+    <Content Include="app\templates\registration\password_change_done.html" />
+    <Content Include="app\templates\registration\password_change_form.html" />
+    <Content Include="app\templates\registration\password_reset_complete.html" />
+    <Content Include="app\templates\registration\password_reset_confirm.html" />
+    <Content Include="app\templates\registration\password_reset_done.html" />
+    <Content Include="app\templates\registration\password_reset_email.html" />
+    <Content Include="app\templates\registration\password_reset_form.html" />
+    <Content Include="lv_admin\templates\login.html" />
+    <Content Include="lv_admin\templates\layout.html" />
+    <Content Include="requirements.txt" />
+    <Content Include="db.sqlite3" />
+    <Content Include="app\static\app\content\bootstrap.css" />
+    <Content Include="app\static\app\content\bootstrap.min.css" />
+    <Content Include="app\static\app\content\site.css" />
+    <Content Include="app\static\app\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="app\static\app\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="app\static\app\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="app\static\app\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="app\static\app\scripts\bootstrap.js" />
+    <Content Include="app\static\app\scripts\bootstrap.min.js" />
+    <Content Include="app\static\app\scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="app\static\app\scripts\jquery-1.10.2.js" />
+    <Content Include="app\static\app\scripts\jquery-1.10.2.min.js" />
+    <Content Include="app\static\app\scripts\jquery-1.10.2.min.map" />
+    <Content Include="app\static\app\scripts\jquery.validate-vsdoc.js" />
+    <Content Include="app\static\app\scripts\jquery.validate.js" />
+    <Content Include="app\static\app\scripts\jquery.validate.min.js" />
+    <Content Include="app\static\app\scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="app\static\app\scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="app\static\app\scripts\modernizr-2.6.2.js" />
+    <Content Include="app\static\app\scripts\respond.js" />
+    <Content Include="app\static\app\scripts\respond.min.js" />
+    <Content Include="app\static\app\scripts\_references.js" />
+    <Content Include="app\templates\app\about.html" />
+    <Content Include="app\templates\app\contact.html" />
+    <Content Include="app\templates\app\index.html" />
+    <Content Include="app\templates\app\layout.html" />
+    <Content Include="app\templates\app\login.html" />
+    <Content Include="app\templates\app\loginpartial.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.html">
+      <SubType>WebBrowser</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Django.targets" />
+  <!-- Specify pre- and post-build commands in the BeforeBuild and 
+       AfterBuild targets below. -->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <AutoAssignPort>True</AutoAssignPort>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

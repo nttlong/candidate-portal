@@ -1,0 +1,187 @@
+﻿@import "main_site/variables.less";
+@import "main_site/main_search_company_widget";
+@import "main_site/main_content.less";
+
+body {
+    font-family: @hcs-font;
+}
+
+.debug {
+    border: 1px solid red !important;
+}
+
+.lv-main-container {
+    background: #eee;
+}
+
+.lv-banner-container {
+    .lv-box-search {
+        padding: 30px;
+        border: 1px solid #ddd;
+        top: 25%;
+        margin-left: 50%;
+        background: #f2f2f2;
+        overflow: hidden;
+
+        .btn-default {
+            width: 100%;
+            color: #fff;
+            background: #00b9f2;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .btn-default:hover {
+            background: #ed9900;
+        }
+
+        .has-feedback {
+            .form-control-feedback {
+                left: 15px;
+            }
+
+            .form-control {
+                padding: 6px 35px;
+            }
+        }
+    }
+}
+
+.lv-paginator {
+    text-align: center;
+}
+
+.lv-header-companyjob {
+    font-size: 25px;
+    margin: 0 0 15px;
+    font-weight: 500;
+    height: 30px;
+    display: inline-block;
+}
+
+.lv-item-job {
+    margin-bottom: 10px;
+
+    .lv-item-job-box {
+        border: 1px solid #e9e9e9;
+        background: #fff;
+        padding: 0;
+        position: relative;
+        height: 152px;
+
+        .lv-view-detail {
+            bottom: 0;
+            right: 0;
+            padding: 5px 10px;
+            margin-bottom: 0;
+            background: #34495E;
+            position: absolute;
+
+            a {
+                color: #fff;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: #d3d3d3;
+            }
+        }
+
+        .row {
+            display: table;
+        }
+
+        .row [class*="col-"] {
+            float: none;
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .lv-item-job-box-img {
+            float: left;
+            height: 100%;
+            border: 1px solid #e9e9e9;
+
+            img {
+                height: 150px;
+                width: 150px;
+            }
+        }
+
+        .lv-item-job-box-content {
+            height: 100%;
+            width: calc(~'100% - 152px');
+            float: left;
+            padding: 10px;
+
+            p:first-child {
+                font-size: 19px;
+                padding: 5px 0 0 0;
+                font-weight: 500;
+                width: 100%;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            p {
+                font-size: 13px;
+                font-weight: 500;
+                margin-bottom: 5px;
+
+                .p-f {
+                    color: #00a583;
+                }
+
+                .p-s {
+                    color: #a9a9a9;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .select2-drop {
+        border: 0;
+        border-radius: 0 !important;
+    }
+
+    .lv-dropdown-list {
+        /*span.lv-icon {
+            height: 44px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            padding: 0 10px;
+            line-height: 44px;
+            z-index: 2;
+            color: #666;
+            opacity: 0.5;
+            font-size: 20px;
+        }*/
+        .lv-search-list {
+            height: 44px;
+            background: #fff !important;
+
+            a {
+                height: 44px !important;
+                border-radius: 0 !important;
+                border: 0 !important;
+                background: #fff;
+                line-height: 44px !important;
+                font-size: 15px;
+                padding-left: 40px !important;
+            }
+
+            .select2-arrow {
+                background: transparent;
+                border: 0;
+                line-height: 44px;
+                padding-top: 7px;
+            }
+        }
+    }
+}

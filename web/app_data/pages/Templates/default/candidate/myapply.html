@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(My Apply)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_myapply.min.css" rel="stylesheet" />
+</head>
+<body ng-controller="app" ng-cloak>
+
+    <render>../commons/navbar.html</render>
+
+    <div class="wrapper" id="app">
+        <section class="container myresume-content">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-9">
+                    <div class="myresume-detail">
+                        <div class="box">
+                            <render>header.html</render>
+                        </div>
+                        <!--/// Box thứ 2-->
+                        <div class="myresume-contact row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    {{#ifCond requisition.length 0}}
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12 col-md-12 item_box2" style="text-align: center; padding: 50px;">
+                                            res:(Không có dữ liệu)
+                                        </div>
+                                    </div>
+                                    {{/ifCond}}
+                                    {{#each requisition}}
+                                    <div class="col-xs-12 col-sm-6">
+                                        <div class="">
+											<div class="col-md-12 item_box2">
+												{{#ifCond CandidateApplyList.Status 0 }}
+												<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 1 }}
+												<a href="{{Config.RootUrl}}myapplydetail/{{Recruiter.RecruiterCode}}/{{_id}}">
+													<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												</a>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 2 }}
+												<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 3 }}
+												<a href="{{Config.RootUrl}}myapplydetail/{{Recruiter.RecruiterCode}}/{{_id}}">
+													<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												</a>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 4 }}
+												<a href="{{Config.RootUrl}}myapplydetail/{{Recruiter.RecruiterCode}}/{{_id}}">
+													<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												</a>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 5 }}
+												<a href="{{Config.RootUrl}}myapplydetail/{{Recruiter.RecruiterCode}}/{{_id}}">
+													<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												</a>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 6 }}
+												<a href="{{Config.RootUrl}}myapplydetail/{{Recruiter.RecruiterCode}}/{{_id}}">
+													<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												</a>
+												{{/ifCond}}
+												{{#ifCond CandidateApplyList.Status 7 }}
+												<h3 title="{{JobTitle}}"> {{JobTitle}} </h3>
+												{{/ifCond}}
+												<div class="row">
+													<div class="col-xs-6 col-sm-6 col-md-6 myapply_item_box2_left">
+														<div class="myapply_item_box2_left_hr">
+															<span>res:(Công ty): </span>
+															<a title="{{Recruiter.RecruiterName}}" href="{{../Config.RootUrl}}{{Recruiter.CandidateSite}}">
+																{{Recruiter.RecruiterName}}
+															</a>
+														</div>
+														<p class="item_color" style="position: absolute; top: 82px;">
+															res:(Ứng tuyển): {{dateFormat CandidateApplyList.AppliedDate 'dd/MM/yyyy'}}
+														</p>
+													</div>
+													<div class="col-xs-6 col-sm-6 col-md-6 myapply_item_box2_right">
+														<p class="item_color">res:(Số người ứng tuyển)</p>
+														<h4><strong>{{TotalApplyCandidate}} res:(người)</strong></h4>
+														<h6 class="item_color">res:(Tình trạng)</h6>
+														<p style="color: #629b2a">
+															{{#ifCond CandidateApplyList.Status 0 }}
+															<span style="color: #faa916">res:(Đã ứng tuyển)</span>
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 1 }}
+															res:(Đã duyệt hồ sơ)
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 2 }}
+															<span style="color: #ff0000">res:(Từ chối hồ sơ)</span>
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 3 }}
+															res:(Đang tuyển dụng)
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 4 }}
+															res:(Đã trúng tuyển)
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 5 }}
+															res:(Không trúng tuyển)
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 6 }}
+															res:(Bỏ thi tuyển)
+															{{/ifCond}}
+															{{#ifCond CandidateApplyList.Status 7 }}
+															res:(Đang cân nhắc)
+															{{/ifCond}}
+														</p>
+														<!--0 (default): Đã ứng tuyển
+			1: Đã duyệt hồ sơ
+			2: Từ chối hồ sơ
+			3: Đang tuyển dụng
+			4: Đã tuyển
+			5: Không trúng tuyển-->
+														<!--<p style="color: #629b2a">{{getName 'StrStatus'}}</p>-->
+													</div>
+												</div>
+											</div>
+                                        </div>
+                                    </div>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        </div>
+                        <!--<render>myapply_detail.html</render>-->
+                    </div>
+                </div>
+                <!--right box-->
+                <render>myresume_right_box.html</render>
+                <!--<render>myapply_rightbox.html</render>-->
+                <!---->
+            </div>
+        </section>
+    </div>
+   
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.db",
+            "./../modules/lv.model",
+            (utils, aut, Data, models, app) => {
+                app.onLoad = (event) => {
+                    utils._try(() => {
+                        var user = aut.getUser(event.req);
+                        event.setModel("user", user);
+                        Data.cnn((err, db) => {
+                            if (err) {
+                                event.done(err); return;
+                            }
+                            utils.paralellCaller()
+                                .call(emit => {
+                                    db.collection("ls_requisition")
+                                        .aggregate([
+                                            {
+                                                $unwind: "$CandidateApplyList"
+                                            }, {
+                                                $match: {
+                                                    "CandidateApplyList.CandidateEmail": {
+                                                        $regex: new RegExp("^" + user.Email + "$", "i")
+                                                    }
+                                                }
+                                            }, {
+                                                $lookup: {
+                                                    from: "ls_recruiters",
+                                                    localField: "RecruiterId",
+                                                    foreignField: "_id",
+                                                    as: "Recruiter"
+                                                }
+                                            }, {
+                                                $unwind: "$Recruiter"
+                                            }, {
+                                                $sort: { "CandidateApplyList.AppliedDate": -1 }
+                                            }
+                                        ]).toArray((err, list) => {
+                                            event.setModel("requisition", list);
+                                            emit(err);
+                                        })
+                                })
+                                
+                                .done(err => {
+                                    if (err) {
+                                        event.done(err); return;
+                                    }
+                                    event.done();
+                                })
+
+
+                        })
+                    }, event);
+                }
+                app.doChangeAllowSearch = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = aut.getUser(event.req);
+
+                            models.ls_candidate()
+                                .where("UserEmail==Email", user)
+                                .set({
+                                    AllowSearch: clientData.isAllow,
+                                    LatestModifiedOn: new Date(),
+                                    LatestModifiedOnUTC: utils.getUTCDate(new Date())
+                                }).commit.sync();
+                            utils.writeData(event, {});
+                            event.done();
+                        } catch (e) {
+                            event.done(e);
+                        }
+                    }, event);
+                }
+            }]
+    </script>
+    <render>../commons/footer.html</render>
+    <script>
+        window.candidateId = "{{{viewer.candidateId}}}";
+        ng_app([], function (scope) {
+            scope.$root.isHiddenCv = true;
+            scope.$root.isHiddenHs = false;
+            scope.$root.AllowEdit = scope.$root.allowEdit = function () {
+                return (!window.candidateId) || (window.candidateId == "");
+            }
+            scope.$root.onChangeAllowSearch = function (event) {
+                var a = "server.page://doChangeAllowSearch";
+                a.data({ isAllow: event.target.checked })
+                    .done(function (res) {
+                        if (event.target.checked) {
+                            toastr.success("res:(Bạn đã cho phép các nhà tuyển dụng tìm thấy hồ sơ của bạn)");
+                        }
+                        else {
+                            toastr.success("res:(Bạn đã không cho phép các nhà tuyển dụng tìm thấy hồ sơ của bạn)");
+                        }
+                    });
+
+            }
+        });
+    </script>
+</body>
+</html>

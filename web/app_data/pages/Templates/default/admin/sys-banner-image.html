@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div class="container">
+        
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Select image)</label>
+                <div class="col-sm-10">
+                    <div c-photo-upload ng-model="data.Data"></div>
+                </div>
+               
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="exampleInputEmail">res:(Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" placeholder="res:(Enter Name)" ng-model="data.Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Type)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" placeholder="res:(Enter Caption)" ng-model="data.Type">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(IsActive)</label>
+                <div class="col-sm-10">
+                    <input class="form-control-checkbox" type="checkbox" ng-model="data.IsActive" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Ordinal)</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" ng-model="data.Ordinal" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <button type="button" class="btn btn-primary" ng-click="doSaveData()">res:(Update)</button>
+                            
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Second group">
+                            <button type="button" class="btn btn-default" ng-click="$doClose()">res:(Close)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+    </div>
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/lv.db",
+            (utils, Data, app) => {
+                app.doLoadData = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var id = utils.objectID(clientData.id);
+                        Data.cnn((err, db) => {
+                            if (err) event.done(err);
+                            else {
+                                db.collection("sys_banner_images")
+                                    .findOne({
+                                        _id: id
+                                    }, (err, item) => {
+                                        if (err) event.done(err);
+                                        else {
+                                            utils.writeData(event, item);
+                                            event.done();
+                                        }
+                                    });
+                            }
+                        });
+                    }, event);
+                };
+                app.doSaveData = (event) => {
+                    utils._try(() => {
+                        Data.cnn((err, db) => {
+                            if (err) event.done(err);
+                            else {
+                                var clientData = utils.readData(event);
+
+                                if (clientData._id) {
+                                    var id = utils.objectID(id);
+                                    var updater = {
+                                        $set: {}
+                                    };
+                                    var keys = Object.keys(clientData);
+                                    keys.forEach(key => {
+                                        if (key != "_id") {
+                                            updater.$set[key] = clientData[key];
+                                        }
+                                    })
+                                    db.collection("sys_banner_images")
+                                        .updateOne({
+                                            _id:id
+                                        }, updater, (err, result) => {
+                                            if (err) event.done(err);
+                                            else {
+                                                utils.writeData(event, {});
+                                                event.done();
+                                            }
+                                        })
+                                }
+                                else {
+                                    db.collection("sys_banner_images")
+                                        .insertOne(clientData, (err, result) => {
+                                            if (err) event.done(err);
+                                            else {
+                                                utils.writeData(event, {});
+                                                event.done();
+                                            }
+                                        })
+                                }
+                            }
+                        })
+                    }, event);
+                };
+            }
+        ]
+    </script>
+    <script>
+            (app => {
+                app.data = {};
+                window.getText = (obj) => {
+                    if (obj["$oid"]) return obj["$oid"];
+                    else return obj;
+                }
+
+                app.doChangeImage = () => {
+                    $("#fileImage").unbind();
+                    $("#fileImage").bind("change", function (evt) {
+                        if (window.File && window.FileReader && window.FileList && window.Blob) {
+                            var files = evt.target.files;
+                            var file = files[0];
+                            if (files && file) {
+                                var reader = new FileReader();
+
+                                reader.onload = function (readerEvt) {
+                                    var binaryString = readerEvt.target.result;
+                                    var base64String = "data:" + file.type + ";base64," + btoa(binaryString)
+                                    app.data["Data"] = base64String;
+                                };
+
+                                reader.readAsBinaryString(file);
+                            }
+                        } else {
+                            window.toastr.error('The File APIs are not fully supported in this browser.');
+                        }
+                    });
+                    $("#fileImage").trigger("click");
+                };
+
+                app.doLoadData = () => {
+                    console.log(app.$parent.currentEditItem);
+                    var ajax = "server.page://doLoadData";
+                    if (app.$parent.currentEditItem) {
+                        ajax.data({
+                            id: app.$parent.currentEditItem._id
+                        }).done(res => {
+                            
+                            app.data = res;
+                            app.$applyAsync();
+                        });
+                    }
+                    else {
+                        app.data = {
+                            Name: null,
+                            Type: null,
+                            IsActive: false,
+                            Ordinal: 0,
+                            Data: null
+                        };
+                        app.$applyAsync();
+                    }
+                };
+
+                app.doSaveData = () => {
+                    var ajax = "server.page://doSaveData";
+                    ajax.data(app.data).done(res => {
+                        toastr.success("res:(Update is complete)", "res:(Message)");
+                        
+                        app.$parent.doLoadData();
+                        app.$doClose();
+                    });
+                }
+                app.doLoadData();
+                
+            });
+
+    </script>
+</body>
+</html>

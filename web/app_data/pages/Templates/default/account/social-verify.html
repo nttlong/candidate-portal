@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    
+</head>
+<body>
+    <script server>
+       [
+           "./../libs/lv.utils",/*Tien ich*/
+           "./../modules/node.portal.candidate" /**/,
+           "./../libs/lv.authenticate" /*Dung de lay User hien tai*/,
+           "./../modules/lv.startup",
+           "./../modules/lv.db",
+           "./../modules/lv.model",
+           (utils, portal, aut, startUp,Data,models, page) => {
+               page.onLoad = (event) => {
+                  
+                   utils._try(() => {
+                       try {
+                           var token = event.req.routeInfo.params.key;
+
+                           var item = models.sys_activation().where("(Token==token)and(IsActived==NULL)", { token: token, NULL: null })
+                               .toItem.sync();
+                           if (item == null) {
+                               event.setModel("info.ActivationWasNotFound", true);
+                               event.done();
+                           }
+                           else {
+                               event.setModel("info.data", item);
+                               event.done();
+                           }
+                       }
+                       catch (ex) {
+                           event.setModel("info.ActivationWasNotFound", true);
+                           event.done();
+                       }
+                       
+
+
+                       
+
+                   }, event);
+
+               };
+               page.doAccept = (event) => {
+                   utils._try(() => {
+                       try {
+                           var clientData = utils.readData(event);
+                           var item = models.sys_activation()
+                               .where("Token==token", clientData)
+                               .toItem.sync();
+                           models.sys_Users()
+                               .where("Email==UserEmail", item.Data)
+                               .set("LinkTo" + item.Data.SocialName + ".Email", item.Data.Email)
+                               .commit.sync();
+                           models.sys_activation()
+                               .where("Token==token", clientData)
+                               .set("IsActived", true)
+                               .commit.sync();
+                           utils.writeData(event, {});
+                           event.done();
+                       }
+                       catch (ex) {
+                           event.done(ex);
+                       }
+                   }, event)
+               };
+           }];
+    </script>
+    <render>../commons/navbar.html</render>
+
+    <div class="container" style="min-height:800px">
+        <div class="page-header">
+            <h1>res:(Thiết lập liên kết tài khoản với mạng xã hội)</h1>
+        </div>
+       {{#if info.ActivationWasNotFound}}
+        <section>
+            <h4>   res:(Thật đáng tiếc yêu cầu của bạn không tìm thấy hoặc đã hết hạn sử dụng. Hãy thử lại theo các bước sau):</h4>
+            <ol>
+                <li>
+                    res:(Vào trang tài khoản và thiết lập lại bằng cách bấm vào link) <a href="{{Config.RootUrl}}candidate/my-account"><b>res:(Thiết lập cá nhân)</b></a>.
+                </li>
+                <li>
+                    res:(Tìm đến mục "Chứng thực" chọn mạng xã hội mà bạn muốn thiết lập mối liên kết với tài khoản của bạn)
+                </li>
+            </ol>
+        </section>
+        {{else}}
+        <section>
+            <p>
+                <h3>
+                    res:(Bạn có muốn liên kết tài khoản của bạn với)&nbsp;{{info.data.Data.SocialName}}&nbsp;res:(bằng địa chỉ email)&nbsp;&quot;<b>{{info.data.Data.Email}}</b>&quot;?
+                </h3>
+                <div style="min-height:200px">
+                    <section  id="msg" style="display:none" >
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            res:(Hệ thống đã chấp nhận việc sử dụng) &nbsp;&quot;{{info.data.Data.Email}}&quot;&nbsp;res:(để đăng nhập vào hệ thống của chúng tôi bằng)&nbsp;{{info.data.Data.SocialName}}<br />
+                            <small>
+                                res:(Cảm ơn bạn đã thực hiện thao tác này giúp chúng tôi).
+                            </small>
+                        </div>
+                       
+                       
+                        
+                    </section>
+                </div>
+                <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <button type="button" class="btn btn-primary" id="btnAccept">res:(Vâng, thực hiện ngay)</button>
+                        
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Second group">
+                        <button type="button" class="btn btn-default"  id="btnCancel">res:(Không, làm ơn bỏ qua)</button>
+                        
+                    </div>
+                    
+                </div>
+            </p>
+           
+        </section>
+        {{/if}}
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#btnAccept").click(function () {
+                var ajax = "server.page://doAccept";
+                ajax.data({
+                    token: "{{info.data.Token}}"
+                }).done(function (res) {
+                    $("#msg").show();
+
+
+                })
+            });
+            $("#btnCancel").click(function () {
+                window.location.href="{{Config.RootUrl}}"
+            });
+        })
+    </script>
+    <render>../commons/footer.html</render>
+</body>
+</html>

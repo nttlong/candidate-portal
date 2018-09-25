@@ -1,0 +1,157 @@
+﻿<body>
+    <div class="container" style="max-width:600px">
+        <div ng-if="data.error">
+            ${data.error}
+        </div>
+        <div ng-if="!data.error">
+            <form role="form">
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="form-group-input">AppId</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="form-group-input" placeholder="AppId" ng-model="data.AppId">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="form-group-input">Host</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="form-group-input" placeholder="AppId" ng-model="data.Host">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label" for="form-group-input">Port</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="form-group-input" placeholder="AppId" ng-model="data.Port">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                            
+                            <div class="btn-group" role="group" aria-label="First group">
+                                <button type="button" class="btn btn-default" ng-click="doFetchInfo()">Fetch info by AppId</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div ng-if="access_data.error">
+            ${access_data.error}
+        </div>
+        <div ng-if="!access_data.error">
+            <table class="table table-bordered">
+                <tr ng-repeat="p in getAccessTokenFields()">
+                    <td>
+                        ${p}
+                    </td>
+                    <td>
+                        ${getAccessTokenInfoValue(p)}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="html"></div>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/CandidatePortalClient.js",
+            "./../libs/lv.logs",
+            "request-promise",
+            (utils, client, logs, request, page) => {
+                page.doLoadData = (event) => {
+                  
+                    utils._try(() => {
+                        try {
+                            var data = client.loadInfo.sync();
+                            
+                            utils.writeData(event, data);
+                            event.done();
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex.message||ex });
+                            event.done();
+                        }
+                    }, event);
+                },
+                    page.doFetchInfo = (event) => {
+                    utils._try(() => {
+                        //debugger;
+                        //var api_name = "get_access_token";
+                        //var url = "http://localhost" + "/dev/api" + api_name;
+                        //const options = {
+                        //    method: 'POST',
+                        //    uri: 'http://localhost:1337//dev/api/get_access_token',
+                        //    json: true,
+                        //    body: {
+                        //        AppId: '44e7bb56ab7d497e4a5734f0c4f77b4c547dc807'
+                        //    }
+                        //}
+
+                        //request(options)
+                        //    .then(function (response) {
+                        //        event.done();
+                        //        // Request was successful, use the response object at will
+                        //    })
+                        //    .catch(function (err) {
+                        //        event.done();
+                        //        // Something bad happened, handle the error
+                        //    })
+
+                            try {
+                                debugger
+                                var clientData = utils.readData(event);
+                                client.setHostName(clientData.Host);
+                                client.setPort(clientData.Port);
+                                client.setAppId(clientData.AppId);
+                                var data = client.get_access_token.sync();
+                               
+                                
+                                client.saveInfo.sync();
+                                utils.writeData(event, data);
+                                event.done();
+
+                            }
+                            catch (ex) {
+                                utils.writeData(event, { error: ex.message||ex });
+                                event.done();
+                            }
+                        }, event);
+
+                    }
+
+            }]
+    </script>
+    <script>
+            (function (scope) {
+                scope.doLoadData = function () {
+                    var a = "server.page://doLoadData";
+                    a.done(function (res) {
+                        scope.data = res;
+                        scope.$applyAsync();
+                    });
+                };
+                scope.doLoadData();
+                scope.doFetchInfo = function () {
+                    var a = "server.page://doFetchInfo";
+                    a.data(scope.data)
+                        .done(function (res) {
+                            console.log(res);
+                            if (res.error && res.error.error && res.error.error.html) {
+                                $("#html").html(res.error.error.html)
+                                return;
+                            }
+                            scope.access_data = res;
+                            scope.$applyAsync();
+                        });
+                };
+                scope.getAccessTokenFields = function () {
+                    return Object.keys(scope.access_data.data);
+                };
+                scope.getAccessTokenInfoValue = function (key) {
+                    return scope.access_data.data[key];
+                }
+
+
+            });
+    </script>
+</body>

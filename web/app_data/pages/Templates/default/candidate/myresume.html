@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title  ng-cloak>${$root.get_page_title()}{{viewer.FullName}}</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_myresume.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/moment.min.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/bootstrap-datepicker.js"></script>
+    <link href="{{Config.RootUrl}}Content/css/bootstrap-datepicker3.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/tinymce/jquery.tinymce.min.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/tinymce/tinymce.min.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/toastr.js"></script>
+    <link href="{{Config.RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/ajax_call.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/summernote/summernote.js"></script>
+    <link href="{{Config.RootUrl}}Scripts/summernote/summernote.css" rel="stylesheet" />
+    <script>
+        appDirectiveSetRootUrl("{{Config.RootUrl}}/");
+        ajax_call_set_url("{{Config.RootUrl}}api_process");
+
+    </script>
+</head>
+<body ng-controller="app" ng-cloak>
+    <style>
+        .modal-backdrop.in {
+            background: none !important;
+            display: none !important;
+        }
+    </style>
+    <script>
+        //$set_dialog_template_root_dir("{{{Config.RootUrl}}}/company/dialogs");
+        ajax_call_set_url("{{Config.RootUrl }}/api_process")
+
+    </script>
+
+    <render>../commons/navbar.html</render>
+    <div class="wrapper" id="app" v-cloak>
+        <section class="container myresume-content">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-9">
+                    <div class="myresume-detail">
+                       
+                        <div c-template url="candidate/myresume_personal_info" ng-cloak></div>
+                        <div c-template url="candidate/myresume_contact"  ng-cloak></div>
+                        <div c-template url="candidate/myresume_profile" ng-cloak></div>
+                        <div c-template url="candidate/myresume_education"  ng-cloak></div>
+                        <div c-template url="candidate/myresume_certificate"  ng-cloak></div>
+                        <div c-template url="candidate/myresume_desire"  ng-cloak></div>
+
+                    </div>
+                </div>
+                <render>myresume_right_box.html</render>
+            </div>
+        </section>
+        <render>../commons/footer.html</render>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+        "./../modules/lv.db",
+        "./../libs/lv.authenticate", 
+            "./../modules/lv.model",
+            (utils, Data, Aut,models,app) => {
+              
+                app.onLoad = (event) => {
+                    if (event.req.routeInfo && event.req.routeInfo.params && event.req.routeInfo.params.userId) {
+                        //nếu là KH đang review hồ sơ nhân viên thì write thêm nôi dung HTML cái id của user đang review
+                        event.setModel("viewer.candidateId", event.req.routeInfo.params.userId);
+                        
+                        //Tính số lượt xem
+                        utils._try(() => {
+                            var userId = event.req.routeInfo.params.userId;
+                            event.req.viewUserId = userId;
+                            
+                                   
+                                    var user = Aut.getUser(event.req);
+                                    var candidate_user;
+                                    var candidate;
+                                    var recruiter;
+                                    utils.paralellCaller()
+                                        .call(emiter => {//tìm user theo userid
+
+                                            models.sys_Users()
+                                                .where("UserId", userId)
+                                                .toItem()
+                                                .then(result => {
+                                                    candidate_user = result;
+                                                    event.setModel("viewer.FullName", candidate_user.FirstName + " " + candidate_user.LastName);
+                                                    emiter();
+                                                })
+                                                .catch(ex => {
+                                                    emiter(ex);
+                                                });
+
+                                        })
+                                        .call(emiter => {
+                                            models.ls_recruiters()
+                                                .where("UserEmail", user.Email)
+                                                .toItem((err, result) => {
+                                                    recruiter = result;
+                                                    emiter(err);
+                                                });
+                                           
+                                        })
+                                        .done((err, result) => {
+                                            if ((!err) && (candidate_user) && (recruiter)) {
+                                                models.ls_candidate()
+                                                    .where("UserEmail", candidate_user.Email)
+                                                    .inc("TotalRecruiterReviews")
+                                                    .commit();
+
+                                                models.ls_candidate()
+                                                    .where("UserEmail", candidate_user.Email)
+                                                    .select({indexOfRecruiter: { $indexOfArray: ["$RecruiterReviews.RecruiterCode", recruiter.RecruiterCode] }})
+                                                    .toArray((err, list) => {
+                                                        if (err) return;
+                                                        else {
+                                                            if ((list.length == 0) || (list[0].indexOfRecruiter == -1) || (list[0].indexOfRecruiter == null)) {
+                                                                models.ls_candidate()
+                                                                    .where("UserEmail", candidate_user.Email)
+                                                                    .push("RecruiterReviews", {
+                                                                        RecruiterCode: recruiter.RecruiterCode,
+                                                                        RecruiterName: recruiter.RecruiterName,
+                                                                        ViewDate: new Date(),
+                                                                        ViewDateUTC: utils.getUTCDate(new Date()),
+                                                                        TotalReviews: 1
+                                                                    })
+                                                                    .commit();
+                                                                
+                                                            }
+                                                            else {
+                                                                models.ls_candidate()
+                                                                    .where("UserEmail", candidate_user.Email)
+                                                                    .inc("RecruiterReviews." + list[0].indexOfRecruiter + ".TotalReviews")
+                                                                    .commit();
+                                                               
+                                                            }
+                                                        }
+                                                    })
+                                                
+                                            }
+                                           
+                                        })
+                                }
+                          
+
+                        , event);
+
+                    }
+
+                    event.done();
+                }
+                app.doChangeAllowSearch = (event)=>{
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = Aut.getUser(event.req);
+
+                            models.ls_candidate()
+                                .where("UserEmail==Email", user)
+                                .set({
+                                    AllowSearch: clientData.isAllow,
+                                    LatestModifiedOn: new Date(),
+                                    LatestModifiedOnUTC: utils.getUTCDate(new Date())
+                                }).commit.sync();
+                            utils.writeData(event, {});
+                            event.done();
+                        } catch (e) {
+                            event.done(e);
+                        }
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+        window.candidateId = "{{{viewer.candidateId}}}";
+        window.candidateName = "{{{viewer.FullName}}}";
+        ng_app([], function (scope) {
+            scope.$root.isHiddenCv = false;
+            scope.$root.get_page_title = function () {
+                if ((!window.candidateId) || (window.candidateId == "")){
+                    return "res:(Hồ sơ của tôi)";
+                }
+                else {
+                    setTimeout(function () {
+                        $(".img-edit hidden-xs").remove();
+                    }, 2500);
+                    return "res:(Hồ sơ của): " + window.candidateName;
+                    
+                }
+            }
+            scope.$root.AllowEdit = scope.$root.allowEdit = function () {
+                return (!window.candidateId) || (window.candidateId == "");
+            }
+            scope.$applyAsync();
+            scope.$root.onChangeAllowSearch = function (event) {
+                var a = "server.page://doChangeAllowSearch";
+                a.data({ isAllow: event.target.checked })
+                    .done(function (res) {
+                        if (event.target.checked) {
+                            toastr.success("res:(Bạn đã cho phép các nhà tuyển dụng tìm thấy hồ sơ của bạn)");
+                        }
+                        else {
+                            toastr.success("res:(Bạn đã không cho phép các nhà tuyển dụng tìm thấy hồ sơ của bạn)");
+                        }
+                    });
+                
+            }
+
+        })
+    </script>
+    <script>
+       
+        window.changeToViewMode = function (e) {
+            e.stopPropagation();
+            var myFrom = $($(e.toElement || e.target).parents("form")[0]);
+            if (myFrom.hasClass('edit-mode')) {
+                myFrom.removeClass('edit-mode');
+                myFrom.find('.field-edit').css('display', 'none');
+                myFrom.find('.field-view').fadeIn();
+            }
+        }
+        window.doEditWebPart = function (e) {
+            e.stopPropagation();
+            //if (!app.isThisUser)
+            //    return;
+            var myFrom = $($(e.toElement || e.target).parents("form")[0]);
+            if (!myFrom.hasClass('edit-mode')) {
+                myFrom.addClass('edit-mode');
+                myFrom.find('.field-view').css('display', 'none');
+                myFrom.find('.field-edit').fadeIn();
+
+            }
+
+            /*end form contact*/
+        }
+    </script>
+
+</body>
+</html>

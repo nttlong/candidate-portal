@@ -1,0 +1,622 @@
+﻿<!DOCTYPE html>
+<html  ng-app="app">
+<head>
+    <title>page-caption:(Đăng ký để trở thành nhà tuyển dụng tại SureHCS)</title>
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_mainui_login_employer.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/toastr.min.js"></script>
+    <link href="{{Config.RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+</head>
+<body  ng-controller="app" ng-cloak>
+    <div class="wrapper">
+        <div class="container box animated fadeInDown" ng-if="!hasRegistered">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="text-center box_header">
+                        <a href="{{Config.RootUrl}}">
+                            <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/surehcs_lg.png" alt="LacVietHCS" height="80">
+                        </a>
+                    </div>
+                    <div class="box_body">
+                        <div class="box_body_content fadeInRight animated">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row section-form em-log-in">
+                                        <div class="col-sm-10 col-sm-offset-1">
+                                            <div class="box_body_content_header">
+                                                <h1>res:(Đăng Ký Tài Khoản Nhà Tuyển Dụng Tại SureHCS)</h1>
+                                            </div>
+                                            <div id="loginForm" role="form" name="company-login">
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Địa chỉ email)</label>
+                                                    <input class="form-control valid" type="text" ng-model="data.UserEmail" placeholder="res:(Địa chỉ email)" name="Email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Mật khẩu)</label>
+                                                    <input class="form-control valid" type="password" ng-change="ChangePassword()" ng-model="data.Password" placeholder="res:(Mật khẩu)" name="Password">
+                                                    <span style="color: red; font-size: 13px;" ng-if="isPasswordError"> res:(Mật khẩu phải từ 4 đến 16 ký tự)</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Nhập Lại Mật Khẩu)</label>
+                                                    <input class="form-control valid" type="password" ng-change="ChangeConfirmPassword()" ng-model="data.ConfirmPassword" placeholder="res:(Nhập Lại Mật Khẩu)" name="Password">
+                                                    <span style="color: red; font-size: 13px;" ng-if="isPasswordNotMatch"> res:(Mật khẩu không trùng khớp)</span>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Mã công ty)</label>
+                                                    <input class="form-control valid" type="text" ng-model="data.RecruiterCode" placeholder="res:(Mã công ty)">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Tên Công Ty)</label>
+                                                    <input class="form-control valid" type="text" ng-model="data.RecruiterName" placeholder="res:(Tên Công Ty)">
+                                                </div>
+                                                <!--<div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Ngành nghề)</label>
+                                                    <input c-select2 data-source="dataJobs" ng-model="data.FullJobCode"/>
+                                                </div>-->
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Địa Chỉ)</label>
+                                                    <input class="form-control valid" type="text" ng-model="data.Address" placeholder="res:(Địa Chỉ)">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Điện Thoại)</label>
+                                                    <input class="form-control valid" type="text" placeholder="res:(Điện Thoại)" ng-model="data.ContactInfo.Tel">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label><span style="color: red">*</span> res:(Fax)</label>
+                                                    <input class="form-control valid" type="text" placeholder="res:(Fax)" ng-model="data.ContactInfo.Fax">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>res:(Hiện Tại, Quý Khách Có Nhu Cầu Tuyển Dụng Hay Không?)</label>
+                                                    <div>
+                                                        <div class="radio radio-success">
+                                                            <input type="radio" value="true" name="resumeApply" id="rad1" ng-model="data.isRecruiter"> 
+                                                            <label for="rad1">
+                                                                <span>res:(Có)</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio radio-success">
+                                                            <input type="radio" value="false" name="resumeApply" id="rad2" ng-model="data.isRecruiter">
+                                                            <label for="rad2">
+                                                                <span>res:(Không)</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 control-label" for="form-group-input">res:(Mã nhận dạng)</label>
+                                                    <div class="col-sm-9">
+                                                        <div class="input-group">
+
+                                                            <div>
+                                                                <img ng-src="${captchaData}" ng-click="getCaptcha()" style="height:40px;float:left" ng-if="captchaData" />
+                                                            </div>
+                                                            <span class="input-group-addon" style="border:none !important;background:none !important">
+                                                                <button class="btn btn-default" ng-click="getCaptcha()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                                                            </span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 control-label" for="form-group-input">res:(Nhập vào mã nhận dạng)</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" id="form-group-input" placeholder="res:(Nhập vào mã nhận dạng)" ng-model="data.Captcha">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="checkbox checkbox-success checkbox-inline">
+                                                        <input id="checkbox" type="checkbox" ng-model="data.isAgreeTerms">
+                                                        <label for="checkbox">
+                                                            res:(Tôi đã đọc và đồng ý với các)
+                                                            <a href="#" class="link" target="_blank">res:(Quy định bảo mật)</a>
+                                                            res:(và )
+                                                            <a href="#" class="link" target="_blank">res:(Thỏa thuận sử dụng)</a>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button id="btnLogin" class="btn btn-primary block full-width" type="button" ng-click="doRegister()">res:(Đăng ký)</button>
+                                                </div>
+                                                <div class="form-group">
+                                                    <p class="text-muted text-center text-left-xs m-t">
+                                                        res:(Bạn đã có tài khoản?)
+                                                        <a href="{{Config.RootUrl}}company/login"><strong>res:(Đăng nhập ngay!)</strong></a>
+                                                    </p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container box animated fadeInDown" ng-if="hasRegistered">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="text-center box_header">
+                        <a href="{{Config.RootUrl}}">
+                            <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/surehcs_lg.png" alt="LacVietHCS" height="80">
+                        </a>
+                    </div>
+                    <div class="box_body">
+                        <div class="fadeInRight animated">
+                            <div class="row">
+                                <h4>res:(Tài khoản của bạn đã được tạo, tuy nhiên để sử dụng tài khoản này bạn cần phải kích hoạt tài khoản. Một email hướng dẫn kích hoạt tài khoản đã được gởi đến bạn, hãy kiểm tra email vào làm theo hướng dẫn)</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/node.sys.customer",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.db",
+            "./../modules/lv.model",
+            "./../modules/node.Email",
+            "./../modules/resource",
+            (utils, customer, aut, Data, models, EMAIL, resource, app) => {
+                function CreateUser() {
+
+                }
+                app.doLoad_group_jobs = (event) => {
+                    customer.get_ls_group_jobs(event.req.currentLanguageCode, (err, list) => {
+                        if (err) event.done(err);
+                        else {
+                            var ret = [];
+                            list.forEach(item => {
+                                var retItem = {
+                                    id: item.Code,
+                                    text: item["Name"][event.req.currentLanguageCode],
+                                    children: []
+                                };
+                                ret.push(retItem);
+                                item.Jobs.forEach(cItem => {
+                                    retItem.children.push({
+                                        id: item.Code + "::" + cItem.Code,
+                                        text: cItem["Name"][event.req.currentLanguageCode]
+                                    })
+                                })
+                            })
+                            utils.writeData(event, ret);
+                            event.done();
+                        }
+                    })
+                };
+                app.doLoad_locations = (event) => {
+                    customer.get_ls_locations(event.req.currentLanguageCode, (err, list) => {
+                        if (err) event.done(err);
+                        else {
+                            var ret = [];
+                            list.forEach(item => {
+                                var retItem = {
+                                    id: item.Code,
+                                    text: item["Name"][event.req.currentLanguageCode],
+                                    children: []
+                                };
+                                ret.push(retItem);
+                                item.Provinces.forEach(cItem => {
+                                    retItem.children.push({
+                                        id: item.Code + "::" + cItem.Code,
+                                        text: cItem["Name"][event.req.currentLanguageCode]
+                                    })
+                                })
+                            })
+                            utils.writeData(event, ret);
+                            event.done();
+                        }
+                    })
+                };
+                app.doRegister = (event) => {
+                    var createUser = (Email,Password) => {
+                        var hasPassword = utils.sha("uid=" + Email.toLowerCase() + ";pwd=" + Password);
+                        var ret = models.sys_Users()
+                            .insert({
+                                UserId: utils.newGuid(),
+                                UserName: Email,
+                                UsernameLowerCase: Email.toLowerCase(),
+                                Email: Email.toLowerCase(),
+                                LoginCount: 0,
+                                ChangedPasswordCount: 0,
+                                LastestChangePassword: null,
+                                LoginFailCount: 0,
+                                LatestLoginTime: null,
+                                Password: hasPassword,
+                                Settings: {
+                                    DefaultDateFormat: "dd/MM/yyyy",
+                                    DefaultLanguage: "vn",
+                                    DefaultCurrency: {
+                                        Code: "VN?"
+                                    }
+                                }
+                            })
+                            .commit.sync();
+                    }
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var lang = utils.getCurrentLanguageCode(event);
+                        var reg_email = /^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$/i;
+                        var retError = {
+                            errorType: "",
+                            message: "",
+                            field: ""
+                        };
+                        var err = false;
+                        var Password = clientData["Password"];
+                        var ConfirmPassword = clientData["ConfirmPassword"];
+                        var Email = clientData.UserEmail;
+
+                        if ((!Email) || (Email == "")) {
+                            retError.errorType = "EmailIsEmpty";
+                            retError.message = "Please enter email";
+                            retError.field = "Email";
+                            err = true;
+                        }
+                        else {
+                            if (!reg_email.test(Email)) {
+                                retError.errorType = "EmailIsInvalid";
+                                retError.message = "The email is invalid";
+                                retError.field = "Email";
+                                err = true;
+                            }
+                            else {
+                                if ((!Password) || (Password == "")) {
+                                    retError.errorType = "PasswordIsEmpty";
+                                    retError.message = "Please enter password";
+                                    retError.field = "Password";
+                                    err = true;
+                                } else if ((!ConfirmPassword) || (ConfirmPassword == "")) {
+                                    retError.errorType = "ConfirmPasswordIsEmpty";
+                                    retError.message = "Please enter ConfirmPassword";
+                                    retError.field = "ConfirmPassword";
+                                    err = true;
+                                } else {
+                                    if (Password != ConfirmPassword) {
+                                        retError.errorType = "PasswordIsNotEqualConfirmPassword";
+                                        retError.message = "Password and confirm password is not match";
+                                        retError.field = "Password";
+                                        err = true;
+                                    }
+                                }
+                            }
+                        }
+                        //
+                        if (err) {
+                            utils.writeData(event, {
+                                formError: retError
+                            })
+                            event.done();
+                        }
+
+                        var ret = utils.checkRequireFields([
+                            "UserEmail",
+                            "Password",
+                            "ConfirmPassword",
+                            "RecruiterCode",
+                            "RecruiterName",
+                            "Address",
+                            "ContactInfo.Tel",
+                            "ContactInfo.Fax",
+                            "isAgreeTerms",
+                            "Captcha"
+                        ], clientData);
+                        if (ret.length > 0) {
+                            utils.writeData(event, { apiError: ret[0] });
+                            event.done();
+                            return;
+                        }
+                        else {
+                            var captchaContent = resource.getCaptchaContent(event.req);
+                            if (clientData.Captcha != captchaContent) {
+                                retError.errorType = "CaptchaInvalid";
+                                retError.message = "Captcha is invalid";
+                                retError.field = "Captcha";
+                                utils.writeData(event, {
+                                    formError: retError
+                                });
+                                event.done();
+                                return;
+                            }
+                            try {
+                                //
+                                var count = models.sys_Users()
+                                    .where("(Email==email)or" +
+                                    "(LinkToGoogle.Email==email)or" +
+                                    "(LinkToFacebook.Email==email)or" +
+                                    "(LinkToLinkedIn.Email==email)or" +
+                                    "(LinkToTwitter.Email==email)", { email: Email })
+									.count.sync();
+								var countRecuriters = models.ls_recruiters()
+									.where("(UserEmail==email)", { email: Email })
+									.count.sync();
+								if (countRecuriters > 0) {
+                                    retError.errorType = "EmailIsExist";
+                                    retError.message = "'Email' is existing";
+                                    retError.field = "Email";
+                                    err = true;
+                                    utils.writeData(event, {
+                                        formError: retError
+                                    })
+
+                                    event.done();
+                                    return;
+                                } else {
+									try {
+										if (count <= 0) {
+											createUser(Email, Password)
+										}
+
+                                        var candidate = models.ls_recruiters()
+                                            .insert({
+                                                UserEmail: Email.toLowerCase(),
+                                                RecruiterName: clientData.RecruiterName,
+                                                RecruiterCode: clientData.RecruiterCode,
+                                                CandidateSite: clientData.RecruiterCode,
+                                                Address: clientData.Address,
+                                                ContactInfo: {
+                                                    Tel: clientData.ContactInfo.Tel,
+                                                    Fax: clientData.ContactInfo.Fax,
+                                                    Email: Email.toLowerCase()
+                                                },
+                                                CreatedOn: new Date(),
+                                                CreatedUTC: utils.getUTCDate(new Date())
+                                            }).commit.sync();
+                                        var activeToken = utils.newGuid();
+                                        models.sys_activation()
+                                            .insert({
+                                                Type: "AccountActivation",
+                                                Token: activeToken,
+                                                Email: Email.toLowerCase()
+                                            })
+                                            .commit.sync();
+
+                                        var d = new Date();
+
+                                        var dataEmail = {
+                                            RootUrl: utils.getRootUrl(event.reg),
+                                            Token: activeToken,
+                                            ActivationLink: utils.getRootUrl(event.reg) + "account/active/" + activeToken,
+                                            RegisteredOn: ("0" + d.getDate()).slice(-2) + '/' + ("0" + (d.getMonth() + 1)).slice(-2)
+                                            + '/' + d.getFullYear()
+                                        }
+                                        var schema = utils.getSchema(dataEmail);
+                                        var Subject = "v/v kích hoạt tài khoản";
+                                        var Body = "Thân chào bạn,<br/>" +
+                                            "Bạn vừa đăng ký sử dụng dịch vụ tìm việc tại website {{RootUrl}} vào lúc {{RegisteredOn}}.<br/>" +
+                                            "Để kích hoạt tài khoản sử dụng xin hãy bấm vào <a href=\"{{ActivationLink}}\">{{ActivationLink}}<a>," +
+                                            "hoặc sao chép nội dung {{ActivationLink}} dán vào thanh địa chỉ của trình duyệt và làm theo hướng dẫn.<br/>" +
+                                            "Chân thành cảm ơn bạn đã đăng ký sử dụng dịch vụ";
+                                        
+                                        var ret = EMAIL.getTemplate.sync(null, "CustomerActivationAlert", lang, Subject, Body, schema, "Template email báo active cho nhà tuyển dụng");
+                                        var ret = EMAIL.sendEmail.sync(null, Email, ret.Subject, ret.Body, null, dataEmail);
+                                        utils.writeData(event, {});
+                                        event.done();
+                                        return;
+                                    }
+                                    catch (ex) {
+                                        if (ex.isUnique) {
+                                            if (ex.fields.indexOf("RecruiterCode") > -1) {
+                                                retError.errorType = "RecruiterCodeIsDuplicate";
+                                                retError.message = "Please enter RecruiterCode";
+                                                retError.field = "RecruiterCode";
+                                                err = true;
+                                            }
+                                            if (ex.fields.indexOf("UserEmail") > -1) {
+                                                retError.errorType = "UserEmailIsDuplicate";
+                                                retError.message = "Please enter RecruiterCode";
+                                                retError.field = "UserEmail";
+                                                err = true;
+                                            }
+                                            if (ex.fields.indexOf("Email") > -1) {
+                                                retError.errorType = "UserEmailIsDuplicate";
+                                                retError.message = "Please enter RecruiterCode";
+                                                retError.field = "UserEmail";
+                                                err = true;
+                                            }
+                                            if (ex.source.indexOf(models.ls_recruiters().name) > -1) {
+                                                models.sys_Users()
+                                                    .where("Email", Email)
+                                                    .delete().commit();
+                                            }
+                                            utils.writeData(event, { formError: retError });
+                                            event.done();
+                                            return;
+                                        } else {
+                                            event.done(ex);
+                                            return;
+                                        }
+                                    }
+                                }
+                                utils.writeData(event, {});
+                                event.done();
+                            } catch (ex) {
+                                event.done(ex);
+                            }
+                        }
+                    })
+                };
+                app.getCaptcha = (event) => {
+                    utils._try(() => {
+                        try {
+                            resource.captcha(event);
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+
+            }
+        ]
+    </script>
+
+    <script>
+        ng_app([], function (app) {
+            app.data = {};
+            app.hasRegistered = false;
+            app.data.FullJobCode = "undefined";
+            app.data.LocationFullCode = "undefined";
+            app.data.isRecruiter = true;
+            // Load Locations
+            app.onLoadDataLocation = function () {
+                var ajax = "server.page://doLoad_locations";
+                ajax.done(function (res) {
+                    app.dataLocations = res;
+                    app.$apply();
+                })
+            }
+            app.onLoadDataLocation();
+            // Load Jobs
+            app.onLoadDataJob = function () {
+                var ajax = "server.page://doLoad_group_jobs";
+                ajax.done(function (res) {
+                    var data = [];
+                    data.push({
+                        "id": "undefined",
+                        "text": "res:(Vui lòng chọn)"
+                    })
+                    if (res.length > 0) {
+                        for (var i = 0; i < res.length; i++) {
+                            data.push(res[i]);
+                        }
+                        //res.forEach(item => {
+                        //    data.push(item);
+                        //})
+                        app.dataJobs = data;
+                    }
+                    app.$apply();
+                })
+            }
+            app.onLoadDataJob();
+            // s? ki?n thay ??i password
+            app.ChangePassword = function () {
+                if (app.data.Password.length < 4 || app.data.Password.length > 16) {
+                    app.isPasswordError = true;
+                } else {
+                    app.isPasswordError = false;
+                }
+                if (app.data.ConfirmPassword) {
+                    if (app.data.ConfirmPassword != app.data.Password) {
+                        app.isPasswordNotMatch = true;
+                    } else {
+                        app.isPasswordNotMatch = false;
+                    }
+                }
+            }
+            app.ChangeConfirmPassword = function () {
+                if (app.data.ConfirmPassword != app.data.Password) {
+                    app.isPasswordNotMatch = true;
+                } else {
+                    app.isPasswordNotMatch = false;
+                }
+            }
+            app.getCaptcha = function () {
+                var a = "server.page://getCaptcha";
+                a.done(function (res) {
+                    app.captchaData = res.data;
+
+                    app.$applyAsync();
+                });
+            };
+            app.getCaptcha();
+            // Register
+            app.doRegister = function () {
+                toastrError = function (error, model) {
+                    toastr.error(error);
+                    $("[ng-model='" + model + "']").focus(
+                        function () {
+                            $(this).css({ "border-color": "red" })
+                        }
+                    );
+                    $("[ng-model='" + model + "']").blur(
+                        function () {
+                            $(this).css({ "border-color": "#ccc" })
+                        }
+                    );
+                    $("[ng-model='" + model + "']").trigger("click");
+                    $("[ng-model='" + model + "']").select();
+                }
+                var ajax = "server.page://doRegister";
+                ajax.data(
+                    app.data
+                ).done(function (res) {
+                    if (res.apiError) {
+                        
+                        if (res.apiError.errorType == "UserEmailIsEmpty") {
+                            toastrError("res:(Xin nhập vào địa chỉ email)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "PasswordIsEmpty") {
+                            toastrError("res:(Xin nhập vào Mật khẩu)", "data." + res.apiError.field)
+                            return;
+                        } else if (app.isPasswordError) {
+                            toastrError("res:(Mật khẩu phải từ 4 đến 16 ký tự)", "data.Password")
+                            return;
+                        } else if (res.apiError.errorType == "ConfirmPasswordIsEmpty") {
+                            toastrError("res:(Xin nhập vào Nhập lại mật khẩu)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "RecruiterCodeIsEmpty") {
+                            toastrError("res:(Xin nhập vào Mã công ty)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "RecruiterNameIsEmpty") {
+                            toastrError("res:(Xin nhập vào Tên công ty)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "AddressIsEmpty") {
+                            toastrError("res:(Xin nhập vào địa chỉ)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "ContactInfo.TelIsEmpty") {
+                            toastrError("res:(Xin nhập vào Số điện thoại)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "ContactInfo.FaxIsEmpty") {
+                            toastrError("res:(Xin nhập vào Fax)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "isAgreeTermsIsEmpty") {
+                            toastrError("res:(Bạn chưa đồng ý Quy định bảo mật và Thỏa thuận sử dụng của chúng tôi)", "data." + res.apiError.field)
+                            return;
+                        } else if (res.apiError.errorType == "CaptchaIsEmpty") {
+                            toastrError("res:(Xin nhập mã nhận dạng)", "data." + res.apiError.field)
+                            return;
+                        }
+                    } else if (res.formError) {
+                        if (res.formError.errorType == "EmailIsInvalid") {
+                            toastrError("res:(Sai định dạng Email)", "data.UserEmail");
+                            return;
+                        } else if (res.formError.errorType == "EmailIsEmpty") {
+                            toastrError("res:(Xin nhập vào Địa chỉ email)", "data.UserEmail");
+                            return;
+                        } else if (res.formError.errorType == "EmailIsExist") {
+                            toastrError("res:(Email đã được sử dụng)", "data.UserEmail");
+                            return;
+                        } else if (res.formError.errorType == "PasswordIsEmpty") {
+                            toastrError("res:(Xin nhập vào Mật khẩu)", "data.Password");
+                            return;
+                        } else if (res.formError.errorType == "ConfirmPasswordIsEmpty") {
+                            toastrError("res:(Xin nhập vào Nhập lại mật khẩu)", "data.ConfirmPassword");
+                            return;
+                        } else if (res.formError.errorType == "PasswordIsNotEqualConfirmPassword") {
+                            toastrError("res:(Password không trùng khớp)", "data.ConfirmPassword");
+                            return;
+                        } else if (res.formError.errorType == "RecruiterCodeIsDuplicate") {
+                            toastrError("res:(Trùng Mã công ty)", "data." + res.formError.field);
+                            return;
+                        } else if (res.formError.errorType == "CaptchaInvalid") {
+                            toastrError("res:(Không đúng mã nhận dạng)", "data." + res.formError.field);
+                            return;
+                        }
+                    } else {
+                        app.hasRegistered = true;
+                        app.$apply();
+                    }
+                })
+            }
+        })
+    </script>
+</body>
+</html>

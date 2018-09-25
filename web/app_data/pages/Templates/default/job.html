@@ -1,0 +1,634 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Chi tiết công việc)</title>
+    <meta charset="utf-8" />
+    {{^printMode}}
+    <render>commons/header.html</render>
+   
+
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_viewjob.min.css" rel="stylesheet"/>
+    <script src="{{Config.RootUrl}}Scripts/moment-duration-format.js"></script>
+    {{/printMode}}
+</head>
+<body ng-controller="app">
+   <script server>
+       [
+           "./../libs/lv.utils",/*Tien ich*/
+           "./../modules/node.portal.candidate" /**/,
+           "./../libs/lv.authenticate" /*Dung de lay User hien tai*/,
+           "./../modules/lv.startup",
+           "./../modules/lv.db",
+           "./../modules/lv.model",
+
+           (utils, portal, aut, startUp,Data,model, page) => {
+               page.onLoad = (event) => {
+				   utils._try(() => {
+					   debugger
+                       if (event.req.query.print == "1") {
+                           event.setModel("printMode", "x");
+                       }
+                       event.setModel("RequisitionId", event.req.routeInfo.params.RequisitionID);
+                       var lan = utils.getCurrentLanguageCode(event);
+                       event.setModel('lang', lan);
+                       if (aut.getUser(event.req)) {
+                           var query = model.ls_requisition().unwind("CandidateReviewList")
+                               .where("(CandidateReviewList.CandidateEmail==email)and(_id==id)", {
+                                   "email": aut.getUser(event.req).Email,
+                                   "id": utils.objectID(event.req.routeInfo.params.RequisitionID)
+                               })
+                               //.whereAnd({
+                               //    _id: utils.objectID(event.req.routeInfo.params.RequisitionID)
+                               //})
+                               .query();
+
+                           query.toItem((err, item) => {
+                                   if (item == null) {
+                                       model.ls_requisition()
+                                           .where({
+                                               _id: utils.objectID(event.req.routeInfo.params.RequisitionID)
+
+                                           })
+                                           .push("CandidateReviewList", {
+                                               CandidateEmail: aut.getUser(event.req).Email,
+                                               CreatedOn: new Date(),
+                                               CreatedOnUTC: utils.getUTCDate(new Date())
+                                           }).commit((err, result) => {
+                                           });
+                                       model.ls_requisition()
+                                           .where({ _id: utils.objectID(event.req.routeInfo.params.RequisitionID) })
+                                           .inc("TotalViewByCandidate")
+                                           .commit();
+                                   }
+                               })
+
+                       }
+                       model.ls_requisition()
+                           .where({ _id: utils.objectID(event.req.routeInfo.params.RequisitionID) })
+                           .inc("HitCount")
+                           .commit();
+                       utils.paralellCaller()
+                           .call(emit => {
+                               model.ls_requisition()
+                                   .where({ _id: utils.objectID(event.req.routeInfo.params.RequisitionID) })
+                                   .lookup(model.ls_recruiters(), "RecruiterId", "_id", "Recruiter")
+                                   .unwind("Recruiter")
+                                   .select({
+                                       RecruiterCode: "Recruiter.RecruiterCode",
+                                       JobName: "Job.JobName." + lan,
+                                       RecruiterName: "Recruiter.RecruiterName",
+                                       Address: "Recruiter.Address",
+                                       ProvinceName: "Location.ProvinceName",
+                                       LocationName: "Location.LocationName",
+                                       TotalViewByCandidate: 1,
+                                       SalaryType: 1,
+                                       Salary: 1,
+                                       RequisitionID: "_id",
+                                       PublishDate: 1,
+                                       HitCount: 1,
+                                       OverView: "Recruiter.OverView",
+                                       Description: 1,
+                                       JobTitle: 1,
+                                       Requirements: 1,
+                                       ReceiveTo: 1,
+                                       IsLocked: 1,
+                                       RecieverEmail: 1,
+                                       LanguageCV: 1,
+                                       RecieverContact: 1,
+                                       ReceiveFrom: 1,
+                                       Skills: 1,
+                                       Locations: 1
+                                   }).toItem()
+								   .then(item => {
+                                       event.setModel('requisition', item);
+                                       emit();
+                                   })
+                                   .catch(ex => {
+                                       emit(ex);
+                                   })
+                           })
+                           .call(emit => { // đếm xem ứng viên đã nộp đơn hay chưa
+                               if (!aut.getUser(event.req)) {
+                                   /*Chua logi*/
+                                   emit();
+                                   return;
+                               }
+                               model.ls_requisition()
+                                   .where("(_id==id)and(CandidateApplyList.CandidateEmail==email)",
+                                   {
+                                       id: utils.objectID(event.req.routeInfo.params.RequisitionID),
+                                       email: aut.getUser(event.req).Email
+                                   })
+                                   .count()
+                                   .then(item => {
+                                       event.setModel('numberCandidate', item);
+                                       emit();
+                                   })
+                                   .catch(ex => {
+                                       emit(ex);
+                                   })
+                           })
+                           .call(emit => { // check lưu job
+                               if (!aut.getUser(event.req)) {
+                                   /*Chua logi*/
+                                   emit();
+                                   return;
+                               }
+                               model.ls_candidate()
+                                   .where("(UserEmail==email)", {
+                                       email: aut.getUser(event.req).Email
+                                   })
+                                   .unwind("RequistionSaveList")
+                                   .where("(RequistionSaveList.RequisitionId==id)", {
+                                       id: utils.objectID(event.req.routeInfo.params.RequisitionID)
+                                   })
+                                   .count()
+                                   .then(item => {
+                                       if (item > 0) {
+                                           event.setModel('isSaved', true);
+                                           emit();
+                                       } else {
+                                           event.setModel('isSaved', false);
+                                           emit();
+                                       }
+                                   })
+                                   .catch(ex => {
+                                       emit(ex);
+                                   })
+                           })
+                           .call(emit => { // Load việc tương tự
+                               var data = event.req.routeInfo.params;
+                               var qr = model.ls_requisition()
+                                   .where("((Job.JobCode==job)or(Job.GroupCode==group))and(IsPublished==ispub)and(ReceiveTo>=date)and(_id!=id)", {
+                                       //job: data.JobCode,
+                                       //group: data.JobGroup,
+                                       date: new Date(),
+                                       ispub: true,
+                                       id: utils.objectID(data.RequisitionID)
+                                   })
+                                   .lookup(model.ls_recruiters(), "RecruiterId", "_id", "recruiters")
+                                   .unwind("recruiters")
+                                   .sort("ReceiveTo", -1)
+                                   .select({
+                                       _id: 1,
+                                       Code: 1,
+                                       JobTitle: 1,
+                                       RecruiterId: 1,
+                                       id: "recruiters._id",
+                                       RecruiterName: "recruiters.RecruiterName",
+                                       RecruiterCode: "recruiters.RecruiterCode",
+                                       CandidateSite: "recruiters.CandidateSite",
+                                       GroupCode: "Job.GroupCode",
+                                       JobCode: "Job.JobCode",
+                                       SalaryType: 1,
+                                       Salary: 1,
+                                       Locations: 1
+                                   });
+
+                                   qr.toArray()
+                                   .then(item => {
+                                       event.setModel('dataSameJobs', item);
+                                       emit();
+                                   })
+                                   .catch(ex => {
+                                       emit(ex);
+                                   })
+                           })
+                           .done((err, result) => {
+                               event.done();
+                           });
+
+
+                   }, event);
+
+               };
+               page.doSaveJob = (event) => {
+                   utils._try(() => {
+
+                       try {
+                           var user = aut.getUser(event.req);
+                           var clientData = utils.readData(event);
+                           if (!user) {
+                               utils.writeData(event, {
+                                   redirectUrl: utils.getRootUrl() + "/account/login?retUrl=" + clientData.url
+                               });
+                               event.done();
+                               return;
+                           }
+
+                           var count = model.ls_candidate()
+                               .where("(UserEmail==email)and(RequistionSaveList.RequisitionId==id)", {
+                                   email: user.Email,
+                                   id: utils.objectID(clientData.id)
+                               }).count.sync();
+                           //if (count == 0) {
+                           //    var ret = model.ls_candidate()
+                           //        .where("UserEmail==Email", user)
+                           //        .push("RequistionSaveList", {
+                           //            RequisitionId: utils.objectID(clientData.id),
+                           //            SaveOn: new Date(),
+                           //            SaveOnUTC: utils.getUTCDate(new Date())
+                           //        })
+                           //        .commit.sync();
+                           //}
+
+                           var data = {};
+                           if (count > 0) { // pull
+                               model.ls_candidate().where("(UserEmail==email)", {
+                                   email: user.Email
+                               })
+                                   .pull("RequistionSaveList", { RequisitionId: clientData.id.toObjectID() })
+                                   .commit.sync();
+                               data.action = "pullItem";
+                           } else { // push
+                               model.ls_candidate().where("(UserEmail==email)", {
+                                   email: user.Email
+                               })
+                                   .push("RequistionSaveList", {
+                                       RequisitionId: clientData.id.toObjectID(),
+                                       SaveOn: new Date(),
+                                       SaveOnUTC: utils.getUTCDate(new Date())
+                                   })
+                                   .commit.sync();
+                               data.action = "pushItem";
+                           }
+
+                           utils.writeData(event, data);
+                           event.done();
+                       }
+                       catch (ex) {
+                           event.done(ex);
+                       }
+
+
+                   }, event);
+               };
+           }];
+   </script>
+    <script>
+        ng_app([], function (scope) {
+        
+            scope.doSaveJob = function (v1, v2) {
+                var a = "server.page://doSaveJob";
+                a.data({
+                    id: '{{{RequisitionId}}}',
+                    url: window.location.href
+                })
+                    .done(function (res) {
+                        if (res.redirectUrl) {
+                            window.location.href = res.redirectUrl;
+                            return;
+                        }
+                        if (res.action == "pushItem") {
+                            toastr.success("res:(Đã lưu)");
+                            $("#imgJobSave").attr("src", "{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/hearted.png");
+                            $("#aJobSave").attr("title", "res:(Đã lưu)");
+                        } else {
+                            toastr.success("res:(Bỏ lưu)");
+                            $("#imgJobSave").attr("src", "{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/heart.png");
+                            $("#aJobSave").attr("title", "res:(Chưa lưu)");
+                        }
+                        
+                    });
+
+            };
+            scope.doPrinter = function () {
+                var url = "{{Config.RootUrl}}{{Config.Url}}?print=1";
+                var w = window.open(url);
+                w.document.close();
+                w.focus();
+                w.print();
+                setTimeout(function () {
+                    w.close();
+                }, 50);
+                //var x = document.getElementsByClassName('box-header-left-logocompany')[0];
+                //var img = x.getElementsByTagName('img')[0];
+                //w.document.write(img.innerHTML);
+                //setTimeout(function () {
+                //    w.document.write(document.getElementsByClassName('infor-box-left')[0].innerHTML);
+                //    w.document.write(document.getElementsByClassName('box-info-job')[0].innerHTML);
+                    //w.print();
+                    //w.close();
+                //}, 0)
+                
+            }
+            scope.doSendEmail = function () {
+                window.open('mailto:lqsang19951@gmail.com');
+            }
+            scope.formatMoney = function (salary) {
+                return accounting.formatMoney(salary, "", 0);
+            }
+        });
+    </script>
+    {{^printMode}}
+    <render>commons/navbar.html</render>
+    {{/printMode}}
+    <div class="wrapper">
+        <section class="container myresume-content">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 box-header">
+                    <div class="col-xs-12 col-sm-12 col-md-9 box-header-left">
+                        <div class="row">
+                            <!--<div class="image col-xs-12 col-sm-12 col-md-3">
+                                <img  style="width:100%" src="{{Config.RootUrl}}Photo/Logo/{{requisition.RecruiterCode}}.png" />
+                            </div>-->
+                            <div class="align_center box-header-left-logocompany col-xs-12 col-sm-3" >
+                                <table cellpadding="0" cellspacing="0" width="100%" height="100%">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <a href="" target="_blank"> 
+                                                    <img style="max-width:128px;padding: 10px;" src="{{Config.RootUrl}}Photo/Logo/{{requisition.RecruiterCode}}.png" id="imgCompany"/>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-12 col-sm-9 col-md-9 infor-box-left">
+                                <h1>{{requisition.JobTitle}}</h1>
+                                <p class="p-l">res:(Ngành nghề): {{requisition.JobName}}</p>
+                                <p class="p-f">res:(Công ty): {{requisition.RecruiterName}}</p>
+                                <p class="p-s">res:(Địa chỉ): {{requisition.Address}}</p>
+                                <p class="p-s">res:(Nơi làm việc): 
+                                    {{#each requisition.Locations}}
+                                        <span>{{getName Provinces.Name}}</span>
+                                        <span id="sp-infor-box-left"> - </span>
+                                    {{/each}}
+                                </p>
+                                <p class="p-sa">res:(Mức lương): 
+                                {{#ifCond requisition.SalaryType '1'}}
+									<span>
+										<!--{{formatSalary requisition.Salary}}-->
+										{{requisition.Salary}}
+									</span>
+                                {{else}}
+									{{#ifCond requisition.SalaryType '2'}}
+										<span>res:(cạnh tranh)</span>
+									{{else}}
+										<span>res:(thỏa thuận)</span>
+									{{/ifCond}}
+                                {{/ifCond}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {{^printMode}}
+                    <div class="col-xs-12 col-sm-12 col-md-3 box-header-right">
+                        <div class="">
+                            {{#ifCondNowDate requisition.ReceiveTo}} <!--Kiểm tra hết hạn nộp hồ sơ-->
+                                <a class="btn btn-primary btn-apply" ng-disabled="true">
+                                    res:(Hết hạn nộp hồ sơ)
+                                </a>
+                            {{else}}
+                                {{#ifCond requisition.IsLocked 1}}
+                                    <a class="btn btn-primary btn-apply" ng-disabled="true">
+                                        res:(Tạm dừng nhận hồ sơ)
+                                    </a>
+                                {{else}}
+                                    {{#if numberCandidate}}
+                                        <a class="btn btn-primary btn-apply" ng-disabled="true">
+                                            res:(Đã nộp đơn)
+                                        </a>
+                                    {{else}}
+                                        <a class="btn btn-primary btn-apply" href="{{Config.RootUrl}}candidate/apply-job/{{requisition.RecruiterCode}}/{{requisition.RequisitionID}}">
+                                            res:(Nộp đơn)
+                                        </a>
+                                    {{/if}}
+                                {{/ifCond}}
+                            {{/ifCondNowDate}}
+                        </div>
+                        <!--<div class="social-btn">
+                            <button type="button" class="btn btn-sm btn-facebook col-md-2">
+                                <i class="fa fa-facebook" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-twitter col-md-2">
+                                <i class="fa fa-twitter" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-print col-md-2" ng-click="doPrinter()">
+                                <i class="fa fa-print" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-envelope col-md-2" ng-click="doSendEmail()">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                            </button>
+                            {{#if isSaved}}
+                            <button type="button" id="btnSaveJob" class="btn btn-sm btn-plus-c col-md-2" ng-click="doSaveJob()">
+                                <i class="fa fa-heart" aria-hidden="true"></i>
+                            </button>
+                            {{else}}
+                            <button type="button" id="btnSaveJob" class="btn btn-sm btn-plus col-md-2" ng-click="doSaveJob()">
+                                <i class="fa fa-heart" aria-hidden="true"></i>
+                            </button>
+                            {{/if}}
+                        </div>-->
+                        <div id="share-buttons">
+                            <!-- Facebook -->
+                            <a href="http://www.facebook.com/sharer.php?u={{Config.RootUrl}}{{Config.Url}}" target="_blank">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/facebook.png" alt="Facebook" />
+                            </a>
+                            <!-- Google+ -->
+                            <a href="https://plus.google.com/share?url={{Config.RootUrl}}{{Config.Url}}" target="_blank">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/google.png" alt="Google" />
+                            </a>
+                            <!-- Twitter -->
+                            <a href="https://twitter.com/share?url={{Config.RootUrl}}{{Config.Url}}" target="_blank">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/twitter.png" alt="Twitter" />
+                            </a>
+                            <!-- Print -->
+                            <a href="" ng-click="doPrinter()">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/print.png" alt="Print" />
+                            </a>
+                            <!-- Email -->
+                            <a href="mailto:?Subject=Simple Share Buttons&amp;Body=I%20saw%20this%20and%20thought%20of%20you!%20 https://simplesharebuttons.com">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/email.png" alt="Email" />
+                            </a>
+                            <!-- Save Job -->
+                            {{#if isSaved}}
+                            <a ng-click="doSaveJob()" id="aJobSave" title="res:(Đã lưu)">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/hearted.png" id="imgJobSave" alt="Email" />
+                            </a>
+                            {{else}}
+                            <a ng-click="doSaveJob()" id="aJobSave" title="res:(Chưa lưu)">
+                                <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/heart.png" id="imgJobSave" alt="Email" />
+                            </a>
+                            {{/if}}
+                        </div>
+                        <div class="info-bottom col-md-12">
+                            <span class="pull-left">{{requisition.HitCount}} res:(lượt xem)</span>
+                            <span class="pull-right">res:(Đăng tuyển) {{dateFormatValue requisition.PublishDate 'dd/MM/yyyy'}}</span>
+                            {{#if requisition.TotalViewByCandidate}}
+                            <span class="pull-left">{{requisition.TotalViewByCandidate}} res:(ứng viên đã xem)</span>
+                            {{else}}
+                            <span class="pull-left">0 res:(ứng viên đã xem)</span>
+                            {{/if}}
+                            <br style="clear:both" />
+                            {{#ifCondNowDate requisition.ReceiveTo}}
+                                <span class="pull-left">res:(Đã hết hạn)</span>
+                            {{else}}
+                                <!--<span class="pull-left">res:(Thời hạn): {{humanizeDuration requisition.ReceiveTo Language.Current.Code}}</span>-->
+                                <span class="pull-left">res:(Ngày hết hạn): {{dateFormatValue requisition.ReceiveTo 'dd/MM/yyyy'}}</span>
+                            {{/ifCondNowDate}}
+                        </div>
+                    </div>
+                    {{/printMode}}
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12" style="padding: 0">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-9">
+                            
+                            <div class="col-xs-12 col-sm-12 col-md-12 box-info-job">
+								<div class="col-xs-12 col-sm-12 col-md-12">
+									{{#ifObj requisition.Description lang}}
+									<h3>
+										<i style="color: #00b9f2;" class="fa fa-check-circle"></i> res:(Mô tả chi tiết công việc)
+									</h3>
+									<div class="info-job">
+										<p>{{{getName requisition.Description}}}</p>
+										{{#if requisition.PhotoLink}}
+										<img src="{{Config.RootUrl}}photo/{{requisition.PhotoLink}}.png" style="width:100%" />
+										{{/if}}
+									</div>
+									{{/ifObj}}
+									{{#ifObj requisition.Requirements lang}}
+									<h3>
+										<i style="color: #00b9f2;" class="fa fa-check-circle"></i> res:(Yêu cầu)
+									</h3>
+									<div class="info-job">
+										<p>{{{getName requisition.Requirements}}}</p>
+										{{#if requisition.PhotoLink}}
+										<img src="{{Config.RootUrl}}photo/{{requisition.PhotoLink}}.png" style="width:100%" />
+										{{/if}}
+									</div>
+									{{/ifObj}}
+									{{#ifObj requisition.Skills lang}}
+									<h3>
+										<i style="color: #00b9f2;" class="fa fa-check-circle"></i> res:(Kỹ năng)
+									</h3>
+									<div class="info-job">
+										<p>{{{getName requisition.Skills}}}</p>
+									</div>
+									{{/ifObj}}
+									<h3>
+										<i style="color: #00b9f2;" class="fa fa-check-circle"></i> res:(Thông tin liên hệ)
+									</h3>
+									<div class="info-ct">
+										<p><span>res:(Nhận Hồ sơ bằng Ngôn ngữ):</span> res:({{getValueLang requisition.LanguageCV}}) </p>
+										<p><span>res:(Người liên hệ):</span> {{requisition.RecieverContact}} </p>
+										<p><span>res:(Địa chỉ Email nhận Hồ sơ):</span> {{requisition.RecieverEmail}} </p>
+										<p><span>res:(Hạn nộp hồ sơ):</span> {{dateFormatValueFull requisition.ReceiveTo 'DD/MM/YYYY'}} </p>
+									</div>
+									<h3>
+										<i style="color: #00b9f2;" class="fa fa-check-circle"></i> res:(Về công ty chúng tôi)
+									</h3>
+									<div class="info-ct">
+										{{{getName requisition.OverView}}}
+									</div>
+								</div>
+
+
+                                <!--<div class="col-xs-12 col-sm-12 col-md-4">
+                                    <div class="col-xs-12 boxtp info-career">
+                                        <h3 class="col-xs-12">Thông Tin Tuyển Dụng</h3>
+                                        <ul class="col-xs-12 info">
+                                            <li class="col-xs-12"><b class="col-xs-12 col-sm-5 col-md-5">Nơi làm việc</b> <span class="col-xs-12 col-sm-7 col-md-7"><a href="https://careerbuilder.vn/viec-lam/tay-ninh-l66-vi.html">Tây Ninh</a> </span></li>
+                                            <li class="col-xs-12"><b class="col-xs-12 col-sm-5 col-md-5">Cấp bậc</b> <span class="col-xs-12 col-sm-7 col-md-7">Nhân viên</span></li>
+                                            <li class="col-xs-12">
+                                                <b class="col-xs-12 col-sm-5 col-md-5">Lương</b> <span class="col-xs-12 col-sm-7 col-md-7">
+                                                    20,000,000 - 28,000,000 VND
+                                                </span>
+                                            </li>
+                                            <li class="col-xs-12"><b class="col-xs-12 col-sm-5 col-md-5">Hết hạn nộp</b> <span class="col-xs-12 col-sm-7 col-md-7">07/02/2018</span></li>
+                                            <li class="col-xs-12"><b class="col-xs-12 col-sm-5 col-md-5">Ngành nghề</b> <span class="col-xs-12 col-sm-7 col-md-7"><a href="https://careerbuilder.vn/viec-lam/tiep-thi-marketing-c4-vi.html">Tiếp thị / Marketing</a>, <a href="https://careerbuilder.vn/viec-lam/ban-hang-kinh-doanh-c31-vi.html">Bán hàng / Kinh doanh</a>, <a href="https://careerbuilder.vn/viec-lam/tiep-thi-truc-tuyen-c37-vi.html">Tiếp thị trực tuyến</a></span></li>
+                                        </ul>
+                                    </div>
+                                </div>-->
+
+
+                                <!--<div class="col-xs-12 col-sm-12 col-md-12">
+                                    <h2 style="color: #00b9f2;">
+                                        res:(Về công ty chúng tôi)
+                                    </h2>
+                                    <div class="info-ct">
+                                        {{{getName requisition.OverView}}}
+                                    </div>
+                                </div>-->
+
+                            </div>
+                            
+                        </div>
+                        {{^printMode}}
+                        <div class="col-xs-12 col-sm-12 col-md-3 box-body-right">
+                            <div class="item-job">
+                                <h2 style="color: #00b9f2;">res:(Công việc tương tự)</h2>
+                            </div>
+                            <div class="col-sm-12 item-job-list">
+                                <ul class="list">
+                                    {{#if dataSameJobs}}
+                                        {{#each dataSameJobs}}
+                                        <li class="col-md-6">
+                                            <p class="item-job-list-title">
+                                                <a target="_blank" title="{{JobTitle}}" href="{{Config.RootUrl}}/job/{{RecruiterCode}}/{{GroupCode}}/{{JobCode}}/{{_id}}">
+                                                    {{JobTitle}}
+                                                </a>
+                                            </p>
+                                            <div class="item-job-list-align-center logocompany">
+                                                <table width="100%" cellspacing="0" cellpadding="0" height="100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <a target="_blank" href="{{Config.RootUrl}}/job/{{RecruiterCode}}/{{GroupCode}}/{{JobCode}}/{{_id}}">
+                                                                    <img alt="{{JobTitle}}"
+                                                                         src="{{Config.RootUrl}}/Photo/Logo/{{RecruiterCode}}.png">
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <p class="item-job-list-company">
+                                                <a href="{{Config.RootUrl}}/{{CandidateSite}}" title="{{RecruiterName}}">
+                                                    {{RecruiterName}}
+                                                </a>
+                                            </p>
+                                            <p class="item-job-list-location">
+                                                res:(Địa điểm):
+                                                <a href="#" title="{{getArrLocationByLang Locations Language.Current.Code}}">
+                                                    {{getArrLocationByLang Locations Language.Current.Code}}
+                                                </a>
+                                            </p>
+                                            {{#ifCondi SalaryType 2}}
+                                            <p class="item-job-list-salary">
+                                                res:(Lương): <span>res:(Cạnh tranh)</span>
+                                            </p>
+                                            {{/ifCondi}}
+                                            {{#ifCondi SalaryType 0}}
+                                            <p class="item-job-list-salary">
+                                                res:(Lương): <span>res:(Thỏa thuận)</span>
+                                            </p>
+                                            {{/ifCondi}}
+                                            {{#ifCondi SalaryType 1}}
+                                            <p class="item-job-list-salary">
+                                                res:(Lương): <span>{{formatSalary Salary}} VND</span>
+                                            </p>
+                                            {{/ifCondi}}
+                                        </li>
+                                        {{/each}}
+                                    {{else}}
+                                        <li class="col-md-6">
+                                            <p>res:(Không có dữ liệu)</p>
+                                        </li>
+                                    {{/if}}
+                                </ul>
+                            </div>
+                        </div>
+                        {{/printMode}}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    {{^printMode}}
+    <render>commons/footer.html</render>
+    {{/printMode}}
+</body>
+</html>

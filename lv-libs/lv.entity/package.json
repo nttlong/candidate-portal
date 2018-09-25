@@ -1,0 +1,16 @@
+{
+  "name": "lv.entity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nttlong",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^2.2.31",
+    "mathjs": "^3.16.5",
+    "lv.logs": "./../lv.logs"
+  }
+}

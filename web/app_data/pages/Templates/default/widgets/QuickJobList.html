@@ -1,0 +1,140 @@
+﻿
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/node.portal.candidate",
+        "./../modules/lv.model",
+        (utils, portal, models, page) => {
+            utils.debug();
+            page.onLoad = (event) => {
+                utils._try(() => {
+                    var pageIndex = (event.req.routeParams) ? (event.req.routeParams["page-index"] || 0) : 0;
+                    var pageSize = 30;
+                    event.setModel("pageIndex", pageIndex);
+                    event.setModel("pageSize", pageSize);
+                    utils.paralellCaller()
+						.call(emit => {
+                            models.ls_requisition()
+                                .where("(ReceiveTo>=date)and(IsPublished==_ispub)and((IsLocked==islock)or(IsLocked==_islock))", {
+                                    date: new Date(),
+                                    _ispub: true,
+                                    islock: null,
+                                    _islock: false
+                                })
+                                
+                                .lookup("ls_recruiters", "RecruiterId", "_id", "recruiter")
+                                .unwind("recruiter")
+                                .sort("PublishDate",-1)
+                                .select({
+                                    JobName: "Job.JobName",
+                                    JobGroupName:"Job.GroupName",
+                                    RecruiterName: "recruiter.RecruiterName",
+                                    JobCode: "Job.JobCode",
+                                    IsHot: 1,
+                                    GroupCode: "Job.GroupCode",
+                                    RecruiterCode: "recruiter.RecruiterCode",
+                                    NumOfStaff: 1,
+                                    JobTitle:1,
+                                    ReceiveTo: 1
+                                })
+                                .skip(pageIndex * pageSize)
+                                .limit(pageSize)
+                                .toArray((err, list) => {
+                                    event.setModel("data.items", list);
+                                    emit(err);
+                                })
+                        })
+                        .call(emit => {
+                            models.ls_requisition()
+                                .where("(ReceiveTo>=date)and(IsPublished==_ispub)and((IsLocked==islock)or(IsLocked==_islock))", {
+                                    date: new Date(),
+                                    _ispub: true,
+                                    islock: null,
+                                    _islock: false
+                                })
+                                .count((err, total) => {
+                                    event.setModel("TotalItems", total);
+                                    emit(err);
+                                })
+                        })
+                        .call(emit => {
+                            models.ls_requisition().count((err, result) => {
+                                var pager = utils.createPager(5, ret.total, 50, pageIndex);
+                                event.setModel("data.pager", pager);
+                                emit(err);
+                            })
+                        })
+                        .done(err => {
+                            event.done(err);
+                        })
+
+
+
+                    //portal.getListOfTopRequistion(50, 0,  (err, result) => {
+                    //    if (err) event.done(err);
+                    //    else {
+                    //        utils._try(() => {
+                    //            portal.getTotalRequisition((err, ret) => {
+                    //                if (err) event.done(err);
+                    //                else {
+                    //                    event.setModel("data.items", result);
+                    //                    var pageIndex = (event.req.routeParams) ? (event.req.routeParams["page-index"] || 0) : 0;
+                    //                    var pager = utils.createPager(5, ret.total, 50, pageIndex);
+                    //                    event.setModel("data.pager", pager);
+                    //                    event.done();
+                    //                }
+                    //            });
+                    //        }, event)
+
+
+                    //    }
+                    //});
+                }, event);
+            }
+        }
+    ]
+</script>
+<div class="lv-list-job">
+    <div class="lv-header">res:(Việc làm đang tuyển)</div>
+    <div class="lv-content lv-custom-scrollbar">
+        <ul>
+            {{#each data.items}}
+            <li class="job-item" title="{{getName JobName}} - {{RecruiterName}}" style="min-height:90px">
+                <a href="{{../Config.RootUrl}}job/{{RecruiterCode}}/{{_id}}">
+                    {{#if IsHot}}
+                    <span class="job-score"><span class="label label-danger" style="font-size: 65%;">res:(HOT)</span></span>
+                    {{else}}
+                    <span class="job-score"><span class="label label-default" style="font-size: 65%;">res:(NEW)</span></span>
+                    {{/if}}
+                    <span class="job-title">
+                        <strong>{{JobTitle}}</strong><br />
+                        <i class="text-clip">{{getName JobName}}</i>
+                        <em class="text-clip">{{RecruiterName}}</em>
+                    </span>
+                </a>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="lv-paginator">
+        <!--<nav>
+            <ul class="pagination">
+                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                {{#each data.pager.pagers}}
+                <li class="page-indicator" data-page-id="{{index}}"><a href="{{../Config.RootUrl}}home/{{index}}">{{caption}} <span class="sr-only"></span></a></li>
+                {{/each}}
+                <li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+            </ul>
+        </nav>-->
+        <nav c-pager-link totalItem="{{TotalItems}}" pageSize="{{pageSize}}" pagerIndex="{{pageIndex}}" numberShow="5" urlConfig="{{Config.RootUrl}}">
+
+        </nav>
+    </div>
+    <script>
+        var pageIndex = "{{{data.pager.pageIndex}}}";
+        $(document).ready(function () {
+            $("[data-page-id='" + pageIndex + "']").addClass("active");
+        })
+    </script>
+
+</div>
+

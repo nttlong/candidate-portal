@@ -1,0 +1,443 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(Cổng thông tin việc làm của ứng viên)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+   
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_home.min.css" rel="stylesheet" />
+    
+
+</head>
+<body>
+    <render>../commons/navbar.html</render>
+    <div class="slider-home">
+        <div style="overflow-y: auto; overflow-x: hidden;overflow:hidden">
+            <div id="sliderContentMin" class="row hcs-home-panel-group-container" style="margin-bottom: 1.5rem; display: none;">
+                <div class="hcs-home-panel-group">
+                    <div class="hcs-home-heading">
+                        <a href="javascript:void(0)" class="hcs-home-heading-collapse hcs-home-list-news-caption" ng-click="expandSlider()">
+                            <span class="pull-left hcs-home-heading-icon">
+                                <i class="glyphicon glyphicon-menu-down" style="visibility: hidden;"></i>
+                            </span>
+                            <span>{{$currentSlide.Caption_1}}</span>
+                            <span class="hcs-caption-bold">{{$currentSlide.Caption_2}}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div id="sliderContentFull" class="hcs-home-slide-background">
+                <!--<div class="hcs-home-portal-carousel">
+
+                    <div class="hcs-home-portal-carousel-buttons hcs-home-tile-group">
+                        <a id="hcsCarouselButtonPrev" href="#">
+                            <span class="ace-icon glyphicon glyphicon-menu-left"></span>
+                        </a>
+                        <a id="hcsCarouselButtonNext" href="#">
+                            <span class="ace-icon glyphicon glyphicon-menu-right"></span>
+                        </a>
+                    </div>
+
+                    
+                </div>
+                <a class="collapse-button" href="javascript:void(0)" ng-click="collapseSlider()">
+                    <span class="ace-icon glyphicon glyphicon-menu-up"></span>
+                </a>-->
+            </div>
+        </div>
+    </div>
+    <div class="hcs-home-panel-group-container">
+        <div class="hcs-home-panel-group">
+            <div class="hcs-home-tile-group">
+                <a class="hcs-tile-container col-lg-3 col-xs-6" href="{{Config.RootUrl}}/candidate/myapply">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div class="hcs-title-background"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My Apply)</span>
+                                <!--<span class="hcs-tile-caption hcs-tile-caption-break">Caption2</span>-->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 hcs-tile-descreption">
+                                <!--<span class="hcs-tile-description">Description</span>-->
+                                <span>res:(Các vị trí công việc bạn đã ứng tuyển.)</span>
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">{{data.AppliedCount}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="hcs-tile-container col-lg-3 col-xs-6" href="{{Config.RootUrl}}/candidate/myresume">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div class="hcs-title-background"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My Resume)</span>
+                                <!--<span class="hcs-tile-caption hcs-tile-caption-break">Caption2</span>-->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 hcs-tile-descreption">
+                                <!--<span class="hcs-tile-description">Description</span>-->
+                                <span>res:(Hồ sơ của bạn để nhà tuyển dụng tham khảo.)</span>
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <!--<span class="hcs-tile-number">{{data.RecruiterReviewsCount}}</span>-->
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="hcs-tile-container col-lg-3 col-xs-6" href="{{Config.RootUrl}}/candidate/myinterview">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div class="hcs-title-background"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My Interview)</span>
+                                <!--<span class="hcs-tile-caption hcs-tile-caption-break">Caption2</span>-->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 hcs-tile-descreption">
+                                <!--<span class="hcs-tile-description">Description</span>-->
+                                <span>res:(Lịch phỏng vấn của bạn từ các nhà tuyển dụng.)</span>
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">{{data.InterViewCount}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <a class="hcs-tile-container col-lg-3 col-xs-6" href="{{Config.RootUrl}}candidate/myjobsave">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div class="hcs-title-background"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(Job save)</span>
+                                <!--<span class="hcs-tile-caption hcs-tile-caption-break">Caption2</span>-->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 hcs-tile-descreption">
+                                <!--<span class="hcs-tile-description">Description</span>-->
+                                <span>res:(Các vị trí công việc mà bạn thích nhưng chưa dự tuyển)</span>
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">{{data.SaveCount}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!--<a class="hcs-tile-container" href="{{Config.RootUrl}}candidate/myresume">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div style="background: url(../resources/images/world_template.png);background-position: center;background-repeat: no-repeat;background-size: contain;width: 100%;height: 100%;position: absolute;margin: -15px;opacity:0.3;"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My resume)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">{{data.RecruiterReviewsCount}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a class="hcs-tile-container" href="{{Config.RootUrl}}candidate/myinterview">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div style="background: url(../resources/images/world_template.png);background-position: center;background-repeat: no-repeat;background-size: contain;width: 100%;height: 100%;position: absolute;margin: -15px;opacity:0.3;"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My interview)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">{{data.InterViewCount}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>-->
+                <!--<a class="hcs-tile-container" href="{{Config.RootUrl}}candidate/myoffer">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div style="background: url(../resources/images/world_template.png);background-position: center;background-repeat: no-repeat;background-size: contain;width: 100%;height: 100%;position: absolute;margin: -15px;opacity:0.3;"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My offer)</span>
+                               
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                               
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>-->
+                <!--<a class="hcs-tile-container" href="{{Config.RootUrl}}candidate/myjobsave">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div style="background: url(../resources/images/world_template.png);background-position: center;background-repeat: no-repeat;background-size: contain;width: 100%;height: 100%;position: absolute;margin: -15px;opacity:0.3;"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(Job save)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>-->
+                <!--<a class="hcs-tile-container" href="{{Config.RootUrl}}candidate/mydocument">
+                    <div class="hcs-tile-3 hcs-tile-style-top-1">
+                        <div style="background: url(../resources/images/world_template.png);background-position: center;background-repeat: no-repeat;background-size: contain;width: 100%;height: 100%;position: absolute;margin: -15px;opacity:0.3;"></div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-caption">res:(My document)</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                            </div>
+                        </div>
+                        <div class="row hcs-tile-footer">
+                            <div class="col-xs-12">
+                                <span class="hcs-tile-icon">
+                                    <i class="ace-icon"></i>
+                                </span>
+                                <span class="hcs-tile-navigation">
+                                    <i class="ace-icon glyphicon glyphicon-menu-right"></i>
+                                </span>
+                                <span class="hcs-tile-number">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>-->
+            </div>
+        </div>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.model",
+            "./../libs/lv.authenticate",
+            (utils, models, aut, page) => {
+                page.onLoad = (event) => {
+                    var user = aut.getUser(event.req);
+                    utils.paralellCaller()
+                        .call(emit => {
+                            try {
+                                models.ls_requisition()
+                                    .unwind("CandidateApplyList")
+                                    .where("(CandidateApplyList.CandidateEmail==Email)", user)
+                                 .toArray((err, list) => {
+                                        event.setModel("data.AppliedCount", list.length);
+                                      
+                                        emit(err);
+                                    });
+                                
+                            }
+                            catch (ex) {
+                                emit(ex);
+                            }
+                        })
+                        .call(emit => {
+                            try {
+                                models.ls_candidate()
+                                    .where("(UserEmail==Email)", user)
+                                    .unwind("RecruiterReviews")
+                                    
+                                    .toArray((err, list) => {
+                                        event.setModel("data.RecruiterReviewsCount", list.length);
+
+                                        emit(err);
+                                    });
+
+                            }
+                            catch (ex) {
+                                emit(ex);
+                            }
+                        })
+                        .call(emit => {
+                            try {
+                                models.ls_requisition()
+                                    .unwind("CandidateApplyList")
+                                    .where("(CandidateApplyList.CandidateEmail==Email)", user)
+                                    .unwind("CandidateApplyList.Tasks")
+                                    .where("CandidateApplyList.Tasks.IsInterview==isInterView", {isInterView:true})
+                                    .toArray((err, list) => {
+                                        event.setModel("data.InterViewCount", list.length);
+
+                                        emit(err);
+                                    });
+
+                            }
+                            catch (ex) {
+                                emit(ex);
+                            }
+                        })
+                        .call(emit => {
+                            try {
+                               models.ls_candidate()
+                                    .where("UserEmail==Email",user)
+                                   .unwind("RequistionSaveList")
+                                   .query()
+                                    .count((e, r) => {
+                                        event.setModel("data.SaveCount", r);
+
+                                        emit(e);
+                                    })
+                                    
+
+                            }
+                            catch (ex) {
+                                emit(ex);
+                            }
+                        })
+                        .done(err => {
+                            event.done(err);
+                        })
+                }
+            }
+        ]
+    </script>
+    <script>
+        setTimeout(function () {
+            function resizeTileGroup() {
+                var tileGroup = $(".hcs-home-tile-group");
+                var header = $(".hcs-home-heading");
+                var wd = $(window).width(); //30px padding-left/right
+                var wp = 0;
+                
+                //var wContent, pWidth;
+                //if (wd > 1137) {
+                //    wContent = 1120;
+                //    wp = 24;
+                //} else if (wd > 910) {
+                //    wContent = 876;
+                //    wp = 12;
+                //} else if (wd > 764) {
+                //    wContent = 620;
+                //    wp = 12;
+                //} else if (wd > 600) {
+                //    wContent = 577;
+                //    wp = 12;
+                //} else if (wd > 480) {
+                //    wContent = 480;
+                //    wp = 12;
+                //} else if (wd > 360) {
+                //    wContent = 350;
+                //    wp = 12;
+                //} else {
+                //    wContent = 293;
+                //    wp = 12;
+                //}
+                //console.log(wd, wp, wContent);
+                //pWidth = parseInt((wd - wContent - wp) / 2);
+                //pHeader = pWidth - 20;
+                //tileGroup.css({
+                //    "padding-left": pWidth + "px",
+                //    "padding-right": pWidth + "px"
+                //});
+                //header.css({
+                //    "padding-left": ((pHeader >= 10) ? pHeader : 10) + "px",
+                //    "padding-right": ((pHeader >= 10) ? pHeader : 10) + "px"
+                //});
+            }; resizeTileGroup();
+            function resizeContentSlider() {
+                var hWin = $(window).height();
+                var wWin = $(window).width();
+                var slider = $(".hcs-home-slide-background");
+
+                slider.css({
+                    height: (wWin * 730) / 1500,
+                    "max-height": hWin-200,
+                    "overflow-y":"hidden"
+                });
+            }; resizeContentSlider();
+            $(window).resize(function () {
+                resizeContentSlider();
+                resizeTileGroup();
+            });
+        }, 100);
+    </script>
+</body>
+</html>

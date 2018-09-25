@@ -1,0 +1,563 @@
+@media(min-width: 768px) {
+    .select2-drop {
+        border: 0;
+        border-radius: 0 !important;
+    }
+
+    .lv-search-wrapper {
+        margin: 20px 0;
+    }
+
+    .button-list-cat {
+        display: block;
+    }
+
+    .lv-button-list-cat {
+        display: none;
+    }
+
+    .lv-search-container {
+        height: 66px;
+        background: transparent;
+        position: relative;
+        top: 0;
+        left: 0;
+
+        .lv-search-widget {
+            border-radius: 0;
+            box-shadow: none;
+            background: @orange !important;
+            color: #fff;
+            padding: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+
+            h1 {
+                font-size: 18px;
+                font-weight: 400;
+                margin-top: 0;
+                margin-bottom: 10px;
+                text-align: left;
+            }
+
+            .break-title {
+                display: none;
+            }
+
+            .lv-search-controls {
+                height: 44px;
+            }
+
+            .lv-upload-profile {
+                width: 100%;
+                text-align: center;
+
+                a {
+                    height: 34px;
+                    line-height: 34px;
+                    font-size: 15px;
+                    cursor: pointer;
+                    opacity: 0.7;
+                    color: #fff;
+                    text-decoration: none;
+                }
+            }
+
+            .lv-upload-profile a:hover {
+                color: #e38008;
+                -webkit-transition: color 300ms linear;
+                -ms-transition: color 300ms linear;
+                transition: color 300ms linear;
+            }
+        }
+    }
+
+    .lv-dropdown-list {
+        margin-left: -12px;
+        margin-right: -6px;
+
+        span.lv-icon {
+            height: 44px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            padding: 0 10px;
+            line-height: 44px;
+            z-index: 2;
+            color: #666;
+            opacity: 0.5;
+            font-size: 20px;
+        }
+
+        .lv-search-list {
+            height: 44px;
+            background: #fff !important;
+
+            a {
+                height: 44px !important;
+                border-radius: 0 !important;
+                border: 0 !important;
+                background: #fff;
+                line-height: 44px !important;
+                font-size: 15px;
+                padding-left: 40px !important;
+            }
+
+            .select2-arrow {
+                background: transparent;
+                border: 0;
+                line-height: 44px;
+                padding-top: 7px;
+            }
+        }
+    }
+
+    .lv-search-box {
+        margin: 0 -6px 0 -12px;
+    }
+}
+
+@media(max-width: 767px) {
+    .lv-search-wrapper {
+        margin: 0;
+    }
+
+    .button-list-cat {
+        display: none;
+    }
+
+    .lv-button-list-cat {
+        display: block;
+    }
+
+    .lv-search-container {
+        height: 320px;
+        background: transparent;
+        position: relative;
+        top: 0;
+        left: 0;
+
+        .lv-search-widget {
+            box-shadow: none;
+            background: @orange;
+            color: #fff;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 20px 30px 30px 30px;
+
+            h1 {
+                font-size: 24px;
+                font-weight: 100;
+                margin-top: 30px;
+                line-height: 30px;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+
+            .break-title {
+                display: block;
+            }
+
+            .lv-search-controls {
+                > form {
+                    > div.lv-control {
+                        margin: 10px 0;
+                        padding: 0;
+
+                        input,
+                        button {
+                            border-radius: 0;
+                        }
+                    }
+                }
+            }
+
+            .lv-upload-profile {
+                width: 100%;
+                text-align: center;
+
+                a {
+                    height: 34px;
+                    line-height: 34px;
+                    font-size: 15px;
+                    cursor: pointer;
+                    opacity: 0.7;
+                    color: #fff;
+                    text-decoration: none;
+                }
+            }
+
+            .lv-upload-profile a:hover {
+                color: #e38008;
+                -webkit-transition: color 300ms linear;
+                -ms-transition: color 300ms linear;
+                transition: color 300ms linear;
+            }
+        }
+
+        .lv-search {
+            margin: 0px -15px;
+            /*> div:last-child {
+                margin-top: 12px;
+            }*/
+        }
+
+        .lv-button-list-cat {
+            background: transparent;
+            color: #fff;
+            height: 44px;
+            position: relative;
+            margin-left: -12px;
+            margin-right: -12px;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+
+            > a {
+                width: 100%;
+                height: 100%;
+                background: transparent;
+                border: 0;
+                color: #fff;
+            }
+
+            > a:hover {
+                text-decoration: none;
+                background: @orange-dark;
+            }
+        }
+    }
+
+    .lv-dropdown-list {
+        margin: 10px 0;
+
+        span.lv-icon {
+            height: 44px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            line-height: 44px;
+            z-index: 2;
+            color: #666;
+            opacity: 0.5;
+            font-size: 20px;
+        }
+
+        .lv-search-list {
+            height: 44px;
+            background: #fff !important;
+
+            a {
+                height: 44px !important;
+                border-radius: 0 !important;
+                border: 0 !important;
+                margin-left: -12px;
+                margin-right: -12px;
+                background: #fff;
+                line-height: 44px !important;
+                font-size: 15px;
+                padding-left: 40px !important;
+            }
+
+            .select2-arrow {
+                background: transparent;
+                border: 0;
+                line-height: 44px;
+                padding-top: 7px;
+            }
+        }
+    }
+
+    .lv-search-box {
+        margin: 10px -12px;
+    }
+}
+
+.lv-search-box {
+    height: 44px;
+    position: relative;
+
+    .input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 44px;
+        width: 100%;
+        padding: 10px 30px 10px 40px;
+        border: 0;
+        font-size: 15px; // border-radius: 2px;
+        color: #333;
+        z-index: 1;
+        text-overflow: ellipsis;
+    }
+
+    span {
+        color: #666;
+        opacity: 0.5;
+    }
+
+    .icon-search {
+        position: absolute;
+        left: 0;
+        height: 44px;
+        width: 40px;
+        z-index: 2;
+        font-size: 20px;
+        line-height: 40px;
+        padding: 0 8px;
+    }
+
+    .icon-remove {
+        position: absolute;
+        right: 0;
+        height: 44px;
+        width: 30px;
+        z-index: 2;
+        font-size: 13px;
+        line-height: 44px;
+        padding: 0 8px;
+        display: none;
+        cursor: pointer;
+    }
+}
+
+.lv-search-box.has-text {
+    .icon-remove {
+        display: block;
+    }
+}
+
+.lv-button-search {
+    background: @orange;
+    color: #fff;
+    border: 2px solid #fff;
+    height: 44px;
+    position: relative;
+    margin-left: -12px;
+    margin-right: -12px;
+    font-size: 16px;
+    font-weight: 500;
+
+    .btn-search {
+        background: @blue;
+        border: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 18px;
+    }
+}
+
+.button-list-cat {
+    height: 44px;
+    color: #fff;
+    font-size: 20px;
+    line-height: 44px;
+    text-align: center;
+}
+
+.lv-result-search {
+    background: #eaf8fc;
+
+    > .search-header {
+        height: 68px;
+        width: 100%;
+        background: #fff;
+        border-bottom: 1px solid #eceff1;
+        padding: 15px 30px;
+        line-height: 38px;
+
+        .title-count {
+            font-size: 20px;
+            color: #333;
+            opacity: 0.8;
+        }
+
+        .title-sort {
+            font-size: 14px;
+            color: #333;
+            opacity: 0.8;
+
+            > span {
+                padding: 0 3px;
+            }
+
+            > span.lv-tab {
+                cursor: pointer;
+            }
+
+            > span.lv-tab.selected {
+                font-weight: bold;
+            }
+        }
+    }
+
+    > .search-content {
+        .list-item {
+            padding: 10px;
+            display: flex;
+            border-bottom: 1px solid #eceff1;
+
+            .item-icon {
+                //width: 100px;
+                margin: auto;
+
+                .logo-photo {
+                    padding: 0 10px;
+                    width: 86px;
+                    height: 64px;
+                }
+            }
+
+            .item-info {
+                width: calc(~'100% - 100px');
+
+                .job-name {
+                    font-size: 20px;
+                    color: @blue;
+                    cursor: pointer;
+                    font-weight: 500;
+                    display: block;
+                    padding: 3px;
+                }
+
+                .job-name:hover {
+                    text-decoration: none;
+                    color: @orange;
+                    -webkit-transition: color 300ms linear;
+                    -ms-transition: color 300ms linear;
+                    transition: color 300ms linear;
+                }
+
+                .lv-title-job-item {
+                    display: inline-flex;
+
+                    .lv-span-hot {
+                        color: #ff1919;
+                        font-weight: 400;
+                        font-style: italic;
+                        font-size: 11px;
+                        line-height: 10px;
+                        position: relative;
+                        top: 10px;
+                        left: 5px;
+                    }
+                }
+
+                .job-company {
+                    font-size: 15px;
+                    color: #555;
+                    cursor: pointer;
+                    font-weight: 500;
+                    display: block;
+                    padding: 3px;
+
+                    .sm-text {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                    }
+
+                    span {
+                        color: #aaa;
+                    }
+                }
+
+                .job-salary {
+                    font-size: 15px;
+                    display: block;
+                    padding: 3px;
+
+                    .salary {
+                        color: @orange;
+                    }
+
+                    .sm-text {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                    }
+
+                    span {
+                        color: #aaa;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.lv-search-content {
+    padding-bottom: 20px;
+}
+
+.lv-main-footer {
+    border-top: 1px solid #d5d5d5;
+    background: #e2e2e2;
+    padding: 15px 0 30px 0;
+    width: 100%;
+    font-size: 15px;
+
+    p.title {
+        font-weight: bold;
+        font-size: 17px;
+        color: #555;
+        opacity: 0.9;
+    }
+
+    a {
+        font-size: 15px;
+        color: #555;
+        opacity: 0.8;
+    }
+
+    a:hover {
+        text-decoration: none;
+        color: #e38008;
+        -webkit-transition: color 300ms linear;
+        -ms-transition: color 300ms linear;
+        transition: color 300ms linear;
+    }
+
+    hr {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border: 0;
+        border-top: 1px solid #ddd;
+    }
+}
+
+.lv-button-go-top {
+    position: fixed;
+    bottom: 25px;
+    right: 5px;
+
+    .go-top {
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+
+        a {
+            height: 30px;
+            line-height: 30px;
+
+            i {
+                background: #666;
+                opacity: 0.1;
+                border-radius: 30px;
+            }
+
+            i:hover {
+                background: #e38008;
+                opacity: 0.7;
+                border-radius: 30px;
+                -webkit-transition: opacity 300ms linear;
+                -ms-transition: opacity 300ms linear;
+                transition: opacity 300ms linear;
+            }
+        }
+    }
+}

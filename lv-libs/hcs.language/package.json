@@ -1,0 +1,21 @@
+{
+  "name": "hcs.language",
+  "version": "1.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nttlong",
+  "license": "ISC",
+  "dependencies": {
+    "async-lock": "^1.1.0",
+    "hcs.cache": "./../hcs.cache",
+    "sync": "^0.2.5"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "hcs.language"
+  },
+  "description": ""
+}

@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(Danh sách công việc)</title>
+    <render>commons/header.html</render>
+    <link href="{{Config.RootUrl}}Content/css/select2.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/select2.min.js"></script>
+    <link href="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/css/main_findjob.min.css" rel="stylesheet" />
+</head>
+<body class="lv-background-gray">
+    <render>commons/navbar.html</render>
+    <div class="lv-search-wrapper">
+        <render>commons/SearchBox_Job.html</render>
+    </div>
+    <div class="container-fluid lv-search-content">
+        <div class="row">
+            <div class="col-sm-3 sm-col-padding">
+                <div class="lv-background-white lv-left-menu-search desktop-xs">
+                    <render>widgets/Job_FilterConditions.html</render>
+                </div>
+                <div class="lv-background-white lv-left-nav-search tablet-xs">
+                    <div class="col-xs-3 filter-icon" data-toggle="modal" data-target="#lvFilterConfition">
+                        <i class="glyphicon glyphicon-filter"></i>
+                    </div>
+                    <div class="modal fade" id="lvFilterConfition" role="dialog">
+                        <div class="lv-menu-top-tablet modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <span>res:(Lọc theo)</span>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <render>widgets/Job_FilterConditions.html</render>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3 filter-icon" data-toggle="modal" data-target="#lvFilterBy">
+                        <i class="glyphicon glyphicon-sort"></i>
+                    </div>
+                    <div class="modal fade" id="lvFilterBy" role="dialog">
+                        <div class="lv-menu-top-tablet modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <span>res:(Xếp theo)</span>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul>
+                                        <li>
+                                            <a href="#" id="mb-sort-by-date">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                                <span class="chosen-language">res:(Ngày)</span>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="#" id="mb-sort-by-salary">
+                                                <i class="glyphicon glyphicon-bitcoin"></i>
+                                                <span>res:(Lương)</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9 sm-col-padding">
+                <render>widgets/SearchResult.html</render>
+            </div>
+        </div>
+    </div>
+    <render>commons/footer.html</render>
+    <script>
+        $(".panel-body>.group>.header").bind("click", function () {
+            $(this).parent().toggleClass("hide-body");
+        });
+        $(document).ready(function () {
+            $("#mb-sort-by-date").attr("href", $("#sort-by-date").attr("href"));
+            $("#mb-sort-by-salary").attr("href", $("#sort-by-salary").attr("href"));
+        });
+    </script>
+</body>
+</html>

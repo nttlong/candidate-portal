@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>page-caption:(Sure hcs Candidate Portal developers)</title>
+    <render>header.html</render>
+</head>
+<body>
+    <render>navbar.html</render>
+    <div class="container" id="app">
+        <style>
+            input[readonly="readonly"] {
+                background-color: #fff !important;
+            }
+        </style>
+        <form role="form">
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">ID</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" value="{{{data.ID}}}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">Code</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" value="{{{data.Code}}}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" value="{{{data.Name}}}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">App Id</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" value="{{{data.AppId}}}">
+                </div>
+            </div>
+            
+        </form>
+        <section>
+            <h1>
+                <a href="{{{Config.RootUrl}}}developer/api_list">res:(API list)</a>
+            </h1>
+        </section>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.account",
+            "./../modules/lv.model",
+            "./../libs/lv.authenticate",
+            (utils, acc, models,aut, page) => {
+                page.onLoad = (event) => {
+					utils._try(() => {
+                        var recruiter = acc.getRecruiter.sync(null, event);
+                        if (!recruiter.ClientEndPointService) {
+                            recruiter.ClientEndPointService = {
+                                AppId: utils.sha(utils.newGuid()),
+                                AccessToken: utils.sha(utils.newGuid()),
+                            }
+							models.ls_recruiters()
+                                .where("_id==Email", recruiter._id)
+                                .set("ClientEndPointService", recruiter.ClientEndPointService)
+                                .commit.sync();
+                        }
+                        event.setModel("data", {
+                            ID: recruiter._id,
+                            Code: recruiter.RecruiterCode,
+                            Name: recruiter.RecruiterName,
+                            AppId: recruiter.ClientEndPointService.AppId
+                        });
+                        event.done();
+                    }, event);
+                }
+            }]
+    </script>
+</body>
+</html>

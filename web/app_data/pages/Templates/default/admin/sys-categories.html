@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>
+                            res:(Name)
+                        </th>
+                        <th>
+                            res:(Caption)
+                        </th>
+                        <th>
+                            res:(Description)
+                        </th>
+                        <th>
+                            res:(Created by)
+                        </th>
+                        <th>
+                            res:(Created on)
+                        </th>
+                        <th>
+                            res:(Modified by)
+                        </th>
+                        <th>
+                            res:(Modified on)
+                        </th>
+                        <th class="text-center">
+                            <a href="#view=sys-category" class="admin-button-add">
+                                <i class="glyphicon glyphicon-plus"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in items">
+                        <td>
+                            ${item.Name}
+                        </td>
+                        <td>
+                            ${item.Caption}
+                        </td>
+                        <td>
+                            ${item.Description}
+                        </td>
+                        <td>
+                            ${item.CreatedBy}
+                        </td>
+                        <td>
+                            ${dateFormat(item.CreatedOn)}
+                        </td>
+                        <td>
+                            ${item.ModifiedBy}
+                        </td>
+                        <td>
+                            ${dateFormat(item.ModifiedOn)}
+                        </td>
+                        <td class="text-center" style="width: 40px;">
+                            <a href="#view=sys-category&id=${getText(item._id)}" class="admin-button-edit">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.model",
+            (utils, models, page) => {
+                page.doGetExportLink = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var ret = models.sys_export_token()
+                            .insert({
+                                Type: "excel",
+                                Source: "sys_categories",
+                                Language: clientData.language,
+                                FileName: clientData.fileName,
+                                Operators: JSON.stringify([{$unwind:"$children"}])
+                            }).commit.sync();
+                        utils.writeData(event, { id: ret._id });
+                        event.done();
+
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+        (app=> {
+            app.getText = (obj) => {
+                if (obj["$oid"]) return obj["$oid"];
+                else return obj;
+            }
+            app.items = [];
+            var ajax = "ajax.store.st_admin_load_sys_categories";
+            app.doLoadData = () => {
+                ajax
+                    .data({ language: window.currentLanguage })
+                    .done(res=> {
+                        
+                        app.items = res.items;
+                        app.$applyAsync();
+                    });
+            }
+            app.$doExport = function () {
+
+                dialog(app).url("dialogs/download-excel").done(function (s) {
+                    s.data.FileName = app.$root.$history.data().category;
+                    s.onSubmit(function (sender) {
+                        app.doGetLinkExport(sender.data.FileName, s);
+                    })
+                });
+            }
+            app.doGetLinkExport = function (fileName, dialogScope) {
+                var a = "server.page://doGetExportLink";
+                a.data({
+                    category: app.$root.$history.data().category,
+                    language: window.currentLanguage,
+                    fileName: fileName
+                }).done(function (res) {
+                    dialogScope.token = res.id;
+                    dialogScope.$apply();
+                })
+            }
+            app.doLoadData();
+        });
+    </script>
+</body>
+</html>

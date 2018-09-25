@@ -1,0 +1,314 @@
+@import "main_site/variables";
+
+.lv-horizontal-navbar {
+    margin-bottom: 0;
+    height: 60px;
+    border: none;
+    border-bottom: 1px #e5e5e5 solid;
+    border-radius: 0;
+    background: #fff;
+
+    .navbar-container {
+        margin: 0;
+        padding: 0 5px;
+
+        .navbar-logo {
+            height: 60px;
+            float: left;
+            position: relative;
+
+            .img-logo {
+                height: 60px;
+                position: absolute;
+                margin: 0 60px 0 20px;
+
+                > img {
+                    margin: 10px 0;
+                }
+            }
+
+            .img-tablet-logo {
+                height: 60px;
+                position: absolute;
+                padding: 0 15px;
+                border-right: 1px solid #F5F5F5;
+
+                > img {
+                    margin: 12px 0 8px 0;
+                    height: 40px;
+                }
+            }
+        }
+
+        .navbar-menu-right {
+            float: right !important;
+            margin-right: -5px;
+
+            .button-search {
+                padding-right: 20px;
+                border-right: 1px #ccc solid;
+                display: inline-block;
+                color: #00b9f2;
+                padding: 0 15px;
+                margin: 11px 15px 11px 0;
+            }
+
+            > li:not(.employer-site) > a:hover,
+            > li:not(.employer-site) > a:focus {
+                background: #fff !important;
+            }
+        }
+
+        .navbar-menu-tablet-right {
+            float: right !important;
+            height: 60px;
+            margin: 0;
+
+            > li {
+                float: right;
+
+                > a:hover,
+                > a:focus {
+                    background: #fff !important;
+                }
+            }
+
+            .button-tablet {
+                padding-right: 20px;
+                display: inline-block;
+                color: #6f6f6f;
+                padding: 0 15px;
+                margin: 11px 0;
+                border: 0 !important;
+            }
+
+            .button-tablet:hover {
+                border: 0 !important;
+                color: #e38008;
+                -webkit-transition: color 300ms linear;
+                -ms-transition: color 300ms linear;
+                transition: color 300ms linear;
+            }
+
+            .button-tablet:focus {
+                border: 0 !important;
+            }
+        }
+
+        .glyphicon {
+            margin-top: 5px;
+            font-size: 21px;
+        }
+    }
+
+    .navbar-nav {
+        > li:not(.employer-site) {
+            height: 60px;
+
+            > a {
+                color: #888;
+                line-height: 28px;
+                font-size: 15px;
+            }
+
+            > a.lv-flag {
+                margin: 10px;
+                border-left: 1px solid #ccc;
+                padding: 5px 5px 5px 25px;
+            }
+        }
+    }
+
+    .employer-site {
+        height: 60px;
+        -webkit-transition: background-color .3s;
+        transition: background-color .3s;
+
+        > a {
+            height: 60px;
+            padding: 10px 15px;
+            line-height: 20px !important;
+            background: @orange;
+            font-size: 14px;
+
+            > strong {
+                color: #fff;
+                text-transform: uppercase;
+            }
+
+            > span {
+                color: #00648f;
+                font-size: 13px;
+            }
+        }
+
+        > a:hover, a:focus {
+            background: #eda219 !important;
+        }
+    }
+
+    .lv-nation-flag {
+        height: 15px;
+        width: 25px;
+        margin-top: 8px;
+    }
+}
+
+.lv-menu-top-tablet {
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+
+    .modal-content {
+        height: 100%;
+        border-radius: 0;
+
+        .modal-header {
+            button {
+                font-size: 25px;
+            }
+        }
+
+        .modal-body {
+            padding: 0 !important;
+
+            ul {
+                list-style: none !important;
+                padding: 0;
+
+                li:not(.employer-site):not(.link-user) {
+                    height: 55px;
+                    padding: 15px 15px 15px 20px;
+                    border-bottom: 1px solid #e5e5e5;
+                    font-size: 15px;
+
+                    a {
+                        color: #555;
+
+                        span {
+                            padding-left: 10px;
+                        }
+                    }
+
+                    a:hover,
+                    a:focus {
+                        text-decoration: none;
+                        color: #e38008;
+                        -webkit-transition: color 300ms linear;
+                        -ms-transition: color 300ms linear;
+                        transition: color 300ms linear;
+                    }
+                }
+
+                li.link-user {
+                    height: 100px;
+                    border-bottom: 1px solid #e5e5e5;
+                    padding: 15px 15px;
+
+                    > .user-fullname {
+                        clear: both;
+                        float: left;
+                        text-transform: uppercase;
+                    }
+
+                    > a {
+                        padding: 0;
+
+                        > .view-user-info {
+                            float: left;
+                            clear: both;
+                            padding: 10px 20px;
+                            margin: 10px 0;
+                            background: @blue;
+                            color: #fff;
+                            border-radius: 4px;
+                        }
+                    }
+                }
+
+                li.employer-site {
+                    height: 72px;
+                    -webkit-transition: background-color .3s !important;
+                    transition: background-color .3s !important;
+
+                    > a {
+                        height: 72px;
+                        width: 100%;
+                        padding: 15px 15px 15px 60px;
+                        line-height: 20px !important;
+                        background: @orange;
+                        font-size: 14px;
+                        position: absolute;
+
+                        > strong {
+                            color: #fff;
+                        }
+
+                        > span {
+                            color: #00648f;
+                            font-size: 13px;
+                        }
+                    }
+
+                    > a:hover {
+                        text-decoration: none;
+                        background: #eda219 !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.lv-dropdown-user {
+    width: 300px;
+    right: 0;
+    left: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 0;
+    font-size: 15px;
+    padding: 0 !important;
+
+    .link-setting {
+        height: 50px;
+        padding: 0px 20px;
+        line-height: 50px;
+        border-top: 1px solid #f2f2f2;
+
+        > i.fa {
+            font-size: 20px;
+        }
+
+        > span {
+            padding-left: 10px;
+        }
+    }
+
+    .link-header {
+        padding: 20px 10px;
+
+        > .user-fullname {
+            clear: both;
+            float: left;
+            text-transform: uppercase;
+        }
+
+        > a {
+            padding: 0;
+
+            > .view-user-info {
+                float: left;
+                clear: both;
+                padding: 10px 20px;
+                margin: 10px 0;
+                background: @blue;
+                color: #fff;
+                border-radius: 4px;
+            }
+        }
+    }
+}

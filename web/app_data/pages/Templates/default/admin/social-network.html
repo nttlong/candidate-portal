@@ -1,0 +1,85 @@
+<body>
+    <script server>
+        [
+            "./../modules/node.sys.content_manage",
+            "./../libs/lv.utils",
+            (content, utils, app) => {
+                app.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var data = content.getSocialNetworkLinkInfo.sync(); 
+                                utils.writeData(event, data);
+                                event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                        
+                    }, event);
+                    
+                }
+                app.doSaveData = (event) => {
+                    var clientData = utils.readData(event);
+                    content.saveSocialNetworkLinkInfo(clientData, (err,ret) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, ret);
+                            event.done();
+                        }
+                    });
+                }
+            }
+        ]
+    </script>
+    <div class="panel panel-default">
+        <div class="panel-heading"> res:(Social network app keys)</div>
+        <div class="panel-body">
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Google)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Google client app key)" ng-model="data.google_client_id">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Facebook)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Facebook client app key)" ng-model="data.facebook_client_id">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(LinkedIn)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Facebook client app key)" ng-model="data.linkedIn_client_id">
+                </div>
+            </div>
+          
+        </div>
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary pull-right" ng-click="doSaveData()">res:(Save)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (app => {
+            app.data = {};
+            app.doLoadData = () => {
+                var ajax = "server.page://doLoadData";
+                ajax.done(res => {
+                    app.data = res;
+                    app.$applyAsync();
+                });
+            };
+            app.doSaveData = () => {
+                var ajax = "server.page://doSaveData";
+                ajax.data(app.data).done(res => {
+                    app.data = res;
+                });
+            }
+           
+            app.doLoadData();
+        });
+    </script>
+</body>

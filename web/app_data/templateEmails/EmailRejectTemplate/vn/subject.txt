@@ -1,0 +1,1 @@
+Thông báo từ chối hồ sơ của {{candidate.FullName}}

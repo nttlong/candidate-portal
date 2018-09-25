@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <form role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Code)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Code)" v-model="data.Code">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="res:(Name)" v-model="data.Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="form-group-input">res:(Description)</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="form-group-input" placeholder="res:(Description)"  v-model="data.Description"></textarea>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="button" class="btn btn-primary" value="res:(Update)" v-on:click="doUpdateData"/>
+            </div>
+        </div>
+        
+    </div>
+    <script>
+        (app=> {
+            app.data = {};
+            app.doLoadData = () => {
+                if ($history.data().code) {
+                    var ajax = "ajax.store.st_admin_load_sub_categories_item";
+                    ajax.data({
+                        category: $history.data().category,
+                        sub_category: $history.data().sub_category.substring("total_".length, $history.data().sub_category.length),
+                        id: $history.data().id,
+                        language: window.currentLanguage,
+                        code: $history.data().code
+                    }).done(res=> {
+
+                        app.data = res;
+                    });
+                }
+            };
+            app.doUpdateData = () => {
+
+                var ajax = "ajax.store.st_admin_save_sub_categories_item";
+                ajax.data({
+                    data: app.data,
+                    id: $history.data().id,
+                    code: $history.data().code,
+                    category: $history.data().category,
+                    sub_category: $history.data().sub_category.substring("total_".length, $history.data().sub_category.length),
+                }).done(res=> {
+                    console.log(res);
+                });
+            };
+            app.doLoadData();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>page-caption:(Trang chủ)</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <render>commons/header.html</render>
+
+
+    <link href="{{Config.RootUrl}}templates/{{Config.Customer}}/resources/css/main_site.min.css" rel="stylesheet" />
+</head>
+
+<body class="home" ng-controller="app" ng-cloak>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.db",
+            "./../modules/lv.model",
+            (utils, Data, models, page) => {
+                page.onLoad = (event) => {
+                    utils._try(() => {
+
+
+                        Data.cnn((err, db) => {
+                            if (err) event.done(err);
+                            else {
+                                db.collection("sys_banner_images")
+                                    .find({})
+                                    .toArray((err, list) => {
+                                        if (err) event.done(err);
+                                        else {
+                                            var banners = [];
+                                            list.forEach(item => {
+                                                banners.push({
+                                                    id: item._id,
+                                                    index: list.indexOf(item),
+                                                    classActive: (list.indexOf(item) == 0) ? "active" : ""
+                                                })
+                                            })
+                                            event.setModel("banners", banners);
+                                            event.done();
+                                        }
+                                    });
+                            }
+                        })
+                    }, event);
+                }
+            }]
+    </script>
+
+    <render>commons/navbar.html</render>
+
+    <div class="lv-main-container">
+        <div class="lv-banner-container" id="banner" style="overflow-y:hidden !important;overflow:hidden">
+
+            <div id="lvBannerCarousel" class="lv-slider-banner carousel slide" data-ride="carousel" style="width:100%;max-height:600px">
+                <ol class="carousel-indicators">
+                    {{#each banners}}
+                    <li data-target="#lvBannerCarousel" data-slide-to="{{index}}" class="{{classActive}}"></li>
+                    {{/each}}
+                </ol>
+                <div class="carousel-inner" style="overflow-y:hidden !important">
+                    {{#each banners}}
+                    <div class="item {{classActive}}" style="overflow-y:hidden !important">
+                        <center>
+                            <img src="{{../Config.RootUrl}}photo/banner/{{id}}.png" style="width:100%;height:auto" />
+                        </center>
+
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div>
+                <render>commons/SearchBox.html</render>
+            </div>
+        </div>
+        <section class="lv-main-content container">
+            <div class="row">
+                <div class="col-md-9 col-sm-12 lv-group">
+
+                    <render>widgets/QuickJobList.html</render>
+                </div>
+                <div class="col-md-3 col-sm-12 lv-group">
+
+                    <render>widgets/top_recuiters.html</render>
+                </div>
+            </div>
+        </section>
+    </div>
+    <render>commons/footer.html</render>
+    <script>
+        ng_app([], function (app) {
+        })
+    </script>
+</body>
+</html>

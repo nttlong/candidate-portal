@@ -1,0 +1,17 @@
+﻿<body>
+    <div>
+        <div ng-repeat="item in $root.menuItems" class="col-xs-12 col-sm-6 col-md-3 col-ls-2">
+            <a  href="#view=${item.page}">
+                ${item.caption}
+            </a>
+            
+        </div>
+    </div>
+    
+    <script>
+        (function (scope) {
+            console.log(scope);
+           
+        });
+    </script>
+</body>

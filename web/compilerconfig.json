@@ -1,0 +1,78 @@
+﻿[
+  {
+    "outputFile": "public/Scripts/summernote-develop/src/less/summernote.css",
+    "inputFile": "public/Scripts/summernote-develop/src/less/summernote.less"
+  },
+  {
+    "outputFile": "public/Content/select2-bootstrap-build.css",
+    "inputFile": "public/Content/select2-bootstrap-build.scss"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_home.css",
+    "inputFile": "public/templates/default/resources/css/candidate_home.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/main_site.css",
+    "inputFile": "public/templates/default/resources/css/main_site.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/main_header.css",
+    "inputFile": "public/templates/default/resources/css/main_header.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_jobopen.css",
+    "inputFile": "public/templates/default/resources/css/candidate_jobopen.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_mainui_employer.css",
+    "inputFile": "public/templates/default/resources/css/candidate_mainui_employer.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_restatus.css",
+    "inputFile": "public/templates/default/resources/css/candidate_restatus.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_myapply.css",
+    "inputFile": "public/templates/default/resources/css/candidate_myapply.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_myresume.css",
+    "inputFile": "public/templates/default/resources/css/candidate_myresume.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_myinterview.css",
+    "inputFile": "public/templates/default/resources/css/candidate_myinterview.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_myjobsave.css",
+    "inputFile": "public/templates/default/resources/css/candidate_myjobsave.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_viewjob.css",
+    "inputFile": "public/templates/default/resources/css/candidate_viewjob.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_mainui_login_employer.css",
+    "inputFile": "public/templates/default/resources/css/candidate_mainui_login_employer.less"
+  },
+  {
+    "outputFile": "app_data/pages/Templates/default/resources/css/main_findjob/main_search_widget.css",
+    "inputFile": "app_data/pages/Templates/default/resources/css/main_findjob/main_search_widget.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/main_findjob/main_search_widget.css",
+    "inputFile": "public/templates/default/resources/css/main_findjob/main_search_widget.less"
+  },
+  {
+    "outputFile": "app_data/pages/Templates/default/resources/css/main_findjob.css",
+    "inputFile": "app_data/pages/Templates/default/resources/css/main_findjob.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/main_findjob.css",
+    "inputFile": "public/templates/default/resources/css/main_findjob.less"
+  },
+  {
+    "outputFile": "public/templates/default/resources/css/candidate_login.css",
+    "inputFile": "public/templates/default/resources/css/candidate_login.less"
+  }
+]

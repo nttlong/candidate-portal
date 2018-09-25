@@ -1,0 +1,390 @@
+﻿
+<div class="box edit-mode">
+    <style>
+        .select2-drop-mask {
+            display: none !important;
+        }
+    </style>
+    <div class="myresume-user-infor" id="myresume-info">
+
+        <div class="row">
+            <div class="center-block col-xs-4 col-sm-3">
+                <div class="img-wrapper">
+                    <div class="img-content">
+                        <form id="avartar">
+                            <input type="hidden" name="myresume-id" />
+                            <span class="img-edit hidden-xs" ng-if="$root.AllowEdit()">
+                                <button type="button" class="btn btn-sm btn-default">
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                </button>
+                            </span>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" id="img-avartar">
+                                    <div class="avatar img-circle">
+                                        <img ng-src="${data.Photo}" class="img-circle img-responsive" ng-if="data.Photo" />
+                                        <img ng-src="{{{Config.RootUrl}}}photo/candidate/${data.UserId}.png" class="img-circle img-responsive" ng-if="!data.Photo" />
+                                    </div>
+                                </a>
+                                <span class="avatar-error"></span>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="pic-dropdown" ng-if="$root.AllowEdit()">
+                                    <li role="presentation" ng-click="doShowUpload()">
+                                        <a role="menuitem" tabindex="-1" id="change-photo" class="relative block">
+                                            <i class="glyphicon glyphicon-pencil"></i>
+                                            res:(Thay đổi hình ảnh)
+                                            <!--<input id="avatar-upload" name="avatar" type="file" class="absolute-left transparent" @change="uploadAvatar">-->
+                                        </a>
+                                    </li>
+                                    <li role="presentation" class="divider"></li>
+                                    <li role="presentation" data-toggle="modal" data-target="#dialog-remove-avatar">
+                                        <a role="menuitem" tabindex="-1" class="dropdown-remove-avatar-btn" ng-click="deleteImage()">
+                                            <i class="glyphicon glyphicon-trash"></i> res:(Xóa ảnh này)
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-8 col-sm-9 myresume-header">
+                <form class="infor-wrapper" id="frmInfoHeader" ng-click="doEdit($event)">
+                    <input type="hidden" name="myresume-id" />
+                    <div class="box-info">
+                        <span class="info-edit" ng-if="$root.AllowEdit()">
+                            <button type="button" class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                        </span>
+                        <div class="user-info">
+                            <div class="clearfix">
+                                <div class="name pull-left">
+                                    <div class="field-view" style="display:block">
+                                        <h3 class="name-profile">${data.LastName}</h3>
+                                    </div>
+                                    <div class="field-edit" style="display:none">
+                                        <label><strong class="red-text">*</strong>res:(Họ)</label>
+                                        <input placeholder="Họ" type="text" id="txtLastName" name="txtLastName" class="form-control input-sm" autofocus ng-model="data.LastName" />
+                                        <span class="cls-error" id="errLastName" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                        <span class="cls-error" id="errEmailInLastName" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+                                        <span class="cls-error" id="errSpecialCharsInLastName" hidden="hidden">res:(Vui lòng không nhập số hoặc kí tự đặc biệt)</span>
+                                    </div>
+                                </div>
+                                <div class="last-name pull-left">
+                                    <div class="field-view" style="display:block">
+                                        <h3 class="name-profile">${data.FirstName}</h3>
+                                    </div>
+                                    <div class="field-edit mg-bt" style="display:none">
+                                        <label><strong class="red-text">*</strong>res:(Tên)</label>
+                                        <input placeholder="Tên" type="text" id="txtFirstName" name="txtFirstName" class="form-control input-sm" ng-model="data.FirstName" />
+                                        <span class="cls-error" id="errFirstName" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                        <span class="cls-error" id="errEmailInFirstName" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+                                        <span class="cls-error" id="errSpecialCharsInFirstName" hidden="hidden">res:(Vui lòng không nhập số hoặc kí tự đặc biệt)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="user-poisition">
+                                <div class="field-edit form-group mg-tp" style="display:none">
+                                    <!--<label><strong class="red-text">*</strong> res:(Công ty gần đây nhất)</label>-->
+                                    <input type="text" class="form-control input-sm" ng-model="data.TopDegree" placeholder="res:(Bằng cấp cao nhất)" />
+
+                                    <span class="msg-position-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                </div>
+                                <div class="field-edit form-group mg-tp" style="display:none">
+                                    <!--<label><strong class="red-text">*</strong> res:(Công ty gần đây nhất)</label>-->
+                                    <input type="text" class="form-control input-sm" ng-model="data.TotalExpYear" placeholder="res:(Số năm kinh nghiệm)" />
+
+                                    <span class="msg-position-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                </div>
+                                <div class="field-view" style="display:block">
+                                    <span class="view-control" data-update-tip="Hồ sơ của bạn đã hơn một năm tuổi!!!<br/> Đã đến lúc cần cập nhật rồi.<i class='fa fa-times-circle'></i>">
+                                        ${data.RecentInfo.Job.JobName[lang]}
+                                    </span>
+                                </div>
+                                <div class="field-edit form-group mg-tp" style="display:none">
+                                    <!--<label><strong class="red-text">*</strong> res:(Công việc hiện tại)</label>-->
+                                    <input type="text" c-select2 data-source="listOf_group_jobs" ng-model="data.RecentInfo.Job.FullCode" placeholder="res:(Chọn công việc hiện tại)" />
+
+                                    <span class="msg-position-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                </div>
+                                <div class="field-edit form-group mg-tp" style="display:none">
+                                    <!--<label><strong class="red-text">*</strong> res:(Công ty gần đây nhất)</label>-->
+                                    <input type="text" class="form-control input-sm" ng-model="data.RecentInfo.CompanyName" placeholder="res:(Nhập thông tin công ty gần đây nhất)" />
+
+                                    <span class="msg-position-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+                                </div>
+                            </div>
+                            <div class="user-exp">
+                                <div class="field-view" style="display:block">
+                                    <span class="exp-year">
+                                        res:(Số năm kinh nghiệm:) <span class="exp-year-text">${data.TotalExpYear}</span> res:(năm)
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="field-view" style="display: block;">
+                                <p>
+                                    <span class="text-gray-light">res:(Công ty gần đây nhất:)</span>
+                                    <a class="current-company clickable">${data.RecentInfo.CompanyName}</a>
+                                    <br>
+                                    <span class="text-gray-light">res:(Bằng cấp cao nhất:)</span>
+                                    <a class="current-highest-education clickable">${data.TopDegree}</a>
+                                </p>
+                            </div>
+                            <div class="row field-edit" style="display: none;">
+                                <div class="col-sm-6"></div>
+                                <div class="col-sm-6 text-right">
+                                    <button type="button" class="btn-cancel btn btn-sm btn-default" id="btnCancelSaveInfo" ng-click="doCancel($event)">res:(Hủy)</button>
+                                    <button type="button" class="btn-save btn btn-sm btn-primary" id="btnSaveInfo" ng-click="doUpdate($event)">res:(Lưu)</button>
+                                </div>
+                            </div>
+                            <div class="field-view mg-bt download-resume" style="display: block;" ng-if="$root.AllowEdit()">
+                                <a id="btnDownloadResume" class="btn btn-sm btn-default btn-outline" ng-click="doUpload($event)">
+                                    <i class="glyphicon glyphicon-arrow-up"></i> res:(Đăng tải file hồ sơ đính kèm)
+                                </a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </form>
+                <div class="absolute-right mg-rt mg-tp visible-xs" ng-if="!$root.isHiddenCv">
+                    <a href="#" class="btn btn-block btn-sm btn-default no-border info-togger" data-toggle="collapse" data-target="#divInfor">
+                        <i class="glyphicon glyphicon-briefcase"></i>
+                        <span class="hidden-xs">res:(Thông Tin Cá Nhân)</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row hidden-xs">
+            <div class="col-sm-12">
+                <div class="text-right bg-color">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 pull-right">
+                            <a href="#" class="btn btn-block btn-sm btn-default no-border info-togger" data-toggle="collapse" data-target="#myresume-contact">
+                                <i class="glyphicon glyphicon-briefcase"></i>
+                                <span>res:(Thông Tin Cá Nhân)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script server>
+    [
+        "./../modules/node.sys.categories",
+        "./../libs/lv.utils",
+        "./../modules/node.candidate.profiles",
+        "./../libs/lv.authenticate",
+        "./../modules/lv.db",
+        "./../modules/lv.model",
+        (categories, utils, profiles, aut, Data, models, app) => {
+
+            app.doLoadData = (event) => {
+				utils._try(() => {
+                    var loadData = (email) => {
+                        models.ls_candidate()
+                            .where("UserEmail", email)
+                            .lookup("sys_Users", "UserEmail", "Email", "user")
+                            .unwind("user")
+                            .select({
+                                UserId:"user.UserId",
+                                FirstName: "user.FirstName",
+                                LastName: "user.LastName",
+                                RecentCompany: 1,
+                                Photo: 1,
+                                RecentInfo: 1,
+                                TotalExpYear: 1,
+                                TopDegree: 1,
+                                HasAttachment: {
+                                    $type:"$CV_Attachment"
+                                }
+                            }).toItem()
+                            .then(item => {
+                                if (item) {
+                                    utils.writeData(event, item);
+                                    event.done();
+                                } else {
+                                    loadData(aut.getUser(event.req).Email)
+                                }
+                            }).catch(ex => {
+                                event.done(ex);
+                            });
+
+                    }
+                    var clientData = utils.readData(event);
+
+                    if ((clientData.candidateId) && (clientData.candidateId != "")) {
+
+                        models.sys_Users()
+                            .where("UserId", clientData.candidateId)
+                            .toItem()
+                            .then(item => {
+                                if (item == null) {
+                                    utils.writeData(event, {});
+                                    event.done();
+                                }
+                                else {
+                                    models.ls_candidate()
+                                        .where("UserEmail", item.Email)
+                                        .count(result => {
+                                            if (result == 0) {
+                                                models.ls_candidate()
+                                                    .insertOne({
+                                                        UserEmail: item.Email
+                                                    }).commit((err, result) => {
+                                                        if (err) event.done(err);
+                                                        else {
+                                                            loadData(item.Email);
+                                                        }
+                                                    })
+
+
+                                            }
+                                            else {
+                                                loadData(item.Email);
+                                            }
+                                        })
+                                }
+                            }).catch(ex => {
+                                event.done(ex);
+                            })
+
+                    }
+                    else {
+                        loadData(aut.getUser(event.req).Email)
+                    }
+                }, event);
+
+
+            }
+            app.doLoad_listOf_group_jobs = (event) => {
+                categories.getListOfJobs(utils.getCurrentLanguageCode(event), (err, list) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, list);
+                        event.done();
+                    }
+                })
+            };
+            app.doUpdate = (event) => {
+                var clientData = utils.readData(event);
+                clientData.LatestModifiedOnUTC = utils.getUTCDate(new Date());
+                clientData.LatestModifiedOn = new Date();
+                profiles.savePersonalInfo(aut.getUser(event.req).Email,
+                    utils.getCurrentLanguageCode(event),
+                    clientData,
+                    (err, data) => {
+
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, data);
+                            event.done();
+                        }
+                    })
+            }
+            app.deleteImage = (event) => {
+                utils._try(() => {
+                    try {
+                        var email = aut.getUser(event.req).Email;
+                        models.ls_candidate()
+                            .where("UserEmail==email", { email: email })
+                            .set({ "Photo": "" })
+                            .commit.sync();
+                        utils.writeData(event, {});
+                        event.done();
+                    }
+                    catch (ex) {
+                        event.done(ex);
+                    }
+                }, event);
+            }
+        }]
+</script>
+
+<script>
+        (function (app) {
+
+            
+            app.RecentCompany = {};
+            app.lang = "{{{Language.Current.Code}}}";
+            app.totalExpYear = 0;
+            app.data = {
+
+            };
+            app.listOf_group_jobs = [];
+            app.isThisUser = {};
+            app.uploadAvatar = function () { };
+            app.lstGroupjob = [];
+
+            app.doEdit = function (event) {
+                if (!app.$root.allowEdit()) return;
+
+                if (!app.hasLoadCombobox) {
+                    app.hasLoadCombobox = true;
+                }
+                window.doEditWebPart(event)
+            }
+            app.doLoadData = function () {
+
+                var ajax = "server.page://doLoadData";
+                ajax
+                    .data({ candidateId: window.candidateId })
+                    .done(function (res) {
+                        app.data = res;
+                        app.$applyAsync();
+
+                    })
+            }
+            app.doLoad_listOf_group_jobs = function () {
+                var ajax = "server.page://doLoad_listOf_group_jobs";
+                ajax.noMask().done(function (res) {
+                    app.listOf_group_jobs = res;
+                })
+            }
+            app.doLoad_listOf_group_jobs();
+            app.doLoadData();
+            app.doUpdate = function (e) {
+                var ajax = "server.page://doUpdate";
+                ajax.data(app.data)
+                    .done(function (res) {
+                        if (res.apiError) {
+                            if (res.apiError.errorType == "FirstNameIsEmpty") {
+                                toastr.error("res:(Xin nhập vào 'Họ')", "res:(Thiếu thông tin)")
+                            }
+                            if (res.apiError.errorType == "LastNameIsEmpty") {
+                                toastr.error("res:(Xin nhập vào 'Tên')", "res:(Thiếu thông tin)")
+                            }
+                        }
+                        else {
+                            toastr.success("res:(Hồ sơ của bạn đã cập nhật xong)");
+                            window.changeToViewMode(e);
+                            app.doLoadData();
+                        }
+
+                    })
+            }
+            app.doCancel = function (e) {
+                window.changeToViewMode(e);
+            };
+            app.doShowUpload = function () {
+                dialog(app).url("{{Config.RootUrl}}Candidate/Photo_Upload")
+                    .done();
+            }
+            app.doUpload = function ($event) {
+                $event.stopImmediatePropagation();
+                dialog(app).url("{{Config.RootUrl}}Candidate/Profile_Upload")
+                    .done(function () {
+                        window.changeToViewMode($event);
+                    });
+            }
+            app.deleteImage = function () {
+                var ajax = "server.page://deleteImage";
+                ajax.done(function (res) {
+                    app.doLoadData();
+                    app.$applyAsync();
+                })
+            }
+        })
+</script>

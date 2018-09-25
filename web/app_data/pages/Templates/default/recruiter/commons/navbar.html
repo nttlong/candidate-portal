@@ -1,0 +1,185 @@
+﻿<header class="lv-main-header">
+
+    <nav class="lv-horizontal-navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a class="img-logo desktop-xs" href="{{Config.RootUrl}}">
+                    
+                    <img src="{{Config.RootUrl}}photo/logo/{{info.RecruiterCode}}.png" alt="{{info.RecruiterName}}" height="40px">
+                </a>
+                <a class="img-tablet-logo tablet-xs" href="{{Config.RootUrl}}">
+                    <img src="{{Config.RootUrl}}photo/logo/{{info.RecruiterCode}}.png" alt="{{info.RecruiterName}}" height="40px">
+                </a>
+            </div>
+            <div class="desktop-xs">
+                <ul class="nav navbar-nav navbar-menu-right">
+                    <li>
+                        <a href="{{Config.RootUrl}}jobs/by-post-date/en/all/all/all/all/all/all/0">res:(Tất cả việc làm)</a>
+                    </li>
+                    {{#each Language.Support}}
+                    {{^ifCond ../Language.Current.Code Code}}
+                    <li class="dropdown dropdown-popover-theme language-switcher en dropdown-with-icon">
+                        <a class="lv-flag" href="#">
+                            <form action="api:(lv.candidate.api/lv.candidate.api.widgets/navbar_change_language)">
+                                <input type="hidden" name="lang" value="{{this.Code}}" />
+                                <input class="lv-nation-flag" type="image" src="{{../Config.RootUrl}}/templates/default/resources/fags/{{Code}}.png" />
+
+                                <!--<img  src="{{../Config.RootUrl}}/templates/default/resources/fags/{{code}}.png" />-->
+                            </form>
+                        </a>
+                    </li>
+                    {{/ifCond}}
+                    {{/each}}
+                    {{#if HasLogin }}
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{User.UserName}}<span class="caret"></span></a>
+                        <ul class="dropdown-menu lv-dropdown-user">
+                            <li class="link-header">
+                                <span class="user-fullname">{{User.LastName}} {{User.FirstName}}</span>
+                                <a href="{{Config.RootUrl}}candidate/home">
+                                    <span class="view-user-info">res:(Cổng thông tin việc làm)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="link-setting" href="{{Config.RootUrl}}candidate/my-account">
+                                    <i class="fa fa-user"></i>
+                                    <span>res:(Tài khoản)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="link-setting" href="javascript:$('#btn_sign_out').trigger('click')">
+                                    <i class="fa fa-sign-out"></i>
+                                    <span>res:(Thoát)</span>
+                                </a>
+                            </li>
+                            <li style="display:none">
+                                <form action="api:(lv.candidate.api/lv.candidate.api.accounts/sign_out)" id="frm_sign_out">
+                                    <a>
+                                        <input type="submit" value="res:(Thoát)" style="background:none;border:none" id="btn_sign_out" />
+                                    </a>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {{else}}
+                    <li>
+                        <a href="{{Config.RootUrl}}account/login?retUrl={{Config.RootUrl}}{{page.currentUrl}}"><i class="fa fa-fw fa-lg fa-sign-in"></i>res:(Đăng Nhập)</a>
+                    </li>
+                    <li>
+                        <a href="{{Config.RootUrl}}account/register">res:(Đăng Ký)</a>
+                    </li>
+                    {{/if}}
+                    <li class="employer-site">
+                        <a target="_blank" href="{{Config.RootUrl}}company">
+                            <strong class="text-white">res:(NHÀ TUYỂN DỤNG)</strong>
+                            <br>
+                            <span class="text-white">res:(Đăng Tuyển & Kiếm Nhân Tài)</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tablet-xs">
+                <ul class="nav navbar-nav navbar-menu-tablet-right">
+                    <li>
+                        <a class="button-tablet" href="#" data-toggle="modal" data-target="#lvMenuModal">
+                            <i class="glyphicon glyphicon-menu-hamburger"></i>
+                        </a>
+                        <div class="modal fade" id="lvMenuModal" role="dialog">
+                            <div class="lv-menu-top-tablet modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-fw fa-lg fa-globe"></i>
+                                                    <span class="chosen-language">English</span>
+                                                </a>
+                                            </li>
+                                            {{#if HasLogin }}
+                                            <li class="link-user">
+                                                <span class="user-fullname">{{User.LastName}} {{User.FirstName}}</span>
+                                                <a href="{{Config.RootUrl}}candidate/home">
+                                                    <span class="view-user-info">res:(Cổng thông tin việc làm)</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{Config.RootUrl}}candidate/my-account">
+                                                    <i class="fa fa-user"></i>
+                                                    <span>res:(Tài khoản)</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form action="api:(lv.candidate.api/lv.candidate.api.accounts/sign_out)">
+                                                    <a>
+                                                        <i class="fa fa-sign-out"></i>
+                                                        <input type="submit" value="res:(Thoát)" style="background:none;border:none" />
+                                                    </a>
+                                                </form>
+                                            </li>
+                                            {{else}}
+                                            <li>
+                                                <a href="{{Config.RootUrl}}account/login?retUrl={{Config.RootUrl}}/{{page.currentUrl}}">
+                                                    <i class="fa fa-lg fa-sign-in fa-fw "></i>
+                                                    <span>res:(Đăng Nhập)</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{Config.RootUrl}}account/register">
+                                                    <i class="fa fa-lg fa-user-plus fa-fw "></i>
+                                                    <span>res:(Đăng Ký)</span>
+                                                </a>
+                                            </li>
+                                            {{/if}}
+                                            <li class="employer-site">
+                                                <a href="{{Config.RootUrl}}company">
+                                                    <strong class="text-white">res:(NHÀ TUYỂN DỤNG)</strong>
+                                                    <br>
+                                                    <span class="text-white">res:(Đăng Tuyển & Kiếm Nhân Tài)</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="button-tablet" href="{{Config.RootUrl}}jobs/by-post-date/en/all/all/all/all/all/all/0">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/lv.db",
+        (utils, DB, app) => {
+            utils.debug();
+            app.onLoad = (event) => {
+                utils._try(() => {
+                    DB.cnn((err, db) => {
+                        if (err) event.done(err);
+                        else {
+                            utils._try(() => {
+
+                                event.setModel("info", event.req.currentCustomerInfo);
+                                event.setModel("page.currentUrl", event.req.url.substring(1, event.req.url.length));
+
+                                event.done();
+                            }, event);
+                        }
+                    });
+                }, event);
+              
+
+            }
+        }]
+</script>

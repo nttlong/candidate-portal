@@ -1,0 +1,90 @@
+<body>
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">res:(List of template email)</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="item in data">
+                        <section>
+                            <h4><b>${item.TemplateName}(${item.lang})</b></h4>
+                           
+                        </section>
+                        <section class="row">
+                            <p>
+                                ${item.subject}
+                            </p>
+                            <i class="pull-right">${(item.ModifiedOn||item.CreatedOn)|date:'dd-MM-yyyy'}</i>
+                        </section>
+                        <section class="row">
+
+                            <div class="pull-right"> [<a href="#view=template-email-detail-root&id=${item.fullPath}">res:(Edit)</a>]</div>
+                        </section>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <script server>
+        ["./../libs/lv.utils",
+           
+            "fs",
+            "path",
+            (utils,
+                FS,
+                PATH,
+                page) => {
+                var dir = "./app_data/templateEmails"
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var dirs = FS.readdirSync(dir);
+                            var list = [];
+                            dirs.forEach(_dir => {
+                                ["vn", "en"].forEach(lang => {
+                                    var fPath = PATH.join(dir, _dir, lang);
+
+                                    if (FS.existsSync(fPath)) {
+                                        var content = FS.readFileSync(PATH.join(fPath, "subject.txt"), "utf-8");
+                                        var stat = FS.statSync(fPath);
+                                        list.push({
+                                            TemplateName: _dir,
+                                            lang: lang,
+                                            fullPath: fPath,
+                                            subject: content,
+                                            ModifiedOn: stat.mtime
+                                        });
+                                    }
+                                    list.sort((a, b) => {
+                                        return a.TemplateName > b.TemplateName
+                                    });
+                                });
+                               
+
+                            });
+                            utils.writeData(event, list);
+                            event.done();
+                        } catch (ex) {
+                            event.done(ex)
+                        }
+                    }, event);
+                }
+            }];
+    </script>
+    <script>
+        (function (scope) {
+            scope.doLoadData = function () {
+                var a = "server.page://doLoadData";
+                a.done(function (res) {
+                    scope.data = res;
+                    scope.$applyAsync()
+                });
+            };
+            scope.doLoadData();
+        });
+    </script>
+</body>

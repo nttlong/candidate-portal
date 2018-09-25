@@ -1,0 +1,73 @@
+﻿<nav class="navbar navbar-default" onload="api:(lv.candidate.api/lv.candidate.api.candidates/load)">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{{Config.RootUrl}}">
+                <img src="{{LogoPath}}" style="width:120px" />
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <span class="pull-left">&nbsp;</span>
+            <span class="pull-left">&nbsp;</span>
+            <span class="pull-left">&nbsp;</span>
+            <span class="pull-left">&nbsp;</span>
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <a href="{{rootUrl}}candidate/config">res:(Hệ thống)</a>
+                </li>
+               
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{{rootUrl}}candidate/config">res:(Tất cả các công việc)</a>
+                </li>
+                <li class="dropdown">
+                    {{#Language}}
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{../RootUrl}}templates/default/resources/fags/{{Current}}.png" />
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {{#each Support}}
+                        <li>
+                            <form action="api:(lv.candidate.api/lv.candidate.api.widgets/navbar_change_language)&lang={{this.Code}}">
+                                <input type="image" src="{{../../RootUrl}}templates/default/resources/fags/{{this.Code}}.png" name="language" value="{{Code}}" />
+                            </form>
+                        </li>
+                        {{/each}}
+
+                    </ul>
+                    {{/Language}}
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">res:(Admin) <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a>{{FirstName}}&nbsp;{{LastName}}</a>
+                        </li>
+                        <li>
+                            <a href="{{rootUrl}}/candidate/account">res:(Tài khoản)</a>
+                        </li>
+                        <li>
+                            <form action="api:(lv.candidate.api/lv.candidate.api.accounts/sign_out)">
+                                <a>
+                                    <input type="submit" value="res:(Thoát)" style="background:none;border:none" />
+                                </a>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+</nav>

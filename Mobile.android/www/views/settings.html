@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div layout="row">
+        <md-content layout-padding flex>
+            <div layout="row">
+                <md-input-container flex>
+                    <label>Url</label>
+                    <input ng-model="url">
+                </md-input-container>
+            </div>
+        </md-content>
+        <md-content layout="column">
+            <div flex></div>
+            <md-button ng-click="doSaveConfig()">{{$root.res("button.update")}}</md-button>
+        </md-content>
+            
+        
+    </div>
+    <script>
+        (function (scope) {
+            scope.url = scope.$root.getConfig("service.url");
+            scope.doSaveConfig = function () {
+                scope.$root.setConfig("service.url", scope.url);
+                scope.$root.msg(scope.res("msg.update.config.success"))
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+﻿<script server>
+    [
+        "./../libs/lv.utils",
+        "./../modules/lv.db",
+        "./../libs/lv.authenticate",
+        (utils, Data, aut, app) => {
+            app.onLoad = (event) => {
+                utils._try(() => {
+                    event.setModel("interview", event.req.interviewList);
+                    event.done();
+                }, event)
+            }
+        }]
+</script>
+<div class="myresume-contact row">
+    <div class="col-md-12">
+       
+        <table class="table box">
+            <thead>
+                <tr>
+                   
+                    <th>res:(Bước công việc)</th>
+                    <th>res:(Ngày)</th>
+                    <th>res:(Người thực hiện)</th>
+                    <th>res:(Kết quả)</th>
+                    <th>res:(Ghi chú)</th>
+                    <th>res:(File đính kèm)</th>
+                </tr>
+            </thead>
+            <tbody>
+                    {{#each interview}}
+                <tr>
+                    <td>{{TaskName}}</td>
+                    <td>{{dateFormat ActionDate 'dd/MM/yyyy'}}</td>
+                    
+                    <td>{{Actor}}</td>
+                    <td>{{Result}}</td>
+                    
+                    <td>{{Note}}</td>
+                    <td></td>
+                </tr>
+                
+                {{/each}}
+            </tbody>
+        </table>
+       
+    </div>
+</div>

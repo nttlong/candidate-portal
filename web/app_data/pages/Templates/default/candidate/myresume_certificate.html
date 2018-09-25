@@ -1,0 +1,382 @@
+﻿<div class="muresume-certificate" id="myresume-certificate">
+	<div id="form-certificate">
+		<div class="box border-primary">
+			<fieldset class="">
+				<legend class="box-md">
+					<i class="glyphicon glyphicon-book"></i> res:(Chứng chỉ)
+				</legend>
+				<div class="placeholder-section box-md" ng-if="data.Cer.length < 1">
+					<p class="placeholder">res:(Mô tả toàn bộ chứng chỉ của bạn)</p>
+				</div>
+				<!-- Sample -->
+				<div class="content-certificate">
+
+					<form ng-repeat="item in data.Cer" class="form-view infor-wrapper box-md relative" data-order="10" method="post" action="" ng-click="doEdit($event)">
+						<input type="hidden" name="resume_id" value="${item._id}">
+						<input type="hidden" name="entry_id">
+						<div class="error-message-update-education row" hidden="hidden">
+							<div>
+								<div class="cls-error" style="display: none;"><strong>Oops! </strong> res:(Có lỗi đã xảy ra, vui lòng thử lại.)</div>
+								<br>
+							</div>
+						</div>
+						<span class="edit-btn" ng-if="$root.AllowEdit()">
+							<button type="button" class="btn btn-sm btn-default">
+								<i class="glyphicon glyphicon-pencil"></i>
+							</button>
+						</span>
+						<div>
+							<div class="field-view" style="display: block;">
+								<h4 class="view-control">${item.Name}</h4>
+							</div>
+							<div class="field-edit" style="display: none;">
+								<div class="form-group">
+									<label>
+										<strong class="red-text">* </strong>
+										res:(Tên chứng chỉ)
+									</label>
+									<input type="text" placeholder="res:(Ví dụ: System Manager)" ng-model="item.Name" maxlength="150" autofocus="" class="form-control">
+									<span class="msg-cername-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+									<span class="msg-cername-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="field-view" style="display: block;">
+								<div class="row">
+									<span class="col-sm-6 view-control" data-control="edu-school">${item.CerIssuedPlace}</span>
+									<p class="col-sm-6 view-control" data-control="edu-qualification" data-type="select">res:(Trình độ): ${item.Level}</p>
+								</div>
+							</div>
+							<div class="field-edit" style="display: none;">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>
+												<strong class="red-text">* </strong>
+												res:(Nơi cấp)
+											</label>
+											<input type="text" class="form-control edit-control" placeholder="res:(Ví dụ: Đại học Kinh Tế Tp. Hồ Chí Minh)" ng-model="item.CerIssuedPlace" maxlength="150" data-control="edu-school">
+											<span class="msg-cerplace-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+											<span class="msg-cerplace-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>
+												<strong class="red-text">*</strong>
+												res:(Trình độ)
+											</label>
+											<input type="text" class="form-control edit-control" placeholder="res:(Ví dụ: Sơ cấp)" ng-model="item.Level" maxlength="150" data-control="edu-level">
+											<span class="msg-cerlevel-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+											<span class="msg-cerlevel-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="field-view" style="display: block;">
+									<div class="row">
+										<p class="col-sm-6">
+											<span class="view-control" data-control="from-date">${item.CerFromDate}</span>
+											-
+											<span class="view-control" data-control="to-date">${item.CerToDate}</span>
+											<!--<span class="total-time" ng-if="calculatorExpYearItem(item.CerFromDate, item.CerToDate) > 0 && calculatorExpMonthItem(item.CerFromDate, item.CerToDate) > 0">
+												(
+												<span class="years" ng-if="calculatorExpYearItem(item.CerFromDate, item.CerToDate) > 0">
+													<span class="number-of-years">${calculatorExpYearItem(item.CerFromDate, item.CerToDate)}</span>
+													<span class="lbl">res:(năm)</span>
+												</span>
+												<span class="months" ng-if="calculatorExpMonthItem(item.CerFromDate, item.CerToDate) > 0">
+													<span class="number-of-months">${calculatorExpMonthItem(item.CerFromDate, item.CerToDate)}</span>
+													<span class="lbl">res:(tháng)</span>
+												</span>
+												)
+											</span>-->
+										</p>
+										<span class="col-sm-6">
+											<span class="view-control">res:(Số hiệu): ${item.CerNo}</span>
+										</span>
+									</div>
+								</div>
+								<div class="field-edit" style="display: none;">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>res:(Từ tháng)</label>
+
+												<input type="text" c-month-picker ng-model="item.CerFromDate" />
+												<span class="msg-from-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+												<span class="msg-from-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+												<span class="msg-from-date-valid cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>res:(Đến tháng)</label>
+
+												<input type="text" c-month-picker ng-model="item.CerToDate" />
+												<span class="msg-to-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+												<span class="msg-to-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+												<span class="msg-to-date-valid cls-error" hidden="hidden">res:(Tháng kết thúc phải lớn hơn tháng bắt đầu)</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="field-view" style="display: block;">
+									<div class="row">
+										<span class="col-sm-6 view-control" data-control="edu-school">res:(Xếp loại): ${item.Rank}</span>
+										<p class="col-sm-6 view-control" data-control="edu-qualification" ng-if="item.IsMainCer">res:(Là bằng cấp chính)</p>
+									</div>
+								</div>
+								<div class="field-edit" style="display: none;">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>res:(Xếp loại)</label>
+												<input type="text" id="txtCerRank_${item._id}" name="rating" class="form-control edit-control" placeholder="res:(Ví dụ: Giỏi)" ng-model="item.Rank" maxlength="150" data-control="edu-rating">
+												<span class="msg-rating-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+												<span class="msg-rating-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>
+													res:(Số hiệu chứng chỉ)
+												</label>
+												<input type="text" id="txtCerNo_${item._id}" name="school" class="form-control edit-control" placeholder="res:(Ví dụ: ABC/123)" ng-model="item.CerNo" maxlength="150" data-control="edu-level">
+												<span class="msg-cerno-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="field-view" style="display: block;">
+									<div c-html-view ng-model="item.Note"></div>
+								</div>
+								<div class="field-edit" style="display: none;">
+									<div class="form-group">
+										<label>res:(Thành tựu)</label>
+										<textarea ng-model="item.Note" class="form-control edit-control emp-description achievement-textarea countdown-target" placeholder="" maxlength="5000">
+
+                                        </textarea>
+
+										<em class="countdown text-gray-light" data-text="character remaining">res:(character remaining)</em>
+										<p class="msg-description-limit-max cls-error" hidden="hidden">res:(Bạn đã nhập quá ký tự cho phép)</p>
+										<p class="msg-description-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</p>
+										<p class="msg-description-suggestion text-info" hidden="hidden">res:(Thêm thông tin để nâng mức độ hoàn thành hồ sơ của bạn)</p>
+									</div>
+								</div>
+							</div>
+							<div class="row field-edit" style="display: none;">
+								<div class="col-sm-6">
+									(<strong class="red-text">*</strong>) res:(Thông tin bắt buộc)
+								</div>
+								<div class="col-sm-6 text-right">
+									<button type="button" class="btn-remove-this-section btn btn-link" data-toggle="modal" data-target="#dialog-remove-certificate" ng-click="doDelete($event, idx = $index)">
+										<i class="glyphicon glyphicon-trash"></i>
+									</button>
+									<button type="button" ng-click="doCancel($event,item)" id="btnCancelEditCertificate" class="btn-cancel btn btn-default">res:(Hủy)</button>
+									<button type="button" ng-click="doSave($event,item)" id="btnSaveEditCertificate" class="btn-save btn btn-primary">res:(Lưu)</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<button type="button" class="btn btn-default btn-block no-border add-one-more-section" id="btnAddCertificate" style="display: block;" ng-click="doAddNew($event)" ng-if="$root.AllowEdit()">
+					<strong>res:(Bổ sung)</strong>
+				</button>
+			</fieldset>
+		</div>
+	</div>
+</div>
+<script server>
+	[
+		"./../modules/node.sys.categories",
+		"./../libs/lv.utils",
+		"./../modules/node.candidate.profiles",
+		"./../libs/lv.authenticate",
+		(categories, utils, profiles, aut, app) => {
+			utils.debug();
+
+			app.doLoadData = (event) => {
+				var loadData = (email) => {
+					profiles.getCertificate(email,
+						utils.getCurrentLanguageCode(event),
+						(err, data) => {
+							if (err) event.done(err);
+							else {
+								utils.writeData(event, data);
+								event.done();
+							}
+						})
+				}
+				var clientData = utils.readData(event);
+				if ((clientData.candidateId) && (clientData.candidateId != "")) {
+					profiles.getUserInfoByUserId(clientData.candidateId, (err, user) => {
+						if (err) handler(err);
+						else {
+							if (user == null) {
+								utils.writeData(event, {});
+								event.done();
+							}
+							else {
+								loadData(user.Email);
+							}
+						}
+					})
+				}
+				else {
+					loadData(aut.getUser(event.req).Email)
+				}
+
+			}
+			app.doUpdate = (event) => {
+				var clientData = utils.readData(event);
+				for (var i = 0; i < clientData.length; i++) {
+					if (new Date('01/' + clientData[i].CerFromDate) > new Date('01/' + clientData[i].CerToDate)) {
+						utils.writeData(event, {
+							apiError: { errorType: "DateError" }
+						});
+						event.done();
+						return;
+					}
+				}
+				clientData.LatestModifiedOn = new Date();
+				clientData.LatestModifiedOnUTC = utils.getUTCDate(new Date());
+				profiles.saveCertificate(aut.getUser(event.req).Email,
+					utils.getCurrentLanguageCode(event),
+					clientData,
+					(err, data) => {
+
+						if (err) event.done(err);
+						else {
+							utils.writeData(event, data);
+							event.done();
+						}
+					})
+			}
+		}]
+</script>
+<script>
+    (function (app) {
+        app.Lang = "{{{Language.Current.Code}}}";
+        app.idx = null;
+        app.event = null;
+        app.data = {
+            Cer: [],
+            Users: {
+                Settings: {
+                    DefaultDateFormat: "DD/MM/YYYY"
+                }
+            }
+        };
+        app.calculatorExpMonthItem = window.calculatorExpMonthItem;
+        app.calculatorExpYearItem = function (from, to) {
+            if (from || to) {
+                var totalMonth = 0;
+                var d1 = new Date(from);
+                var d2 = new Date(to);
+                totalMonth = d2.getMonth() - d1.getMonth() + (12 * (d2.getFullYear() - d1.getFullYear()));
+                return Math.floor(totalMonth / 12);
+            }
+            else
+                return 0;
+        };
+        app.doEdit = function (event) {
+            if (!app.$root.AllowEdit()) return;
+            window.doEditWebPart(event)
+        }
+        app.doLoadData = function () {
+
+            var ajax = "server.page://doLoadData";
+            ajax
+                .data({ candidateId: window.candidateId })
+                .done(function (res) {
+                    app.data.Cer = res;
+                    app.$applyAsync();
+            })
+        }
+        app.doDelete = function (e, index) {
+            app.$root.isCer = true;
+            app.$root.isEdu = false;
+            app.event = e;
+            app.idx = index;
+            dialog(app).url("{{Config.RootUrl}}Candidate/confirmDelete")
+                .done();
+        }
+
+        app.$root.onDeleteCer = function () {
+            var me = app;
+            var ret = [];
+            for (var i = 0; i < me.data.Cer.length; i++) {
+                if (i != app.idx) {
+                    ret.push(me.data.Cer[i]);
+                }
+            }
+            me.data.Cer = ret;
+            me.doSave(app.event);
+            $('#myModal').modal('toggle');
+        }
+
+        app.doLoadData();
+        app.doSave = function (e) {
+            toastrError = function (error, model) {
+                toastr.error(error);
+                $("[ng-model='" + model + "']").focus(
+                    function () {
+                        $(this).css({ "border-color": "red" })
+                    }
+                );
+                $("[ng-model='" + model + "']").blur(
+                    function () {
+                        $(this).css({ "border-color": "#ccc" })
+                    }
+                );
+                $("[ng-model='" + model + "']").trigger("click");
+                $("[ng-model='" + model + "']").select();
+            }
+            var me = app;
+            var ajax = "server.page://doUpdate";
+            ajax.data(me.data.Cer)
+                .done(function (res) {
+                    if (res.apiError) {
+                        if (res.apiError.errorType == "NameIsEmpty") {
+                            toastrError("res:(Vui lòng nhập tên chứng chỉ)", "item.Name");
+                        } else if (res.apiError.errorType == "CerIssuedPlaceIsEmpty") {
+                            toastrError("res:(Vui lòng nhập nơi cấp)", "item.CerIssuedPlace");
+                        } else if (res.apiError.errorType == "LevelIsEmpty") {
+                            toastrError("res:(Vui lòng nhập trình độ)", "item.Level");
+						} else if (res.apiError.errorType == 'DateError') {
+							toastrError("res:(Vui lòng nhập Từ tháng < Đến tháng)", "");
+						}
+                    } else {
+                        toastr.success("res:(Hồ sơ của bạn đã cập nhật xong)");
+                        window.changeToViewMode(e);
+                    }
+                })
+        }
+        app.formatDate = function (value, format) {
+            return moment(String(value)).format(format)
+        }
+        app.doCancel = function (e) {
+            window.changeToViewMode(e);
+			app.doLoadData();
+        }
+        app.doAddNew = function (e) {
+            var me = app;
+            if (!app.isThisUser)
+            me.data.Cer.push({});
+            setTimeout(function () {
+                $($("#myresume-certificate").find('.form-view')[$("#myresume-certificate").find('.form-view').length - 1]).find("span").trigger("click");
+            }, 150);
+            e.stopPropagation();
+
+           // $(this).find('.field-edit').fadeIn();
+
+        }
+    })
+</script>

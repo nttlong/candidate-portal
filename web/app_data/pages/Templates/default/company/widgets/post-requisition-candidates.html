@@ -1,0 +1,332 @@
+﻿<body>
+	<div>
+		<h1 ng-if="candidate.length==0" style="text-align: center">res:(Không có ứng viên nào)</h1>
+		<table class="table" ng-if="candidate.length>0">
+			<thead class="thead-default">
+				<tr>
+					<th><input type="checkbox" id="selectall" ng-click="$root.doCheckAllCandidate()" /></th>
+					<th></th>
+					<th>res:(Ứng viên)</th>
+					<th>res:(Công việc hiện tại)</th>
+					<th>res:(Ngày ứng tuyển)</th>
+					<th>res:(Thao tác)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="item in candidate">
+					<th scope="row"><input type="checkbox" ng-click="$root.doCheckCandidate(item)" /></th>
+					<td>
+						<a target="_blank" href="{{Config.RootUrl}}candidate/myresume/${item.UserId}">
+							<img width="64" height="64" style="border-radius: 50%" ng-src="{{Config.RootUrl}}/photo/candidate/${item.UserId}.png" />
+						</a>
+					</td>
+					<td style="width: 30%" class="box_uv">
+						<a target="_blank" href="{{Config.RootUrl}}/candidate/myresume/${item.UserId}">
+							<p><strong>${item.LastName} ${item.FirstName} </strong></p>
+						</a>
+						<p>${item.TotalExpYear} res:(năm)</p>
+						<p>
+							<i class="fa fa-building" aria-hidden="true">
+							</i> ${item.RecentInfo.CompanyName}
+						</p>
+						<p>
+							<i class="fa fa-graduation-cap" aria-hidden="true"></i> ${item.TopDegree}
+						</p>
+					</td>
+					<td>${item.RecentInfo.Job.JobName[lang]}</td>
+					<td ng-if="item.AppliedDate != undefined">${item.AppliedDate|date:'dd/MM/yyyy'}</td>
+					<td ng-if="item.AppliedDate == undefined">res:(Chưa cập nhật ngày ứng tuyển)</td>
+					<td>
+						<span ng-if="item.StatusApply!=2">
+							<a ng-href="{{Config.RootUrl}}/attachments/candidate/cv/${item.UserId}" title="${item.CVFile.FileName}" ng-if="item.StatusApply == 1" class="btn btn-default btn-sm">
+								<i class="fa fa-download" aria-hidden="true"></i>
+							</a>
+							<a ng-href="{{Config.RootUrl}}/attachments/requisition/cv/${item.UserId}/${id}" ng-if="item.StatusApply == 3" class="btn btn-default btn-sm" title="${item.FileName}">
+								<i class="fa fa-download" aria-hidden="true"></i>
+							</a>
+						</span>
+						<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default btn-sm" ng-click="doReject(item)" ng-if="item.Status==0 || item.Status==7" title="res:(Không duyệt)">
+							<i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+						</button>
+						<button type="button" class="btn btn-default btn-sm" ng-click="doApprove(item)" ng-if="item.Status==0 || item.Status==7" title="res:(Duyệt)">
+							<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+						</button>
+						<button type="button" class="btn btn-default btn-sm" ng-click="doConsider(item)" ng-if="item.Status==0" title="res:(Đang cân nhắc)">
+							<i class="fa fa-hourglass-half" aria-hidden="true"></i>
+						</button>
+						<!--<span ng-if="item.Status==0">res:(Đã ứng tuyển)</span>-->
+						<span ng-if="item.Status==1">res:(Đã duyệt hồ sơ)</span>
+						<span ng-if="item.Status==2">res:(Từ chối hồ sơ)</span><br />
+						<span ng-if="item.Status==2">res:(Lý do): ${item.Reason}</span>
+						<span ng-if="item.Status==3">res:(Đang tuyển dụng)</span>
+						<span ng-if="item.Status==4">res:(Đã tuyển)</span>
+						<span ng-if="item.Status==5">res:(Không trúng tuyển)</span>
+						<span ng-if="item.Status==6">res:(Bỏ thi tuyển)</span>
+						<span ng-if="item.Status==7">res:(Đang cân nhắc)</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="myModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">res:(Lý do từ chối ứng viên)</h4>
+				</div>
+				<div class="modal-body">
+					<textarea class="form-control" id="exampleTextarea" rows="3" ng-model="reason"></textarea>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" ng-click="doSaveReject()">res:(Lưu)</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">res:(Đóng)</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<script server>
+        ["./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            "./../modules/node.Email",
+
+            "./../libs/lv.utils", (aut, models, EMAIL, utils, page) => {
+                page.doLoadCandidateByRequisitionId = (event) => {
+                    utils._try(() => {
+                        var user = aut.getUser(event.req);
+                        var clientData = utils.readData(event.req);
+                        var lang = utils.getCurrentLanguageCode(event);
+                        // var user = utils.getUser(event.req);
+                        models.ls_requisition()
+                            .where("_id", utils.objectID(clientData.id))
+                            .unwind("CandidateApplyList")
+                            .lookup(models.ls_candidate(), "CandidateApplyList.CandidateEmail", "UserEmail", "candidate")
+                            .unwind("candidate")
+                            .lookup(models.sys_Users(), "CandidateApplyList.CandidateEmail", "Email", "user")
+                            .unwind("user")
+                            .select({
+                                UserId: "user.UserId",
+                                FirstName: "user.FirstName",
+                                LastName: "user.LastName",
+                                TopDegree: "candidate.TopDegree",
+                                RecentInfo: "candidate.RecentInfo",
+                                Status: "CandidateApplyList.Status",
+                                StatusApply: "CandidateApplyList.ApplyType",
+                                DataFile: "CandidateApplyList.dataFile",
+                                FileName: "CandidateApplyList.fileName",
+                                CVFile: "candidate.CVFile",
+                                AppliedDate: "CandidateApplyList.AppliedDate",
+                                TotalExpYear: "candidate.TotalExpYear",
+								CandidateEmail: "CandidateApplyList.CandidateEmail",
+								Reason: "CandidateApplyList.Reason"
+                            })
+                            .toArray((err, list) => {
+                                utils.writeData(event, list);
+                                event.done(err);
+                            })
+                    }, event);
+                };
+                page.doReject = (event) => {
+                    utils._try(() => {
+						try {
+                            var user = aut.getUser(event.req);
+                            var clientData = utils.readData(event);
+                            var lang = utils.getCurrentLanguageCode(event);
+                            var requisition = models.ls_requisition()
+                                .where("_id", utils.objectID(clientData.id))
+                                .toItem.sync();
+                            var recruiter = models.ls_recruiters()
+                                .where("UserEmail", user.Email)
+                                .toItem.sync();
+                            var candidateUser = models.sys_Users()
+                                .where("UserId", clientData.canidateId)
+                                .toItem.sync();
+                            var cIndex = models.ls_requisition()
+                                .where("_id", clientData.id.toObjectID())
+                                .selectIndex("IndexOfCandidate", "CandidateApplyList.CandidateEmail", candidateUser.Email)
+                                .toItem.sync();
+                            // lấy ngày apply của user
+                            var candidateApply = models.ls_requisition()
+                                .where("_id", clientData.id.toObjectID())
+                                .unwind("CandidateApplyList")
+                                .where("CandidateApplyList.CandidateEmail", candidateUser.Email)
+                                .select({
+                                    "AppliedDate": "CandidateApplyList.AppliedDate",
+                                    "AppliedDateUTC": "CandidateApplyList.AppliedDateUTC"
+                                })
+                                .toItem.sync();
+                            models.ls_requisition()
+                                .where("_id", clientData.id.toObjectID())
+                                .set("CandidateApplyList." + cIndex.IndexOfCandidate + ".Status", 2)
+								.commit.sync();
+							models.ls_requisition()
+								.where("_id", clientData.id.toObjectID())
+								.set("CandidateApplyList." + cIndex.IndexOfCandidate + ".Reason", clientData.reason)
+								.commit.sync();
+                            candidateUser.FullName = candidateUser.LastName + " " + candidateUser.FirstName;
+                            var data = {
+                                applidate: candidateApply,
+                                candidate: candidateUser,
+                                requisition: requisition,
+                                recruiter: recruiter,
+                                RootUrl: utils.getRootUrl(event.req)
+                            };
+                            var defaultTemplateSubject = "Thông báo từ chối apply của {{candidate.FullName}}";
+                            var defaultContentTemplate = "Thân chào bạn {{candidate.FullName}}!</br>" +
+                                "Bạn đã apply vào công việc {{requisition.Job.JobName." + lang + "}} được đăng tuyển của công ty {{recruiter.RecruiterName}} vào ngày {{applidate.AppliedDate}}," +
+                                "nhưng thật đáng tiếc công ty {{recruiter.RecruiterName}} đã vì một lý do nào đó từ chối hồ sơ của bạn, và hẹn một dịp khác khi có công việc và thời cơ thuận lợi hơn.<br/>" +
+                                "Chúc bạn may mắn trong dịp khác.";
+							var emailTemplate = EMAIL.getRejectCandidateEmail.sync(null, lang, user.Email, defaultTemplateSubject, defaultContentTemplate, data);
+							var retSendEmail = EMAIL.sendEmail.sync(null, candidateUser.Email, emailTemplate.Subject, emailTemplate.Template, emailTemplate.Files, data);
+                            utils.writeData(event, {  });
+                            event.done();
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex.message || ex });
+                            event.done();
+                        }
+                    }, event);
+                }
+                page.doApprove = (event) => {
+                    utils._try(() => {
+                        try {
+                            var user = aut.getUser(event.req);
+                            var clientData = utils.readData(event);
+                            var requisition = models.ls_requisition()
+                                .where("_id", utils.objectID(clientData.id))
+                                .toItem.sync();
+                            var recruiter = models.ls_recruiters()
+                                .where("UserEmail", user.Email)
+                                .toItem.sync();
+                            var candidateUser = models.sys_Users()
+                                .where("UserId", clientData.canidateId)
+                                .toItem.sync();
+
+                            var cIndex = models.ls_requisition()
+                                .where("_id", clientData.id.toObjectID())
+                                .selectIndex("IndexOfCandidate", "CandidateApplyList.CandidateEmail", candidateUser.Email)
+                                .toItem.sync();
+                            models.ls_requisition()
+                                .where("_id", clientData.id.toObjectID())
+                                .set("CandidateApplyList." + cIndex.IndexOfCandidate + ".Status", 3)
+                                .commit.sync();
+                            utils.writeData(event, {});
+                            event.done();
+
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { message: ex.message||ex });
+                            event.done();
+                        }
+
+                    }, event);
+				}
+				page.doConsider = (event) => {
+					utils._try(() => {
+						try {
+							var user = aut.getUser(event.req);
+							var clientData = utils.readData(event);
+							var requisition = models.ls_requisition()
+								.where("_id", utils.objectID(clientData.id))
+								.toItem.sync();
+							var recruiter = models.ls_recruiters()
+								.where("UserEmail", user.Email)
+								.toItem.sync();
+							var candidateUser = models.sys_Users()
+								.where("UserId", clientData.canidateId)
+								.toItem.sync();
+
+							var cIndex = models.ls_requisition()
+								.where("_id", clientData.id.toObjectID())
+								.selectIndex("IndexOfCandidate", "CandidateApplyList.CandidateEmail", candidateUser.Email)
+								.toItem.sync();
+							models.ls_requisition()
+								.where("_id", clientData.id.toObjectID())
+								.set("CandidateApplyList." + cIndex.IndexOfCandidate + ".Status", 7) // =7 đang cân nhắc
+								.commit.sync();
+							utils.writeData(event, {});
+							event.done();
+
+						}
+						catch (ex) {
+							utils.writeData(event, { message: ex.message || ex });
+							event.done();
+						}
+
+					}, event);
+				}
+            }]
+	</script>
+	<script>
+            (function (scope) {
+                scope.lang = "{{{Language.Current.Code}}}"
+                scope.$root.isCandidate = true;
+                scope.doLoadCandidateByRequisitionId = function () {
+                    var ajax = "server.page://doLoadCandidateByRequisitionId";
+                    ajax.data({ id: scope.id })
+                        .done(function (res) {
+                            scope.$root.CandidateList = res;
+                            scope.candidate = res;
+                            scope.$apply();
+                        })
+                };
+                scope.$root.onSelectRequisition(function (id) {
+                    scope.$root.currentRequisitionID = id;
+                    scope.id = id;
+                    if (scope.doLoadCandidateByRequisitionId) {
+                        scope.doLoadCandidateByRequisitionId();
+                    }
+                });
+                if (scope.$root.currentRequisitionID) {
+                    scope.id = scope.$root.currentRequisitionID;
+                    scope.doLoadCandidateByRequisitionId();
+                }
+				scope.doReject = function (item) {
+					scope.dataItemMaster = item;
+				}
+				scope.doSaveReject = function () {
+					var ajax = "server.page://doReject";
+                    ajax.data({
+                        id: scope.id,
+						canidateId: scope.dataItemMaster.UserId,
+						reason: scope.reason
+					}).done(function (res) {
+						toastr.success("res:(Ứng viên đã bị từ chối)");
+						scope.dataItemMaster.Status = 2;
+						scope.dataItemMaster.Reason = scope.reason;
+                        scope.$apply();
+                    })
+				}
+                scope.doApprove = function (item) {
+                    var ajax = "server.page://doApprove";
+                    ajax.data({
+                        id: scope.id,
+                        canidateId: item.UserId
+                    }).done(function (res) {
+                        toastr.success("res:(Ứng viên đã được approve)");
+                        item.Status = 1;
+                        scope.$apply();
+                    })
+				}
+				scope.doConsider = function (item) {
+					var ajax = "server.page://doConsider";
+					ajax.data({
+						id: scope.id,
+						canidateId: item.UserId
+					}).done(function (res) {
+						toastr.success("res:(Ứng viên đã được cân nhắc)");
+						item.Status = 7;
+						scope.$apply();
+					})
+				}
+                scope.doClickItem = function (data) {
+                    var url = URL.createObjectURL(blob);
+                    var viewerUrl = 'web/viewer.html?file=' + encodeURIComponent(url);
+                    //window.open("data:application/pdf;base64," + data.split(",")[1]);
+                }
+            })
+	</script>
+</body>

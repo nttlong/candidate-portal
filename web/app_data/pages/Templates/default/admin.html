@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Administrator)</title>
+    <meta charset="utf-8" />
+    <render>admin/commons/header.html</render>
+    <style>
+        .row{
+            padding:10px;
+        }
+        div[c-search-box] {
+           
+        }
+        div[c-search-box] div.input-group-btn button.btn {
+            margin-right: 0px !important;
+            border: none !important;
+        }
+        ul.pagination {
+            margin:0px !important;
+        }
+            /*div[c-search-box] div#btn.input-group-btn {
+                margin-right: 0px !important;
+                border: solid 4px red !important;
+            }*/
+    </style>
+</head>
+
+<body class="nav-md admin-body-container" ng-controller="app">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col menu_fixed">
+                <div class="left_col admin-left-sidebar">
+                    <!--<div class="clearfix"></div>
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="#" class="site_title admin-logo">
+                            <img src="{{Config.RootUrl}}templates/default/resources/images/surehcs_xs.png"/>
+                        </a>
+                    </div>
+                    <div class="clearfix"></div>-->
+                    <br />
+                    <!-- sidebar menu -->
+                    <render>admin/commons/SideBar.html</render>
+                    <!-- /sidebar menu -->
+                </div>
+            </div>
+
+            <!-- top navigation -->
+            <render>admin/commons/top_nav.html</render>
+
+            <!-- /top navigation -->
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <div class="x_panel">
+                    <!--<div class="x_title">
+                        <h2></h2>
+                    </div>-->
+                    <div class="x_content" c-template url="${view}">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <!-- Bootstrap -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/nprogress/nprogress.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/iCheck/icheck.min.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/moment/min/moment.min.js"></script>
+    <script src="{{Config.RootUrl}}admin-content/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <!-- bootstrap-wysiwyg -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
+    <script src="{{Config.RootUrl}}admin-content/vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
+    <script src="{{Config.RootUrl}}admin-content/vendors/google-code-prettify/src/prettify.js"></script>
+    <!-- jQuery Tags Input -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/jquery.tagsinput/src/jquery.tagsinput.js"></script>
+    <!-- Switchery -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/switchery/dist/switchery.min.js"></script>
+    <!-- Select2 -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/select2/dist/js/select2.full.min.js"></script>
+    <!-- Parsley -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/parsleyjs/dist/parsley.min.js"></script>
+    <!-- Autosize -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/autosize/dist/autosize.min.js"></script>
+    <!-- jQuery autocomplete -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
+    <!-- starrr -->
+    <script src="{{Config.RootUrl}}admin-content/vendors/starrr/dist/starrr.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="{{Config.RootUrl}}admin-content/build/js/custom.min.js"></script>
+    <script>
+        appDirectiveSetRootUrl("{{{Config.RootUrl}}}");
+        window.config = {{{ toJson }}}.data.root;
+        window.rootUrl="{{{Config.RootUrl}}}";
+        //window.config.data=JSON.parse(window.config.data);
+        window.dateFormat = function (value) {
+            return moment(value).format(window.config.data.Settings.DefaultDateFormat);
+        }
+        dialog_root_url("{{{Config.RootUrl}}}admin");
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("[role=\"main\"]").css({
+                "min-height": $(window).height() - $(".nav_menu").height() - $("footer").innerHeight()-14,
+                "max-height": $(window).height() - $(".nav_menu").height() - $("footer").innerHeight() - 14,
+                "overflow-y":"auto"
+            });
+            $(window).resize(function () {
+                $("[role=\"main\"]").css({
+                    "min-height": $(window).height() - $(".nav_menu").height() - $("footer").innerHeight() - 14,
+                    "max-height": $(window).height() - $(".nav_menu").height - $("footer").innerHeight() - 14,
+                    "overflow-y": "auto"
+                });
+            });
+
+        });
+
+    </script>
+    <script>
+        ng_app([], function ($scope) {
+            history_navigator($scope.$root);
+            $scope.$root.dialigPath = "admin/dialogs";
+            $scope.$root.$history.change(function (data) {
+                if (data.view) {
+                    $scope.$root.view = "admin/" + data.view;
+
+                    $scope.$root.$applyAsync();
+
+                }
+            });
+            $scope.$root.logout = function () {
+
+            };
+
+        })
+    </script>
+    {{#data}}
+    <script>
+
+        function doSignOut() {
+            var a_singout = "server.api://(nodejs)modules/node.sys.account@sign_out";
+            a_singout.data({
+                retUrl: window.location.href
+            }).done(function (res) {
+                if (res.action && res.action.redirect) {
+                    window.location.href = res.action && res.action.redirect
+                }
+                else {
+                    window.location.reload(true);
+                }
+            })
+        }
+    </script>
+    <script>
+        $(document).ready(function(){
+            window.onChangeLanguage(function(value){
+                if(window.currentApp){
+                    if(window.currentApp.doLoadData){
+                        window.currentApp.doLoadData(value);
+                    }
+                }
+            });
+            var url="{{{getValue '$redirect'}}}";
+
+            if(url && (url!="")&&(url.length>1)){
+                window.location.href=url;
+            }
+        })
+    </script>
+    {{/data}}
+
+
+</body>
+</html>

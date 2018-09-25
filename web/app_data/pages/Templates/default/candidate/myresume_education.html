@@ -1,0 +1,409 @@
+﻿<div class="muresume-education" id="myresume-education" style="margin-top:8px" ng-cloak>
+	<div id="form-education">
+		<div class="box border-primary">
+			<fieldset class="">
+				<legend class="box-md">
+					<i class="glyphicon glyphicon-book"></i> res:(Học Vấn và Bằng Cấp)
+
+				</legend>
+				<div class="placeholder-section box-md" ng-if="data.Degree.length < 1">
+					<p class="placeholder">res:(Mô tả toàn bộ quá trình học vấn của bạn, cũng như các bằng cấp bạn đã được và các khóa huấn luyện bạn đã tham gia)</p>
+				</div>
+				<!-- Sample -->
+				<div class="content-education">
+
+					<form ng-repeat="item in data.Degree" name="frmEditEducation" class="form-view infor-wrapper box-md relative" data-order="10" method="post" action="" ng-click="doEdit($event,item)">
+
+						<div class="error-message-update-education row" hidden="hidden">
+							<div>
+								<div class="cls-error" style="display: none;"><strong>Oops! </strong> res:(Có lỗi đã xảy ra, vui lòng thử lại.)</div>
+								<br>
+							</div>
+						</div>
+						<span class="edit-btn" ng-if="$root.AllowEdit()">
+							<button type="button" class="btn btn-sm btn-default">
+								<i class="glyphicon glyphicon-pencil"></i>
+							</button>
+						</span>
+						<div>
+							<div class="field-view" style="display: block;">
+								<h4 class="view-control">${item.Major}</h4>
+							</div>
+							<div class="field-edit" style="display: none;">
+								<div class="form-group">
+									<label>
+										<strong class="red-text">* </strong>
+										res:(Chuyên ngành)
+									</label>
+									<input type="text" class="form-control edit-control" name="subject" placeholder="res:(Ví dụ: Kinh Doanh Quốc Tế)" ng-model="item.Major" maxlength="150" autofocus="">
+									<span class="msg-subject-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+									<span class="msg-subject-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+								</div>
+							</div>
+						</div>
+						<div>
+							<div class="field-view" style="display: block;">
+								<div class="row">
+									<span class="col-sm-6 view-control" data-control="edu-school">${item.SchoolName}</span>
+									<p class="col-sm-6 view-control" data-control="edu-qualification" data-type="select">${item.MajorLevel}</p>
+								</div>
+							</div>
+							<div class="field-edit" style="display: none;">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>
+												<strong class="red-text">* </strong>
+												res:(Trường)
+											</label>
+											<input type="text" class="form-control edit-control" placeholder="res:(Ví dụ: Đại học Kinh Tế Tp. Hồ Chí Minh)" ng-model="item.SchoolName" maxlength="150" data-control="edu-school">
+											<span class="msg-school-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+											<span class="msg-school-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label>
+												<strong class="red-text">*</strong>
+												res:(Bằng cấp)
+											</label>
+											<input type="text" name="school" class="form-control edit-control" placeholder="res:(Ví dụ: Đại học)" ng-model="item.MajorLevel" maxlength="150" data-control="edu-level">
+											<span class="msg-majorlv-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+											<span class="msg-majorlv-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="field-view" style="display: block;">
+									<div class="row">
+										<p class="col-sm-6">
+											<span class="view-control" data-control="from-date">${item.FromTime}</span>
+											-
+											<span class="view-control" data-control="to-date">${item.ToTime}</span>
+											<span class="total-time" ng-if="calculatorExpYearItem(item.FromTime, item.ToTime) > 0 && calculatorExpMonthItem(item.FromTime, item.ToTime) > 0">
+												(
+												<span class="years" ng-if="calculatorExpYearItem(item.FromTime, item.ToTime) > 0">
+													<span class="number-of-years">${calculatorExpYearItem(item.FromTime, item.ToTime)}</span>
+													<span class="months" ng-if="calculatorExpMonthItem(item.FromTime, item.ToTime) > 0">
+														<span class="lbl">res:(năm)</span>
+													</span>
+													<span class="number-of-months">${calculatorExpMonthItem(item.FromTime, item.ToTime)}</span>
+													<span class="lbl">res:(tháng)</span>
+												</span>
+												)
+											</span>
+										</p>
+										<span class="col-sm-6">
+											<span class="view-control" ng-if="item.IsGraduated">res:(Đã tốt nghiệp)</span>
+											<span class="view-control" ng-if="!item.IsGraduated">res:(Chưa tốt nghiệp)</span>
+										</span>
+									</div>
+								</div>
+								<div class="field-edit" style="display: none;">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>res:(Từ tháng)</label>
+												<!--<div v-date-picker v-model="item.FromTime"></div>-->
+												<input type="text" c-month-picker ng-model="item.FromTime" />
+
+												<span class="msg-from-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+												<span class="msg-from-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+												<span class="msg-from-date-valid cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>res:(Đến tháng)</label>
+												<input type="text" c-month-picker ng-model="item.ToTime" />
+
+
+
+												<span class="msg-to-date-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+												<span class="msg-to-date-no-future-date cls-error" hidden="hidden">res:(Vui lòng không chọn ngày tương lai cho mục này)</span>
+												<span class="msg-to-date-valid cls-error" hidden="hidden">res:(Tháng kết thúc phải lớn hơn tháng bắt đầu)</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="field-view" style="display: block;">
+									<div class="row">
+										<span class="col-sm-6 view-control" data-control="edu-school">res:(Xếp loại): ${item.Rank}</span>
+										<p class="col-sm-6 view-control" data-control="edu-qualification" ng-if="item.IsMainCer">res:(Là bằng cấp chính)</p>
+									</div>
+								</div>
+								<div class="field-edit" style="display: none;">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>res:(Xếp loại)</label>
+												<input type="text" name="rating" class="form-control edit-control" placeholder="res:(Ví dụ: Giỏi)" ng-model="item.Rank" maxlength="150" data-control="edu-rating">
+												<span class="msg-rank-required cls-error" hidden="hidden">res:(Vui lòng nhập thông tin)</span>
+												<span class="msg-rank-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+											</div>
+										</div>
+										<div class="col-sm-6">
+
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>
+													<input type="checkbox" name="isgraduated" ng-model="item.IsGraduated" data-control="edu-isgraduated">
+													res:(Đã tốt nghiệp)
+												</label>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>
+													<input type="checkbox" ng-model="item.IsMainCer" data-control="edu-ismaincer">
+													res:(Là bằng cấp chính)
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div>
+								<div class="field-view" style="display: block;">
+									<div c-html-view ng-model="item.Note"></div>
+								</div>
+								<div class="field-edit" style="display: none;">
+									<div class="form-group">
+										<label>res:(Thành tựu)</label>
+
+										<textarea rows="3" name="description" ng-model="item.Note" class="form-control edit-control emp-description achievement-textarea countdown-target" placeholder="" maxlength="5000">
+                                                                  
+                                                                </textarea>
+										<em class="countdown text-gray-light" data-text="character remaining">4882 res:(character remaining)</em>
+										<p class="msg-description-limit-max cls-error" hidden="hidden">res:(Bạn đã nhập quá ký tự cho phép)</p>
+										<p class="msg-description-valid cls-error" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</p>
+										<p class="msg-description-suggestion text-info" hidden="hidden">res:(Thêm thông tin để nâng mức độ hoàn thành hồ sơ của bạn)</p>
+									</div>
+								</div>
+							</div>
+							<div class="row field-edit" style="display: none;">
+								<div class="col-sm-6">
+									(<strong class="red-text">*</strong>) res:(Thông tin bắt buộc)
+								</div>
+								<div class="col-sm-6 text-right">
+									<button type="button" class="btn-remove-this-section btn btn-link" ng-click="doDelete($event,$index,item)">
+										<i class="glyphicon glyphicon-trash"></i>
+									</button>
+									<button type="button" ng-click="doCancel($event)" id="btnCancelEditEducation" class="btn-cancel btn btn-default">res:(Hủy)</button>
+									<button type="button" ng-click="doSave($event,index,item)" class="btn-save btn btn-primary">res:(Lưu)</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<button ng-if="$root.AllowEdit()" type="button" class="btn btn-default btn-block no-border add-one-more-section" id="btnAddEducation" style="display: block;" ng-click="doAddNewEducation($event)">
+					<strong>res:(Bổ sung)</strong>
+				</button>
+
+			</fieldset>
+		</div>
+	</div>
+</div>
+<script server>
+	[
+		"./../modules/node.sys.categories",
+		"./../libs/lv.utils",
+		"./../modules/node.candidate.profiles",
+		"./../libs/lv.authenticate",
+		(categories, utils, profiles, aut, app) => {
+			utils.debug();
+
+			app.doLoadData = (event) => {
+				var loadData = (email) => {
+					profiles.getEducation(email,
+						utils.getCurrentLanguageCode(event),
+						(err, data) => {
+							if (err) event.done(err);
+							else {
+								utils.writeData(event, data);
+								event.done();
+							}
+						})
+				}
+				var clientData = utils.readData(event);
+				if ((clientData.candidateId) && (clientData.candidateId != "")) {
+					profiles.getUserInfoByUserId(clientData.candidateId, (err, user) => {
+						if (err) handler(err);
+						else {
+							if (user == null) {
+								utils.writeData(event, {});
+								event.done();
+							}
+							else {
+								loadData(user.Email);
+							}
+						}
+					})
+				}
+				else {
+					loadData(aut.getUser(event.req).Email);
+				}
+
+			}
+			app.doUpdate = (event) => {
+				var clientData = utils.readData(event);
+				clientData.FromTime > clientData.ToTime;
+				for (var i = 0; i < clientData.length; i++) {
+					if (new Date('01/' + clientData[i].FromTime) > new Date('01/' + clientData[i].ToTime)) {
+						utils.writeData(event, {
+							apiError: { errorType: "DateError" }
+						});
+						event.done();
+						return;
+					}
+				}
+				clientData.LatestModifiedOn = new Date();
+				clientData.LatestModifiedOnUTC = utils.getUTCDate(new Date());
+				profiles.saveEducation(aut.getUser(event.req).Email,
+					utils.getCurrentLanguageCode(event),
+					clientData,
+					(err, data) => {
+						if (err) event.done(err);
+						else {
+							utils.writeData(event, data);
+							event.done();
+						}
+					})
+			}
+		}]
+</script>
+<script>
+    (function (app) {
+        app.event = null;
+        app.idx = null;
+        app.itemData = null;
+        app.lang = "{{{Language.Current.Code}}}";
+        app.data = {
+            Degree: [],
+            Users: {
+                Settings: {
+                    DefaultDateFormat: "DD/MM/YYYY"
+                }
+            }
+        };
+        app.isThisUser = {};
+        app.calculatorExpMonthItem = function (f, t) {
+            return window.calculatorExpMonthItem(f, t);
+        };
+        app.calculatorExpYearItem = function (f, t) {
+            //return window.calculatorExpMonthItem(f,t)
+        }
+        app.currentItem = {}; //Dòng đang sửa
+        app.doEdit = function (event, item) {
+            if (!app.$root.AllowEdit()) return;
+            app.currentItem = item;
+            window.doEditWebPart(event)
+        }
+        app.doLoadData = function () {
+            var ajax = "server.page://doLoadData";
+            ajax
+                .data({ candidateId: window.candidateId })
+                .noMask().done(function (res) {
+				console.log(1111111111111, res)
+                    app.data.Degree = res;
+                    app.$applyAsync();
+            })
+        }
+
+        app.doLoadData();
+        app.doSave = function (e, index, item) {
+            toastrError = function (error, model) {
+                toastr.error(error);
+                $("[ng-model='" + model + "']").focus(
+                    function () {
+                        $(this).css({ "border-color": "red" })
+                    }
+                );
+                $("[ng-model='" + model + "']").blur(
+                    function () {
+                        $(this).css({ "border-color": "#ccc" })
+                    }
+                );
+                $("[ng-model='" + model + "']").trigger("click");
+                $("[ng-model='" + model + "']").select();
+            }
+            var ajax = "server.page://doUpdate";
+            ajax.data(app.data.Degree)
+				.done(function (res) {
+                    if (res.apiError) {
+						if (res.apiError.errorType == 'MajorIsEmpty') {
+							toastrError("res:(Vui lòng nhập chuyên ngành)", "item.Major");
+						} else if (res.apiError.errorType == 'SchoolNameIsEmpty') {
+							toastrError("res:(Vui lòng nhập trường)", "item.SchoolName");
+						} else if (res.apiError.errorType == 'MajorLevelIsEmpty') {
+							toastrError("res:(Vui lòng nhập bằng cấp)", "item.MajorLevel");
+						} else if (res.apiError.errorType == 'DateError') {
+							toastrError("res:(Vui lòng nhập Từ tháng < Đến tháng)", "item.FromTime");
+						}
+                    } else {
+                        toastr.success("res:(Hồ sơ của bạn đã cập nhật xong)");
+                        window.changeToViewMode(e);
+                    }
+                })
+        }
+        app.doCancel = function (e) {
+			window.changeToViewMode(e);
+			app.doLoadData();
+        }
+        app.doDelete = function (e, index, item) {
+            app.$root.isEdu = true;
+            app.$root.isCer = false;
+            app.event = e;
+            app.idx = index;
+            app.itemData = item;
+            dialog(app).url("{{Config.RootUrl}}Candidate/confirmDelete")
+                .done();
+        }
+
+        app.$root.onDeleteEdu = function () {
+            var ret = [];
+            for (var i = 0; i < app.data.Degree.length; i++) {
+                if (i != app.idx) {
+                    ret.push(app.data.Degree[i]);
+                }
+            }
+            app.data.Degree = ret;
+            app.doSave(app.event, app.idx, app.itemData);
+            $('#myModal').modal('toggle');
+        }
+
+        app.doAddNewEducation = function (e) {
+
+            app.data.Degree.push({});
+            setTimeout(function () {
+                $($("#myresume-education").find('[name="frmEditEducation"]')[$("#myresume-education").find('[name="frmEditEducation"]').length - 1]).find("span").trigger("click");
+            }, 150);
+            e.stopPropagation();
+            if (!app.isThisUser)
+                return;
+            ////$('[id^="frmEditEducation"]').addClass('is-disabled');
+            //$('#frmAddEducation').addClass('edit-mode');
+            //$('#frmAddEducation').insertAfter($('[name^="frmEditEducation"]').last())
+            //$('#frmAddEducation').fadeIn();
+            //$('#frmAddEducation').find('.field-view').css('display', 'none');
+            //$('#btnAddEducation').css('display', 'none');
+            //$(this).find('.field-edit').fadeIn();
+
+
+        }
+        app.formatDate = function (value, format) {
+            return moment(String(value)).format(format)
+        }
+        app.doUpdateMonthPicker = function (index, value, model) {
+            app.data.Degree[index][model] = value;
+
+        }
+
+    })
+</script>

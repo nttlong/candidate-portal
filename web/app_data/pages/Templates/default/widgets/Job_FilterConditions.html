@@ -1,0 +1,183 @@
+﻿
+<div class="panel panel-default">
+    <div class="panel-heading">res:(Lọc theo)<button type="button" class="close" data-dismiss="modal">&times;</button></div>
+    <div class="panel-body" id="appfilter">
+        <div class="group hide-body">
+            <div class="header">
+                <span class="title">res:(Ngành nghề)</span>
+                <span class="icon-down glyphicon glyphicon-menu-down"></span>
+                <span class="icon-right glyphicon glyphicon-menu-right"></span>
+            </div>
+            <div class="body">
+                <!--<div class="input-group" style="margin-bottom: 20px;">
+                    <input type="text" class="form-control" ng-model="modelSearch" placeholder="res:(Tìm kiếm theo ngành nghề)" name="search">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>-->
+                {{#each categories.listOfJobs}}
+                <fieldset>
+                    <legend>{{text}}</legend>
+                    <div class="body">
+                        {{#each children}}
+                        <div class="lv-checkbox-custom">
+                            <input type="checkbox" id="{{id}}" value="{{id}}" ng-click="$root.onSelectJob('{{id}}')"
+                                   name="{{id}}" group-id="{{id}}" class="selected-job-code" />
+                            <label for="{{id}}">
+                                <span class="check"></span>
+                                <span>{{text}}</span>
+                            </label>
+                        </div>
+                        {{/each}}
+                    </div>
+                </fieldset>
+                {{/each}}
+            </div>
+        </div>
+        <div class="group hide-body">
+            <div class="header">
+                <span class="title">res:(Địa điểm)</span>
+                <span class="icon-right glyphicon glyphicon-menu-right"></span>
+                <span class="icon-down glyphicon glyphicon-menu-down"></span>
+            </div>
+            <div class="body">
+                <!--<div class="input-group" style="margin-bottom: 20px;">
+                    <input type="text" class="form-control" v-model="modelLocation" placeholder="Tìm kiếm theo địa điểm" name="search">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>-->
+                {{#each categories.listOfLocations}}
+                <fieldset>
+                    <legend>{{text}}</legend>
+                    {{#each children}}
+                    <div class="lv-checkbox-custom">
+                        <input type="checkbox" id="{{id}}" name="{{id}}" value="{{id}}" ng-click="$root.onSelectLocation('{{id}}')"
+                               class="selected-province-code" group-id="{{id}}" />
+                        <label for="{{id}}">
+                            <span class="check"></span>
+                            <span>{{text}}</span>
+                        </label>
+                    </div>
+                    {{/each}}
+                </fieldset>
+                {{/each}}
+            </div>
+        </div>
+        <div class="group hide-body">
+            <div class="header">
+                <span class="title">res:(Cấp bậc)</span>
+                <span class="icon-right glyphicon glyphicon-menu-right"></span>
+                <span class="icon-down glyphicon glyphicon-menu-down"></span>
+            </div>
+            <div class="body">
+                {{#each categories.listOfExperienceLevels}}
+                <div class="lv-checkbox-custom">
+                    <input type="checkbox" id="{{id}}" name="{{id}}" value="{{text}}" class="selected-level" ng-click="$root.onSelectLevel('{{id}}')" />
+                    <label for="{{id}}">
+                        <span class="check"></span>
+                        <span>{{text}}</span>
+                    </label>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="group hide-body">
+            <div class="header">
+                <span class="title">res:(Mức lương)</span>
+                <span class="icon-right glyphicon glyphicon-menu-right"></span>
+                <span class="icon-down glyphicon glyphicon-menu-down"></span>
+            </div>
+            <div class="body">
+                {{#each salaries}}
+                <div class="lv-checkbox-custom radio radio-success">
+                    <input type="radio" name="Salary" id="{{id}}" value="{{value}}" class="selected-level" ng-click="$root.onSelectSalary('{{value}}')"/>
+                    <label for="{{id}}">
+                        <span class="check"></span>
+                        <span>{{text}}</span>
+                    </label>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="group hide-body">
+            <div class="header">
+                <span class="title">res:(Công ty)</span>
+                <span class="icon-right glyphicon glyphicon-menu-right"></span>
+                <span class="icon-down glyphicon glyphicon-menu-down"></span>
+            </div>
+            <div class="body">
+                <!--<div class="body">
+                    <div class="input-group" style="margin-bottom: 20px;">
+                        <input type="text" class="form-control" ng-model="$root.modelCompany" placeholder="Tìm kiếm theo tên cty" name="search">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </div>-->
+                {{#each categories.listOfRecruiters}}
+                <div class="lv-checkbox-custom">
+                    <input type="checkbox" id="{{id}}" name="{{id}}" class="selected-company"  ng-click="$root.onSelectRecruiter('{{id}}')"
+                           value="{{id}}" />
+                    <label for="{{id}}">
+                        <span class="check"></span>
+                        <span>{{text}}</span>
+                    </label>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script server>
+    ["./../libs/lv.utils",
+        (utils, app) => {
+            app.onLoad = (event) => {
+                var salary = [
+                    {
+                        id: "all",
+                        value: 0,
+                        text: "res:(Tất cả)"
+                    }, {
+                        id: "underfive",
+                        value: 1,
+                        text: "res:(≤ 5.000.000 vnđ)"
+                    }, {
+                        id: "five",
+                        value: 5000000,
+                        text: "res:(Từ 5.000.000 vnđ)"
+                    }, {
+                        id: "ten",
+                        value: 10000000,
+                        text: "res:(Từ 10.000.000 vnđ)"
+                    }, {
+                        id: "fifteen",
+                        value: 15000000,
+                        text: "res:(Từ 15.000.000 vnđ)"
+                    }, {
+                        id: "twenty",
+                        value: 20000000,
+                        text: "res:(Từ 20.000.000 vnđ)"
+                    }, {
+                        id: "agree",
+                        value: -1,
+                        text: "res:(Thỏa thuận)"
+                    }, {
+                        id: "compete",
+                        value: -2,
+                        text: "res:(Cạnh tranh)"
+                    }
+                ];
+                event.setModel("salaries", salary);
+                event.setModel("categories", event.req.categories);
+                event.done();
+            }
+        }
+    ]
+</script>
+<script>
+    window.onClickCkbJobs = function (evt) {
+        alert(evt);
+    }
+</script>

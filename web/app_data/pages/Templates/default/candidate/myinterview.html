@@ -1,0 +1,623 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title>page-caption:(Lịch phỏng vấn của tôi)</title>
+	<meta charset="utf-8" />
+	<render>../commons/header.html</render>
+	<link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_myinterview.min.css" rel="stylesheet" />
+	<link href="{{Config.RootUrl}}calender/Content/full_calendar/fullcalendar.min.css" rel="stylesheet" />
+	<link href="{{Config.RootUrl}}calender/Content/full_calendar/fullcalendar.print.min.css" rel="stylesheet" media="print" />
+	<script src="{{Config.RootUrl}}calender/Content/full_calendar/lib/moment.min.js"></script>
+	<script src="{{Config.RootUrl}}calender/Content/full_calendar/fullcalendar.min.js"></script>
+
+</head>
+<body ng-controller="app" ng-cloak>
+
+	<render>../commons/navbar.html</render>
+	<div class="wrapper">
+		<section class="container myresume-content">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-9" id="app" ng-cloak>
+					<div class="myresume-detail">
+						<div class="box">
+							<div class="myresume-user-infor">
+								<div class="row">
+									<div class="center-block col-xs-4 col-sm-3">
+										<div class="img-wrapper">
+											<div class="img-content">
+												<form id="avartar">
+													<input type="hidden" name="myresume-id" />
+													<span class="img-edit hidden-xs">
+														<button type="button" class="btn btn-sm btn-default">
+															<i class="glyphicon glyphicon-pencil"></i>
+														</button>
+													</span>
+													<div class="dropdown">
+														<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" id="img-avartar">
+															<div class="avatar img-circle">
+																<img ng-src="${info.Photo}" class="img-circle img-responsive" ng-if="info.Photo" />
+																<img ng-src="{{{Config.RootUrl}}}photo/candidate/${info.UserId}.png" class="img-circle img-responsive" ng-if="!info.Photo" />
+															</div>
+														</a>
+														<span class="avatar-error"></span>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+									<div class="col-xs-8 col-sm-9 myresume-header">
+										<form class="infor-wrapper">
+											<input type="hidden" name="myresume-id" />
+											<div class="box-info">
+												<span class="info-edit">
+													<button type="button" class="btn btn-sm btn-default">
+														<i class="glyphicon glyphicon-pencil"></i>
+													</button>
+												</span>
+												<div class="clearfix user-info mar-left">
+													<div class="name pull-left">
+														<div class="field-view" style="display:block">
+															<h3 class="name-profile">${info.LastName}</h3>
+														</div>
+														<div class="field-edit" style="display:none">
+															<label><strong class="red-text">*</strong>Họ</label>
+															<input placeholder="Họ" type="text" id="txtLastName" name="txtLastName" class="form-control input-sm" autofocus />
+															<span class="cls-error" id="errLastName" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+															<span class="cls-error" id="errEmailInLastName" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+															<span class="cls-error" id="errSpecialCharsInLastName" hidden="hidden">res:(Vui lòng không nhập số hoặc kí tự đặc biệt)</span>
+														</div>
+													</div>
+													<div class="last-name pull-left">
+														<div class="field-view" style="display:block">
+															<h3 class="name-profile">${info.FirstName}</h3>
+														</div>
+														<div class="field-edit mg-bt" style="display:none">
+															<label><strong class="red-text">*</strong>Tên</label>
+															<input placeholder="Tên" type="text" id="txtFirstName" name="txtFirstName" class="form-control input-sm" autofocus />
+															<span class="cls-error" id="errFirstName" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+															<span class="cls-error" id="errEmailInFirstName" hidden="hidden">res:(Vui lòng không nhập email hoặc điện thoại)</span>
+															<span class="cls-error" id="errSpecialCharsInFirstName" hidden="hidden">res:(Vui lòng không nhập số hoặc kí tự đặc biệt)</span>
+														</div>
+													</div>
+												</div>
+												<div class="user-info col-md-6">
+													<div class="user-poisition">
+														<div class="field-view" style="display:block">
+															<span class="position-text" data-update-tip="Hồ sơ của bạn đã hơn một năm tuổi!!!<br/> Đã đến lúc cần cập nhật rồi.<i class='fa fa-times-circle'></i>">
+																${info.CurrentJobName}
+															</span>
+														</div>
+														<div class="field-edit form-group mg-tp" style="display:none">
+															<label><strong class="text-red">*</strong> Chức Danh</label>
+															<input placeholder="Vị trí hiện tại. Ví dụ: Developer" type="text" id="txtPosition" name="txtPosition" class="form-control input-sm" value="Developer">
+															<span class="cls-error" id="errPosition" hidden="hidden">Thông tin này bắt buộc</span>
+															<span class="cls-error" id="errEmailInPosition" hidden="hidden">Vui lòng không nhập email hoặc điện thoại</span>
+														</div>
+													</div>
+													<div class="user-exp">
+														<div class="field-view" style="display:block">
+															<span class="exp-year">
+																res:(Số năm kinh nghiệm:) <span class="exp-year-text">${info.TotalExpYear}</span> res:(năm)
+															</span>
+														</div>
+														<div class="field-edit form-group mg-tp" style="display:none">
+															<label><strong class="text-red">*</strong> res:(Số năm kinh nghiệm)</label>
+															<input placeholder="Ví dụ: 7" type="text" name="txtYearExp" id="txtYearExp" maxlength="2" class="form-control input-sm" value="2">
+															<span class="cls-error" hidden="hidden" id="errYearExp">Thông tin này bắt buộc</span>
+														</div>
+													</div>
+													<div class="user-graduate">
+														<div class="field-view" style="display:block">
+															<span class="graduate-text" data-type="radio"></span>
+														</div>
+														<div class="field-edit form-group mg-tp" style="display:none">
+															<label>
+																<input type="checkbox" class="" id="chkGraduate" name="chkGraduate" value="false" data-text-value="Tôi mới tốt nghiệp/chưa có kinh nghiệm làm việc">
+																Tôi mới tốt nghiệp/chưa có kinh nghiệm làm việc
+															</label>
+														</div>
+													</div>
+													<div class="field-view hidden-xs" style="display: block;">
+														<p>
+															<span class="text-gray-light">res:(Công ty gần đây nhất:)</span>
+															<a class="current-company clickable">${info.CompanyName}</a>
+															<br>
+															<span class="text-gray-light">res:(Bằng cấp cao nhất:)</span>
+															<a class="current-highest-education clickable">Cao đẳng</a>
+														</p>
+													</div>
+												</div>
+												<div class="col-md-6" style="margin-bottom: 30px">
+													<div>
+														<span style="color: #f7941d;"><strong>res:(Tổng số job ứng tuyển): <span id="tsj"> ${info.TotalRequisition}</span></strong></span>
+													</div>
+													<div>
+														<span><strong>res:(Lịch phỏng vấn tuần): </strong><span id="lpvt">${info.InterviewStat.TotalWeek}</span></span>
+													</div>
+													<div>
+														<span><strong>res:(Lịch phỏng vấn tháng): </strong><span id="lpvth">${info.InterviewStat.TotalMonth}</span></span>
+													</div>
+													<div>
+														<span><strong>res:(Lịch phỏng vấn năm nay): </strong><span id="lpvna">${info.InterviewStat.TotalYear}</span></span>
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--/// Box thứ 2-->
+						<div>
+							<div id='calendar' class="box" style="padding: 10px;"></div>
+						</div>
+					</div>
+				</div>
+				<!--right box-->
+				<render>myresume_right_box.html</render>
+				<!---->
+			</div>
+		</section>
+	</div>
+	<render>../commons/footer.html</render>
+	<script server>
+		[
+			"./../libs/lv.utils",
+			"./../modules/lv.db",
+			"./../libs/lv.authenticate",
+			"./../modules/lv.model",
+			(utils, Data, aut, models, app) => {
+				app.onLoadData = (event) => {
+					utils._try(() => {
+						var user = aut.getUser(event.req);
+						var candidate;
+						var totalRequistion;//tổng số ứng tuyển
+						var interviewStat;//Thống kê lịch phỏng vấn
+						var totalView;// tổng lượt xem hồ sơ của tất cả các nhà tuyển dụng
+						var interviewList;// danh sách chi tiết lịch phỏng vấn theo từng KH sắp xếp giảm dần theo Action date
+						var lan = utils.getCurrentLanguageCode(event);
+						Data.cnn((err, db) => {
+							utils.paralellCaller() //chạy song song vừa tìm ứng viên vừa tính tổng số ứng tuyển
+								.call(emiter => {
+									db.collection("ls_candidate")
+										.aggregate([
+											{
+												$match: {
+													UserEmail: {
+														$regex: new RegExp("^" + user.Email + "$", "i")
+													}
+												}
+											}, {
+												$lookup: {
+													from: "sys_Users",
+													localField: "UserEmail",
+													foreignField: "Email",
+													as: "User"
+												}
+											}, {
+												$unwind: "$User"
+											}, {
+												$project: {
+													TotalExpYear: 1,
+													CompanyName: "$RecentInfo.CompanyName",
+													TopDegree: 1,
+													FirstName: "$User.FirstName",
+													LastName: "$User.LastName",
+													Photo: 1,
+													UserId: "$User.UserId"
+												}
+											}
+										]).toArray((err, list) => {
+											if ((!err) && (list.length > 0)) {
+												candidate = list[0];
+
+											}
+											emiter(err);
+										});
+								})
+								.call(emiter => {
+									//tính tổng số ứng tuyển
+									db.collection("ls_requisition")
+										.aggregate([
+											{
+												$unwind: "$CandidateApplyList"
+											}, {
+												$match: {
+													"CandidateApplyList.CandidateEmail": {
+														$regex: new RegExp("^" + user.Email + "$", "i")
+													}
+												}
+											}
+										])
+										.toArray((err, list) => {
+											if (!err) {
+												totalRequistion = list.length
+											}
+											emiter(err);
+										})
+
+								})
+								.call(emiter => { //Thống kê lịch phỏng vấn
+									var _date = new Date();
+									var _beginToDay = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 0, 0, 0);
+									var _endToDay = new Date(_date.getFullYear(), _date.getMonth(), _date.getDate(), 23, 59, 59);
+									var _beginThisMonth = new Date(_date.getFullYear(), _date.getMonth(), 1, 0, 0, 0); //ngày đầu tháng
+									var _endThisMonth = new Date(_date.getFullYear(), _date.getMonth() + 1, 0, 23, 59, 59); //ngày cuối tháng javascript engine tự tính khi chuyển sang năm
+									var _beginThisYear = new Date(_date.getFullYear(), 0, 1, 0, 0, 0);
+									var _endThisYear = new Date(_date.getFullYear() + 1, 1, 0, 23, 59, 59);
+									var _beginWeek = new Date(_date.setDate(_date.getDate() - _date.getDay() + 1));
+									var _endWeek = new Date(_date.setDate(_date.getDate() - _date.getDay() + 7));
+									var _beginThisWeek = new Date(_beginWeek.getFullYear(), _beginWeek.getMonth(), _beginWeek.getDate(), 0, 0, 0);
+									var _endThisWeek = new Date(_endWeek.getFullYear(), _endWeek.getMonth(), _endWeek.getDate(), 23, 59, 59);
+									var operators = [];
+									operators.push({
+										$unwind: "$CandidateApplyList"
+									});
+									operators.push({
+										$match: { "CandidateApplyList.CandidateEmail": { $regex: new RegExp("^" + user.Email + "$", "i") } } //tìm theo ứng viên hiện tại
+									});
+									operators.push({
+										$unwind: "$CandidateApplyList.Tasks"
+									});
+									operators.push({
+										$match: {
+											"CandidateApplyList.Tasks.IsInterview": true //chỉ lấy lịch phỏng vấn
+										}
+									});
+									operators.push({
+										$replaceRoot: {
+											newRoot: "$CandidateApplyList.Tasks"
+										}
+									});
+
+									var projectStat = {
+										DayItem: {
+											$cond: {
+												if: {
+
+													$and: [
+														{ $gte: ["$ActionDate", _beginToDay] },
+														{ $lte: ["$ActionDate", _endToDay] }]
+												},
+
+												then: 1, else: 0
+
+											}
+										},
+										MonthItem: {
+											$cond: {
+												if: {
+
+													$and: [
+														{ $gte: ["$ActionDate", _beginThisMonth] },
+														{ $lte: ["$ActionDate", _endThisMonth] }]
+												},
+
+												then: 1, else: 0
+
+											}
+										},
+										YearItem: {
+											$cond: {
+												if: {
+
+													$and: [
+														{ $gte: ["$ActionDate", _beginThisYear] },
+														{ $lte: ["$ActionDate", _endThisYear] }]
+												},
+
+												then: 1, else: 0
+
+											}
+										},
+										WeekItem: {
+											$cond: {
+												if: {
+
+													$and: [
+														{ $gte: ["$ActionDate", _beginThisWeek] },
+														{ $lte: ["$ActionDate", _endThisWeek] }]
+												},
+
+												then: 1, else: 0
+
+											}
+										}
+									};// end project stat
+									var groupSum = {
+										$group:
+											{
+												_id: "a",
+												TotalDay: { $sum: "$DayItem" },
+												TotalMonth: { $sum: "$MonthItem" },
+												TotalYear: { $sum: "$YearItem" },
+												TotalWeek: { $sum: "$WeekItem" }
+											}
+									};
+									operators.push({ $project: projectStat });
+									operators.push(groupSum);
+									db.collection("ls_requisition")
+										.aggregate(operators)
+										.toArray((err, list) => {
+											if ((!err) && (list.length > 0)) {
+												interviewStat = list[0];
+											}
+											else {
+												interviewStat = {
+													TotalDay: 0,
+													TotalMonth: 0,
+													TotalYear: 0,
+													TotalWeek: 0
+												}
+											}
+											emiter(err);
+										})
+								})
+								.call(emiter => { //lấy lịc phỏng vấn
+									db.collection("ls_requisition")
+										.aggregate([
+											{
+												$unwind: "$CandidateApplyList"
+											}, {
+												$unwind: "$CandidateApplyList.Tasks"
+											}, {
+												$match: {
+													$and: [
+														{
+															"CandidateApplyList.CandidateEmail": {
+																$regex: new RegExp("^" + user.Email + "$", "i")
+															}
+														}, {
+															"CandidateApplyList.Tasks.IsInterview": true
+														}]
+
+												}
+											}, {
+												$lookup: {
+													from: "ls_recruiters",
+													localField: "RecruiterId",
+													foreignField: "_id",
+													as: "Recruiter"
+
+												}
+											}, {
+												$unwind: "$Recruiter"
+											}, {
+												$sort: {
+													"CandidateApplyList.Tasks.ActionDate": -1
+												}
+											}, {
+												$project: {
+													RecruiterCode: "$Recruiter.RecruiterCode",
+													RecruiterName: "$Recruiter.RecruiterName",
+													InterviewLocation: "$CandidateApplyList.Tasks.InterviewLocation",
+													FromTime: "$CandidateApplyList.Tasks.InterviewTime.From",
+													ToTime: "$CandidateApplyList.Tasks.InterviewTime.To",
+													InterviewDate: "$CandidateApplyList.Tasks.ActionDate",
+													TaskName: "$CandidateApplyList.Tasks.TaskName",
+													Actor: "$CandidateApplyList.Tasks.Actor",
+													AttachmentID: "$CandidateApplyList.Tasks.AttachmentID",
+													Note: "$CandidateApplyList.Tasks.Note",
+													TaskID: "$CandidateApplyList.Tasks.TaskID",
+													JobName: "$Job.JobName." + lan,
+													GoupName: "$Job.JobName." + lan,
+													LocationName: "$Location.JobName." + lan,
+													ProvinceName: "$Location.ProvinceName." + lan,
+													ContactInfo: "$Recruiter.ContactInfo",
+													RequisitionID: "$_id",
+													Status: "$CandidateApplyList.Tasks.Status",
+													AppliedDate: "$CandidateApplyList.AppliedDate",
+													ShortName: 1,
+													JobTitle: 1
+												}
+											}
+										]).toArray((err, list) => {
+											interviewList = list || [];
+											emiter(err);
+										})
+								})
+								.done((err) => {
+									if (err) event.done(err);
+									else {
+										var data = {};
+										data["info"] = candidate;
+										data["info.TotalRequisition"] = totalRequistion;
+										data["info.InterviewStat"] = interviewStat;
+										data["info.InterviewList"] = interviewList;
+										//event.setModel("info", candidate);
+										//event.setModel("info.TotalRequisition", totalRequistion);
+										//event.setModel("info.InterviewStat", interviewStat);
+										//event.setModel("info.InterviewList", interviewList);
+										//event.req.interviewList = interviewList;
+										utils.writeData(event, data);
+										event.done();
+									}
+								});
+
+
+						});
+					}, event);
+
+				}
+				app.doChangeAllowSearch = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var user = aut.getUser(event.req);
+
+							models.ls_candidate()
+								.where("UserEmail==Email", user)
+								.set({
+									AllowSearch: clientData.isAllow,
+									LatestModifiedOn: new Date(),
+									LatestModifiedOnUTC: utils.getUTCDate(new Date())
+								}).commit.sync();
+							utils.writeData(event, {});
+							event.done();
+						} catch (e) {
+							event.done(e);
+						}
+					}, event);
+				}
+			}]
+	</script>
+	<script>
+        window.candidateId = "{{{viewer.candidateId}}}";
+        ng_app([], function (scope) {
+
+            var convert = function (data) {
+                if (data.indexOf('PM') != -1) {
+                    var x = data.replace(' PM', '');
+                    x = x.split(':');
+                    if (0 < x[1] && x[1] < 10)
+                        return (parseInt(x[0]) + 12) + ':0' + x[1];
+                    return (parseInt(x[0]) + 12) + ':' + x[1];
+                } else if (data.indexOf('AM') != -1) {
+                    var x = data.replace(' AM', '');
+                    x = x.split(':');
+                    if (0 < x[0] && x[0] < 10)
+                        if (0 < x[1] && x[1] < 10)
+                            return '0' + x[0] + ':0' + x[1];
+                        else
+                            return '0' + x[0] + ':' + x[1];
+                    else
+                        if (0 < x[1] && x[1] < 10)
+                            return x[0] + ':0' + x[1];
+                        else
+                            return x[0] + ':' + x[1];
+                }
+
+            }
+
+            var onLoadDataTask = function (interviewList) {
+                var dataEvents = [];
+                for (var i = 0; i < interviewList.length; i++) {
+                    var item = interviewList[i];
+                    var timeStart = new Date(item.InterviewDate);
+                    var Event = {};
+                    Event.title = 'res:(Công ty): ' + item.RecruiterName;
+                    Event.start = timeStart ? timeStart.getFullYear() + '-' + ("0" + (timeStart.getMonth() + 1)).slice(-2) + '-' + ("0" + timeStart.getDate()).slice(-2) + 'T' + (item.FromTime ? convert(item.FromTime) : '00:00') : null;
+					Event.end = timeStart ? timeStart.getFullYear() + '-' + ("0" + (timeStart.getMonth() + 1)).slice(-2) + '-' + ("0" + timeStart.getDate()).slice(-2) + 'T' + (item.FromTime ? convert(item.FromTime) : '00:00') : null;
+                    Event.position = 'res:(Vị trí: )' + item.InterviewLocation;
+                    Event.cddt = 'res:(Chức danh dự tuyển): ' + item.JobName;
+                    Event.vitri = 'res:(Vị trí): ' + item.JobTitle;
+                    Event.hour = 'res:(Giờ: )' + item.FromTime + ' - ' + item.ToTime;
+                    Event.tg = 'res:(Thời gian từ): ' + item.FromTime + ' res:(đến) ' + item.ToTime;
+                    Event.address = 'res:(Địa điểm): ' + item.InterviewLocation;
+                    Event.contact = 'Người liên hệ: ' + item.ContactInfo.ContactName;
+                    Event.mobile = 'Mobile: ' + item.ContactInfo.Tel;
+                    Event.email = 'Email: ' + item.ContactInfo.Email;
+                    Event.JobTitle = item.JobTitle;
+                    //Event.nut = 'Ngày ứng tuyển: ' + item.AppliedDate;
+                    //Event.npv = 'Ngày phỏng vấn: ' + ActionDate;
+                    Event.RecruiterCode = item.RecruiterCode;
+                    Event.RecruiterName = item.RecruiterName;
+                    Event.RequisitionID = item.RequisitionID;
+                    Event.data = item;
+                    //Event.UserEmail = res[i].UserEmail;
+                    Event.TaskID = item.TaskID;
+                    Event.Actor = item.Actor;
+                    Event.Tel = item.ContactInfo.Tel;
+
+                    if (item.Status == 0 || !item.Status) {
+                        Event.backgroundColor = 'yellow';
+                        Event.textColor = 'black';
+                    } else if (item.Status == 1) {
+                        Event.backgroundColor = 'green';
+                        Event.textColor = 'white';
+                    } else if (item.Status == 2) {
+                        Event.backgroundColor = 'red';
+                        Event.textColor = 'white';
+                    }
+                    dataEvents.push(Event);
+                }
+                return dataEvents;
+            }
+            scope.$root.isHiddenCv = true;
+            var durations = [];
+            scope.$root.onLoadDataTask = scope.onLoadData = function () {
+                var ajax = "server.page://onLoadData";
+                ajax.done(function (res) {
+                    scope.info = res.info;
+					if (scope.info) {
+						scope.info.InterviewList = res["info.InterviewList"];
+						scope.info.InterviewStat = res["info.InterviewStat"];
+						scope.info.TotalRequisition = res["info.TotalRequisition"];
+					}
+                    var dataEvents = onLoadDataTask(res["info.InterviewList"]);
+                    scope.loadDataTask(dataEvents);
+                    scope.$applyAsync();
+                })
+            }
+            scope.onLoadData();
+            scope.loadDataTask = function (dataEvents) {
+                $('#calendar').fullCalendar('removeEvents');
+                $('#calendar').fullCalendar('addEventSource', dataEvents);
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    defaultDate: new Date(),
+                    navLinks: true,
+                    navLinkWeekClick: function (weekStart, jsEvent) {
+                    }, // can click day/week names to navigate views
+                    selectable: true,
+                    selectHelper: true,
+                    select: function (start, end) {
+                    },
+                    displayEventTime: false, // ẩn số trước chữ Công ty
+                    events: dataEvents,
+                    dayRender: function (date, cell) {
+                        durations[date.format('YYYY-MM-DD')] = 0;
+                    },
+                    eventRender: function (event, element) {
+                        element.find('.fc-title').append("<br/>" + event.vitri);
+                        element.find('.fc-title').append("<br/>" + event.hour);
+                        element.find('.fc-title').append("<br/>" + event.address);
+                    },
+                    eventClick: function (calEvent, jsEvent, view) {
+                        scope.currentData = {};
+                        if (calEvent.data.Status) {
+                            scope.$root.status = calEvent.data.Status;
+                            if (calEvent.data.Status == 1) {
+                                scope.$root.title = "res:(Đồng ý lịch tuyển dụng)";
+                            } else if (calEvent.data.Status == 2) {
+                                scope.$root.title = "res:(Từ chối lịch tuyển dụng)";
+                            }
+                        }
+                        else {
+                            scope.$root.status = 0;
+                            scope.$root.title = "res:(Xác nhận lịch phỏng vấn)";
+                        }
+                        scope.currentData = calEvent.data,
+
+                            dialog(scope).url("{{{Config.RootUrl}}}candidate/myinterview-confirm")
+                                .done();
+                    }
+                });
+                $('#calendar').fullCalendar('refetchEvents');
+            }
+
+            scope.$root.AllowEdit = scope.$root.allowEdit = function () {
+                return (!window.candidateId) || (window.candidateId == "");
+            }
+            scope.$root.onChangeAllowSearch = function (event) {
+                var a = "server.page://doChangeAllowSearch";
+                a.data({ isAllow: event.target.checked })
+                    .done(function (res) {
+                        if (event.target.checked) {
+                            toastr.success("res:(Bạn đã cho phép các nhà tuyển dụng tìm thấy hồ sơ của bạn)");
+                        }
+                        else {
+                            toastr.success("res:(Bạn đã không cho phép các nhà tuyển dụng tìm thấy hồ sơ của bạn)");
+                        }
+                    });
+            }
+        });
+	</script>
+
+</body>
+</html>
+

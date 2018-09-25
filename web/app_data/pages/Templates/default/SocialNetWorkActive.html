@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(Kích hoạt liên kết mạng xã hội)</title>
+	<meta charset="utf-8" />
+   
+    <render>commons/header.html</render>
+</head>
+<body>
+    <render>commons/navbar.html</render>
+   
+    <div id="main" onload="store:(st_candidate_social_network_active_load)">
+        <div v-if="data.error_result.code=='has_been_use'">
+            res:(Email này đã được sử dụng)
+        </div>
+        <div v-if="data.error_result.code=='invalid_token'">
+            res:(Yêu cầu này không tìm thấy, hoặc không hợp lệ, hoặc đã được kích hoạt)
+        </div>
+        <div v-if="data.IsSuccess">
+            res:(Thông tin đã được kích hoạt)
+        </div>
+    </div>
+    <script>
+        var data={{{ toJson data}}};
+        if(data.IsSuccess){
+            setTimeout(function(){
+                window.location.href="{{Config.RootUrl}}";
+            },1300);
+        }
+        new Vue({
+            delimiters: ['${', '}'],
+            el: '#main',
+            data: {
+                data:{{{toJson data}}}
+            }
+        });
+    </script>
+</body>
+</html>

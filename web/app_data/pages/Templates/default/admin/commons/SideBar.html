@@ -1,0 +1,87 @@
+﻿<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+    <div class="menu_section">
+        <ul class="nav side-menu">
+            <!----<li>
+                <a><i class="fa fa-edit"></i>res:(Appearance) <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                  
+                    <li><a href="#view=pages">res:(Pages)</a></li>
+                </ul>
+            </li>-->
+            <li>
+                <a><i class="fa fa-newspaper-o" aria-hidden="true"></i>res:(Categories) <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    
+                    {{#each categories}}
+                    <li>
+                        <a href="#view=categories&category={{Name}}">{{getName Caption}}</a>
+                    </li>
+                    {{/each}}
+                    
+                    <li><a href="#view=customers">res:(Customers)</a></li>
+                    <li><a href="#view=members">res:(Members)</a></li>
+                </ul>
+            </li>
+            <li>
+                <a><i class="fa fa-cog" aria-hidden="true"></i>res:(System) <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="#view=sys-categories">res:(Categories)</a></li>
+                    <li><a href="#view=sys-banner-images">res:(Banner Images)</a></li>
+                    <li><a href="#view=template-email">res:(Template email)</a></li>
+                    <li><a href="#view=social-network">res:(Social network)</a></li>
+                    <li><a href="#view=trash-data">res:(Trash data)</a></li>
+                </ul>
+            </li>
+            <li>
+                <a><i class="fa fa-file-o" aria-hidden="true"></i>res:(Content) <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="#view=pages">res:(Pages)</a></li>
+                    <li><a href="#view=res-content">res:(Resource content)</a></li>
+                    <li><a href="#view=template-email-root">res:(Template email)</a></li>
+                    <li><a href="#view=social-network">res:(Social network)</a></li>
+                    <li><a href="#view=trash-data">res:(Trash data)</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script server>
+    ["./../modules/lv.model",
+        "./../libs/lv.utils",
+        (models, utils, app) => {
+           
+            app.onLoad = (event) => {
+                utils._try(() => {
+                    var list = models.sys_categories()
+                        .toArray.sync();
+                    event.setModel("categories", list);
+                    event.done();
+                }, event)
+            }
+        }]
+</script>
+<script>
+    $('.nav.side-menu ul li').on('click', function () {
+        var menu = $(".side-menu ul li");
+
+        for (var i = 0; i < menu.length; i++) {
+            $(menu[i]).removeClass("active");
+        }
+
+        $(this).addClass("active");
+    });
+    function doSignOut() {
+        var a_singout = "server.api://(nodejs)modules/node.sys.account@sign_out";
+        a_singout.data({
+            retUrl: window.location.href
+        }).done(function (res) {
+            if (res.action && res.action.redirect) {
+                window.location.href = res.action && res.action.redirect
+            }
+            else {
+                window.location.reload(true);
+            }
+        })
+    }
+</script>

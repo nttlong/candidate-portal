@@ -1,0 +1,137 @@
+<body>
+    <div>
+        <div class="panel-heading">res:(Email template of): ${$root.$history.data().id}</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-sm-2">
+                    res:(Subject)
+                </div>
+                <div class="col-sm-10">
+                    <input class="input-control" ng-model="data.subject" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    res:(Body)
+                </div>
+                <div class="col-sm-10"  style="min-height:600px">
+                    <div c-html-box ng-model="data.body" style="min-height:600px">
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="panel-footer">
+            <section class="row">
+                <div class="col-xs-12">
+                    <input type="button" ng-click="doShowDataSource()" class="btn btn-primary pull-right" value="res:(Datasource)" />
+                    <span>&nbsp;</span>
+                    <input type="button" ng-click="doSaveData()" class="btn btn-primary pull-right" value="res:(Save changes)" />
+                    <span>&nbsp;</span>
+                    <a href="#view=template-email-root" class="btn btn-default pull-right">res:(Cancel)</a>
+                   
+                </div>
+            </section>
+
+        </div>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "fs",
+            "path",
+            (utils,
+                FS,
+                PATH,
+                page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var dir = clientData.id;
+                        debugger;
+                        try {
+                            var subjectPath = PATH.join(dir, "subject.txt");
+                            var subjectContent = FS.readFileSync(subjectPath, "utf-8");
+                            var bodbyPath = PATH.join(dir, "body.html");
+                            var bodyContent = FS.readFileSync(bodbyPath, "utf-8");
+                            //dirs.forEach(_dir => {
+                            //    var fPath = PATH.join(dir, _dir);
+                            //    if (FS.existsSync(fPath)) {
+                            //        var content = FS.readFileSync(fPath, "utf-8");
+                            //        list.push({
+                            //            Body: content,
+                            //            Template: _dir
+                            //        });
+                            //    }
+                            //});
+                            utils.writeData(event, {
+                                subject: subjectContent,
+                                body: bodyContent,
+                                id: clientData.id
+                            });
+                            event.done();
+                        } catch (ex) {
+                            event.done(ex)
+                        }
+                    }, event);
+                }
+
+                page.doSaveFile = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+
+                            var dir = clientData.id;
+                            var subjectPath = PATH.join(dir, "subject.txt");
+                            FS.writeFileSync(subjectPath, clientData.subject, "utf-8");
+                            var bodbyPath = PATH.join(dir, "body.html");
+                            FS.writeFileSync(bodbyPath, clientData.body, "utf-8");
+
+                            utils.writeData(event, {});
+                            event.done();
+                        } catch (ex) {
+                            event.done(ex)
+                        }
+                    }, event);
+                }
+            }];
+    </script>
+
+
+
+    <script>
+        (function (scope) {
+            scope.doLoadData = () => {
+                console.log(scope.$root.$history.data().id)
+
+                var item = scope.$root.$history.data().id.split('\\');
+                scope.TemplateRoot = item[2];
+                scope.Lang = item[3];
+
+                var ajax = "server.page://doLoadData";
+                ajax.data({
+                    id: scope.$root.$history.data().id
+                })
+                    .done(res => {
+                        console.log(res);
+                        scope.data = res;
+                        scope.$applyAsync();
+                    });
+            };
+            scope.doLoadData();
+
+            scope.doSaveData = () => {
+
+                var ajax = "server.page://doSaveFile";
+                ajax.data(scope.data).done(function (res) {
+                    toastr.success("res:(Save changes has been successfull)")
+                    
+                })
+            }
+            scope.doShowDataSource = function () {
+                console.log("XXX");
+                dialog(scope).url("email-template-datasource-root").done();
+            }
+        });
+    </script>
+
+</body>

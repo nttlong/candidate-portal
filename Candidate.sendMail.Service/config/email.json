@@ -1,0 +1,7 @@
+﻿{
+  "url": "mongodb://172.16.0.126:2324/candidate",
+  "Database": "candidate",
+  "Smtp": {
+
+  }
+}

@@ -1,0 +1,370 @@
+﻿<!--<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(My Resume)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_uvienlist.min.css" rel="stylesheet" />
+</head>
+<body>
+    <render>../commons/navbar.html</render>
+    <div class="wrapper" id="app">
+        <section class="container myresume-content">
+            <div>
+                <div class="lv-search-container">
+                    <div class="lv-search-widget">
+                        <div class="lv-search-controls clearfix">
+                            <form enctype="application/x-www-form-urlencoded">
+                                <input type="hidden" name="bytype" value="by-post-date" />
+                                <input type="hidden" name="recruiter" value="all" />
+                                <div class="col-sm-4">
+                                    <div class="lv-search-box">
+                                        <span class="icon-search glyphicon glyphicon-search"></span>
+                                        <input id="txtSearch" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí, kỹ năng...)" name="ByText" v-model="data.textCode">
+                                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="lv-dropdown-list">
+                                        <span class="lv-icon icon-left fa fa-list-ul"></span>
+                                        <select v-model="data.value" v-on:click="onLoadJobCode($event)" class="lv-search-list" placeholder="res:(Tất cả các ngành nghề)" name="ByJob" style="width:100%">
+                                            <option value="all">res:(Tất cả các ngành nghề)</option>
+                                            <optgroup v-for="item in data.JobGroups" :label="item.Name[data.lang]">
+                                                <option :value="it.Code" v-for="it in item.Jobs">${it.Name[data.lang]}</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="lv-dropdown-list">
+                                        <span class="lv-icon icon-left glyphicon glyphicon-map-marker"></span>
+                                        <select v-model="data.value" v-on:click="onLoadLocationCode($event)" class="lv-search-list" placeholder="res:(Tất cả các địa điểm)" name="ByLocation" style="width:100%">
+                                            <option value="all">res:(Tất cả các địa điểm)</option>
+                                            <optgroup v-for="item in data.Locations" :label="item.Name[data.lang]">
+                                                <option :value="it.Code" v-for="it in item.Provinces">${it.Name[data.lang]}</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="lv-button-search">
+                                        <button v-on:click="onSearchCandidate()" class="btn-search">res:(Tìm kiếm)</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- Form tìm kiếm nâng cao -->
+                            <form style="margin-top: 50px;" action="api:(lv.candidate.api/lv.candidate.api.jobs/find)"
+                                  enctype="application/x-www-form-urlencoded">
+                                <input type="hidden" name="bytype" value="by-post-date" />
+                                <input type="hidden" name="recruiter" value="all" />
+                                <div class="col-sm-4">
+                                    <div class="lv-search-box">
+                                        <span class="icon-search glyphicon glyphicon-search"></span>
+                                        <input id="txtSearch" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí, kỹ năng...)" name="ByText" value="{{content}}">
+                                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="lv-search-box">
+                                        <span class="icon-search glyphicon glyphicon-search"></span>
+                                        <input id="txtSearch" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí, kỹ năng...)" name="ByText" value="{{content}}">
+                                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="lv-search-box">
+                                        <span class="icon-search glyphicon glyphicon-search"></span>
+                                        <input id="txtSearch" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí, kỹ năng...)" name="ByText" value="{{content}}">
+                                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="lv-button-search">
+                                        <button class="btn-search" name="CmdSearch">res:(Nâng cao)</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lv-table-content">
+                <div class="lv-table-content-header">
+                    <h1>Tìm  thấy <span>${data.CandidateList.length}</span> hồ sơ</h1>
+                    <button class="btn btn-default"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                </div>
+                <table class="table table-vertical">
+                    <thead>
+                        <tr>
+                            <th width="1%">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </th>
+                            <th width="7%"></th>
+                            <th>res:(Ứng viên)</th>
+                            <th>res:(Công việc hiện tại)</th>
+                            <th>res:(Ngày tạo/Cập nhật)</th>
+                            <th>res:(Đã có)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" />
+                            </td>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                            <td>Sale</td>
+                            <td>13/05/2017</td>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" />
+                            </td>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                            <td>Sale</td>
+                            <td>13/05/2017</td>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" />
+                            </td>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                            <td>Sale</td>
+                            <td>13/05/2017</td>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" />
+                            </td>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                            <td>Sale</td>
+                            <td>13/05/2017</td>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                <img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" />
+                            </td>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                            <td>Sale</td>
+                            <td>13/05/2017</td>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--Table ngang-->
+                <table class="table table-horizontal">
+                    <tbody>
+                        <tr>
+                            <th></th>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td><img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" /></td>
+                        </tr>
+                        <tr>
+                            <th>res:(Ứng viên)</th>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>res:(Công việc hiện tại)</th>
+                            <td>Saler</td>
+                        </tr>
+                        <tr>
+                            <th>res:(Ngày tạo/Cập nhật)</th>
+                            <td>13/08/2017</td>
+                        </tr>
+                        <tr>
+                            <th>res:(Đã có)</th>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <th></th>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td><img width="64" height="64" style="border-radius: 50%" src="http://znews-photo-td.zadn.vn/w480/Uploaded/Ngtmvs/2015_06_25/Minh_Tam_3_thumb.jpg" /></td>
+                        </tr>
+                        <tr>
+                            <th>res:(Ứng viên)</th>
+                            <td>
+                                <p><strong>AMIT ARORA</strong></p>
+                                <p>8 năm</p>
+                                <p><i class="fa fa-building" aria-hidden="true"></i> Asia Telecom & Media Corp VietNam</p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>res:(Công việc hiện tại)</th>
+                            <td>Saler</td>
+                        </tr>
+                        <tr>
+                            <th>res:(Ngày tạo/Cập nhật)</th>
+                            <td>13/08/2017</td>
+                        </tr>
+                        <tr>
+                            <th>res:(Đã có)</th>
+                            <td>34 res:(lần xem hồ sơ)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <script>
+        (function () {
+            var app = {
+                data: {
+                    JobGroups: {},
+                    Locations: {},
+                    lang: {},
+                    jobCode: "all",
+                    locationCode: "all",
+                    textCode: "",
+                    CandidateList: []
+                },
+                loadData: function () {
+                    var ajaxLoadData = "ajax.store.st_load_data_filter_job_location";
+                    ajaxLoadData.done(function (res) {
+                        console.log(res);
+                        app.data.JobGroups = res.JobGroups;
+                        app.data.Locations = res.Locations;
+                        app.data.lang = "{{Language.Current.Code}}";
+                    })
+                },
+                onLoadJobCode: function (event) {
+                    console.log(event.target.value);
+                    app.data.jobCode = event.target.value;
+                },
+                onLoadLocationCode: function (event) {
+                    console.log(event.target.value);
+                    app.data.locationCode = event.target.value;
+                },
+                onSearchCandidate: function () {
+                    console.log(app.data.jobCode, app.data.locationCode, app.data.textCode);
+                    var ajaxSearch = "ajax.store.st_load_data_search_candidate_apply_job";
+                    ajaxSearch.data({
+                        jobCode: app.data.jobCode,
+                        locationCode: app.data.locationCode,
+                        textCode: app.data.textCode
+                    }).done(function (res) {
+                        console.log(res._batch);
+                        app.data.CandidateList = res._batch;
+                    })
+                }
+            }
+            // load data
+            app.loadData();
+            // new Vue
+            var vm = new Vue({
+                delimiters: ['${', '}'],
+                el: '#app',
+                data: app,
+                mounted() {
+                    setTimeout(function () {
+                        $('[name="ByLocation"]').select2({ placeholder: 'res:(Search by location)' });
+                        $('[name="ByJob"]').select2({ placeholder: 'res:(Search by category)' });
+                        $('[name="ByLocation"]').val("all").trigger("change")
+                        $('[name="ByJob"]').val("all").trigger("change");
+                    }, 0)
+                }
+            });
+        })();
+    </script>
+</body>
+</html>-->

@@ -1,0 +1,38 @@
+<html ng-app="app">
+<head>
+    <render>commons/header.html</render>
+</head>
+<body ng-controller="app">
+    <input type="button" ng-click="getImage()" value="test" />
+    <img src="${data}" />
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/resource",
+            (utils,resource, page) => {
+                page.loadImage = (event) => {
+                    utils._try(() => {
+                        try {
+                            resource.captcha(event);
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                   
+                }
+            }]
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            scope.getImage = () => {
+                var a = "server.page://loadImage";
+                a.done((res) => {
+                    scope.data = res.data;
+                    scope.$applyAsync();
+                })
+            }
+        });
+    </script>
+    
+</body>
+</html>

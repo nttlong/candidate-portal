@@ -1,0 +1,254 @@
+﻿<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <!--<div c-pager data-num-of-page-selector="5" data-total-items="1243" data-page-size="20" data-page-index="0" ng-model="filter.pageIndex" ng-change="doSearch()"></div>-->
+                        <div c-pager data-config="${pagerConfig}" data-on-change="onPageChane">
+
+                        </div>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <!--<div c-search-box style="width:200px" ng-change="doSearch()" ng-model="txtSearch"></div>-->
+                        <div class="input-group ng-empty ng-valid" style="width:200px">
+                        <input type="text" class="form-control" placeholder="Search" id="txtSearch" ng-model="txtSearch">
+                        <div class="input-group-btn" id="clear" style="display:none">
+                            <button class="btn btn-default">
+                            <span class="glyphicon glyphicon-remove"></span></button>
+                            </div><div class="input-group-btn" id="btn">
+                            <button class="btn btn-default" style="margin-right: 0px !important;border: none !important;">
+                            <span class="glyphicon glyphicon-search"></span></button></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-show="(data | filter:txtSearch).length == 0">
+                        <h3>res:(Không tìm thấy dữ liệu)</h3>
+                    </li>
+                    <li class="list-group-item" ng-repeat="item in data | filter:txtSearch">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <img src="{{Config.Rooturl}}photo/candidate/${item.UserId}.png" style="width:80px;float:left;padding:4px" />
+                                <h4>
+                                    [${item.Email}] - ${item.FirstName} - ${item.LastName}
+                                </h4>
+                                <p>
+                                    ${(item.CreatedOn||item.ModifiedOn)|date:'dd/MM/yyyy'}|
+                                    <span ng-if="item.RecruiterCode.length>0">${item.RecruiterCode[0]}&nbsp;${item.RecruiterName[0]}</span>
+                                </p>
+                                <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group" role="group" aria-label="First group">
+                                        <button type="button" class="btn btn-default" ng-if="!item.IsActive" ng-click="doActive(item)">res:(Active)</button>
+                                        <button type="button" class="btn btn-default" ng-if="item.IsActive" ng-click="doDeactive(item)">res:(Deactive)</button>
+                                    </div>
+                                    <div class="btn-group" role="group" aria-label="Second group">
+                                        <button type="button" class="btn btn-default" ng-click="doSignIn(item.UserId)">res:(SignIn)</button>
+                                    </div>
+                                    <div class="btn-group" role="group" aria-label="third group">
+                                        <button type="button" class="btn btn-default" ng-click="doDelete(item.UserId)">res:(Delete)</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.model",
+            "./../libs/lv.authenticate",
+            (utils, models, aut,page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var txt = utils.clear_tress(clientData.txtSearch);
+                            var idx = clientData.idx;
+                            var size = clientData.size;
+                            var qr = models.sys_Users();
+                            qr = qr.lookup(models.ls_recruiters(), "Email", "UserEmail", "recruiter").query();
+                            if (clientData.txtSearch && (clientData.txtSearch != "")) {
+                                qr = qr.where("(contains(MetaGroupSearch.PublishSearch.FullName,txt))or" +
+                                    "(contains(Email,txtSearch))", {
+                                        txt: txt,
+                                        txtSearch: clientData.txtSearch
+                                    }).query();
+                            }
+                            var qrItems = qr.clone();
+                            var qrTotal = qr.clone();
+                            var list = qrItems.sort("CreatedOn", -1)
+                                .skip(idx * size)
+                                .limit(size)
+                                .select({
+                                    Email: 1,
+                                    FirstName: 1,
+                                    LastName: 1,
+                                    CreatedOn: 1,
+                                    RecruiterCode: "recruiter.RecruiterCode",
+                                    RecruiterName: "recruiter.RecruiterName",
+                                    UserId: 1,
+                                    IsActive: 1
+                                }).toArray.sync();
+                            var totalItems = qrTotal.count.sync();
+                            utils.writeData(event, {
+                                items: list,
+                                totalItems: totalItems
+                            });
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                page.doSignIn = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = models.sys_Users()
+                                .where("UserId==id", clientData)
+                                .toItem.sync();
+                            if (user) {
+                                var login = models.sys_logins().insert({
+                                    LoginTime: new Date(),
+                                    SessionId: event.req.sessionID,
+                                    User: user
+
+                                }).commit.sync();
+                                aut.setAuthenticate(event.req, login);
+                                utils.writeData(event, { url: utils.getRootUrl(event.req) + "/candidate/home" });
+                                event.done();
+                            }
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                page.doDeactive = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = models.sys_Users()
+                                .where("UserId==id", clientData)
+                                .set("IsActive", false)
+                                .commit.sync();
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                page.doActive = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = models.sys_Users()
+                                .where("UserId==id", clientData)
+                                .set("IsActive", true)
+                                .commit.sync();
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                page.doDelete = (event) => {
+                    utils._try(() => {
+                        
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = models.sys_Users()
+                                .where("UserId==id", clientData)
+                                .delete().commit()
+                                .then(ret => {
+                                    utils.writeData(event, {});
+                                    event.done();
+                                })
+                                .catch(ex => {
+                                    utils.writeData(event, {});
+                                    event.done();
+                                })
+                            
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+        }]
+    </script>
+    <script>
+        (function (scope) {
+            scope.pagerConfig = {
+                numOfPageSelector: 5, totalItems: 0, pageSize: 20, pageIndex: 0
+            }
+            scope.doLoadData = function (idx, size) {
+                var a = "server.page://doLoadData";
+                a.data({
+                    idx: scope.pagerConfig.pageIndex,
+                    size: scope.pagerConfig.pageSize
+                })
+                .done(function (res) {
+                    scope.data = res.items;
+                    scope.pagerConfig.totalItems = res.totalItems;
+                    scope.$applyAsync();
+                });
+            };
+            scope.doSearch = function () {
+                scope.doLoadData(scope.txtSearch);
+            };
+            scope.doSignIn = function (id) {
+                var a = "server.page://doSignIn";
+                a.data({ id: id })
+                .done(function (res) {
+                    if (res.url) {
+                        window.location.href = res.url;
+                    }
+                });
+            };
+            scope.doDeactive = function (item) {
+                var a = "server.page://doDeactive";
+                a.data({ id: item.UserId })
+                    .done(function (res) {
+                        item.IsActive = false;
+                        scope.$applyAsync();
+                    });
+            }
+            scope.doActive = function (item) {
+                var a = "server.page://doActive";
+                a.data({ id: item.UserId })
+                .done(function (res) {
+                    item.IsActive = true;
+                    scope.$applyAsync();
+                });
+            };
+            scope.doDelete = function (id) {
+                if (confirm("res:(Bạn muốn xóa tài khoản của ứng viên này?)")) {
+                    var a = "server.page://doDelete";
+                    a.data({ id: id })
+                    .done(function (res) {
+                        scope.doLoadData(scope.pagerConfig.pageIndex, scope.pagerConfig.pageSize);
+                        toastr.success("res:(Xóa tài khoản thành công)")
+                    });
+                }
+            };
+            scope.doLoadData(scope.pagerConfig.pageIndex, scope.pagerConfig.pageSize);
+            scope.onPageChane = function (idx) {
+                scope.pagerConfig.pageIndex = idx;
+                scope.doLoadData(idx, scope.pagerConfig.pageSize);
+            }
+        })
+    </script>
+</body>

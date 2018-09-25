@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <style>
+            .row{
+                padding:10px;
+            }
+        </style>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group" role="group" aria-label="First group">
+                    <a style="margin: -1px;" href="#view=sheet-category&category=${$root.$history.data().category}" class="btn btn-default">
+                        <i class="glyphicon glyphicon-th"></i> res:(Sheet)
+                    </a>
+                </div>
+                <div class="btn-group" role="group" aria-label="Second group">
+                    <button type="button" class="btn btn-default" ng-click="$doExport()">res:(Export excel)</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="Third group">
+                   
+                </div>
+            </div>
+            
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                res:(Code)
+                            </th>
+                            <th>
+                                res:(Name)
+                            </th>
+                            <th>
+                                res:(Description)
+                            </th>
+                            <th>
+                                res:(Created by)
+                            </th>
+                            <th>
+                                res:(Created on)
+                            </th>
+                            <th>
+                                res:(Modified by)
+                            </th>
+                            <th>
+                                res:(Modified on)
+                            </th>
+                            <th v-for="subItem in childList">
+                                ${subItem.caption}
+                            </th>
+                            <th class="text-center">
+                                <a href="#view=category&category=${$root.$history.data().category}" class="admin-button-add">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in items">
+                            <td>
+                                ${item.Code}
+                            </td>
+                            <td>
+                                ${ item.Name}
+                            </td>
+                            <th>
+                                ${item.Description}
+                            </th>
+                            <th>
+                                ${item.CeratedBy}
+                            </th>
+                            <th>
+                                ${dateFormat(item.CeratedOn)}
+                            </th>
+                            <th>
+                                ${item.ModifiedBy}
+
+                            </th>
+                            <th>
+                                ${dateFormat(item.ModifiedOn)}
+
+                            </th>
+                            <th v-for="subItem in childList">
+                                <a v-bind:href="'#view=sub-categories&id='+getValue(item._id)+'&category='+$history.data().category+'&sub_category='+subItem.name+'&code='+item.Code">
+                                    ${subItem.caption} (${getTotal(subItem.name,item)})
+                                </a>
+                            </th>
+                            <td class="text-center" style="width: 40px;">
+                                <a v-bind:href="'#view=category&id='+getValue(item._id)+'&category='+$history.data().category+'&'" class="admin-button-edit">
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.model",
+            (utils, models, page) => {
+                page.doGetExportLink = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var operators;
+                        if (clientData.category === "ls_group_jobs") {
+                            var operator = {};
+                            operator["$unwind"] = "$Jobs";
+                            operators = [operator]
+                        }
+                        if (clientData.category === "ls_locations") {
+                            var operator = {};
+                            operator["$unwind"] = "$Provinces";
+                            operators = [operator]
+                        }
+                        var ret = models.sys_export_token()
+                            .insert({
+                                Type: "excel",
+                                Source: clientData.category,
+                                Language: clientData.language,
+                                FileName: clientData.fileName,
+                                Operators: JSON.stringify(operators)
+                            }).commit.sync();
+                        utils.writeData(event, { id: ret._id });
+                        event.done();
+
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+        (app=> {
+            window.getText = (obj) => {
+                if (obj["$oid"]) return obj["$oid"];
+                else return obj;
+            }
+            app.getValue = (obj) => {
+                if (obj.$oid) return obj.$oid
+                else return obj;
+            }
+            app.items = [];
+            app.getTotal = (name,item) => {
+                return item[name];
+            }
+            app.childList = [];
+            var ajax = "ajax.store.st_admin_category_load_items";
+				app.doLoadData = () => {
+					debugger
+                    ajax.data({
+                        category: app.$root.$history.data().category,
+                        language: window.currentLanguage
+
+                    }).done(res=> {
+                       
+                        app.childList = res.childList;
+                        app.items = res.items
+                        app.$applyAsync();
+                });
+            }
+            app.$root.$history.onChange(app, function (data) {
+                app.doLoadData();
+            });
+            app.$doExport = function () {
+                
+                dialog(app).url("dialogs/download-excel").done(function (s) {
+                    s.data.FileName = app.$root.$history.data().category;
+                    s.onSubmit(function (sender) {
+                        app.doGetLinkExport(sender.data.FileName,s);
+                    })
+                });
+            }
+            app.doGetLinkExport = function (fileName, dialogScope) {
+                var a = "server.page://doGetExportLink";
+                a.data({
+                    category: app.$root.$history.data().category,
+                    language: window.currentLanguage,
+                    fileName: fileName
+                }).done(function (res) {
+                    dialogScope.token = res.id;
+                    dialogScope.$apply();
+                })
+            }
+        });
+
+    </script>
+</body>
+</html>
+

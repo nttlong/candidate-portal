@@ -1,0 +1,14 @@
+{
+  "name": "candidate.send-mail.service",
+  "version": "0.0.0",
+  "description": "Candidate.sendMail.Service",
+  "main": "app.js",
+  "author": {
+    "name": "nttlong"
+  },
+  "dependencies": {
+    "mongodb": "^2.2.33",
+    "node-windows": "^0.1.14",
+    "nodemailer": "^4.4.0"
+  }
+}

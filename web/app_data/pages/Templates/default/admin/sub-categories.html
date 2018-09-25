@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <div class="row">
+            <div class="col-sm-12">
+                <table>
+                    <tr>
+                        <td>
+                            ${data.masterCaption}
+                        </td>
+                        <td>
+                            <select id="master" style="width:220px"></select>
+                        </td>
+                    </tr>
+                </table>
+               
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>
+                                
+                            </td>
+                            <th>
+                                res:(Code)
+                            </th>
+                            <th>
+                                res:(Name)
+                            </th>
+                            <th>
+                                res:(Description)
+                            </th>
+                            <th>
+                                res:(Created by)
+                            </th>
+                            <th>
+                                res:(Created on)
+                            </th>
+                            <th>
+                                res:(Modified by)
+                            </th>
+                            <th>
+                                res:(Modified on)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in data.items">
+                            <td>
+                                <a v-bind:href="'#view=sub-category&category='+$history.data().category+'&id='+$history.data().id+'&code='+item.Code+'&sub_category='+$history.data().sub_category" class="btn btn-primary">
+                                    res:(Edit)
+                                </a>
+                            </td>
+                            <td>
+                                ${item.Code}
+                            </td>
+                            <td>
+                                ${item.Name}
+                            </td>
+                            <td>
+                                ${item.Description}
+                            </td>
+                            <td>
+                                ${item.CreatedBy}
+                            </td>
+                            <td>
+                                ${dateFormat(item.CreatedOn)}
+                            </td>
+                            <td>
+                                ${item.ModifiedBy}
+                            </td>
+                            <td>
+                                ${dateFormat(item.ModifiedOn)}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+              
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <a v-bind:href="'#view=sub-category&category='+$history.data().category+'&id='+$history.data().id+'&sub_category='+$history.data().sub_category" class="btn btn-primary pull-right">
+                    res:(Add)
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        (app=> {
+            app.data = {
+                items: [],
+                master: [],
+                masterCaption:""
+            };
+            app.doLoadData = (currentCode) => {
+                var ajax = "ajax.store.st_admin_load_sub_categories";
+                ajax.data({
+                    category: $history.data().category,
+                    sub_category: $history.data().sub_category.substring("total_".length, $history.data().sub_category.length),
+                    id: $history.data().id,
+                    language: window.currentLanguage,
+                    code:(currentCode)?currentCode: $history.data().code
+                })
+                .done(res=> {
+                    app.data = res;
+                    //app.data.master = res.master;
+                    //app.data.masterCaption = res.masterCaption;
+                    //app.data.items = res.items;
+                    if (!currentCode) {
+                        $("#master").html('');
+                        $("#master").select2({
+                            data: app.data.master
+                        });
+                        $("#master").on("change", function (e) {
+
+                            app.doLoadData($('#master').val());
+                        });
+                        $('#master').val(app.data.masterCode).trigger('change');
+                    }
+                });
+            }
+            app.doLoadData();
+        });
+    </script>
+</body>
+</html>

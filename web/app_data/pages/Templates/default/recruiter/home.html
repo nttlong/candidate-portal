@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>{{recruiterInfo.RecruiterName}}</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="res:(Danh sách các tuyển dụng của)  {{recruiterInfo.RecruiterName}}" />
+    <meta name="description" content="res:(Tìm việc làm tại) {{recruiterInfo.RecruiterName}}" />
+
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Content/css/select2.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/select2.min.js"></script>
+
+    <link href="{{Config.RootUrl}}templates/{{Config.Customer}}/resources/css/main_site.min.css" rel="stylesheet" />
+</head>
+
+<body class="home">
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.db",
+            (utils, DB, app) => {
+                utils.debug();
+                app.onLoad = (event) => {
+                    utils._try(() => {
+                        DB.cnn((err, db) => {
+                            if (err) event.done(err);
+                            else {
+                                utils._try(() => {
+
+                                    var recruiterCode = event.req.routeInfo.params.RecruiterCode;
+                                    db.collection("ls_recruiters")
+                                        .aggregate([{
+                                            $match: {
+                                                CandidateSite: { $regex: new RegExp("^" + recruiterCode + "$", "i") }
+                                            }
+                                        }, {
+                                            $project: {
+                                                RecruiterName: 1,
+                                                RecruiterCode: 1,
+                                                Banners: 1
+                                            }
+                                        }]).toArray((err, items) => {
+                                            if (err) event.done(err);
+                                            else {
+
+                                                if (items.length > 0) {
+                                                    event.req.currentCustomerInfo = items[0];
+                                                    items[0].BannersPhoto = [];
+                                                    if ((!items[0].Banners) || (items[0].Banners.length == 0)) {
+                                                        db.collection("sys_banner_images")
+                                                            .find({})
+                                                            .toArray((err, list) => {
+                                                                if (err) event.done(err);
+                                                                else {
+                                                                    var banners = [];
+                                                                    list.forEach(item => {
+                                                                        banners.push({
+                                                                            id: item._id,
+                                                                            index: list.indexOf(item),
+                                                                            classActive: (list.indexOf(item) == 0) ? "active" : ""
+                                                                        })
+                                                                    })
+                                                                    items[0].BannersPhoto = banners;
+                                                                    event.setModel("recruiterInfo", items[0]);
+                                                                    event.setModel("recruiterInfo.ByDefault", true);
+                                                                    event.done();
+                                                                }
+                                                            });
+                                                    }
+                                                    else {
+                                                        items[0].Banners.forEach(item => {
+                                                            items[0].BannersPhoto.push({
+                                                                id: item,
+                                                                index: items[0].Banners.indexOf(item),
+                                                                classActive: (items[0].Banners.indexOf(item) == 0) ? "active" : ""
+                                                            })
+                                                        });
+                                                        event.setModel("recruiterInfo", items[0]);
+                                                        event.setModel("recruiterInfo.ByCustomer", true);
+                                                        event.done();
+                                                    }
+
+                                                }
+                                                else {
+                                                    event.res.redirect("/PageWasNotFound");
+                                                    event.done();
+                                                }
+                                            }
+                                        });
+
+                                }, event);
+                            }
+                        });
+                    }, event);
+                 
+
+                }
+            }]
+    </script>
+    <render>commons/navbar.html</render>
+    <div class="lv-main-container">
+        <div class="lv-banner-container" id="banner" style="max-height:400px;">
+            {{#if recruiterInfo.ByDefault}}
+            <div id="lvBannerCarousel" class="lv-slider-banner carousel slide" data-ride="carousel" style="width:100%;max-height:400px;overflow-y:hidden">
+                <ol class="carousel-indicators">
+                    {{#each recruiterInfo.BannersPhoto}}
+
+                    <li data-target="#lvBannerCarousel" data-slide-to="{{index}}" class="{{classActive}}"></li>
+                    {{/each}}
+                </ol>
+                <div class="carousel-inner" style="overflow-y:hidden">
+                    {{#each recruiterInfo.BannersPhoto}}
+                    <div class="item {{classActive}}">
+                        <center>
+                            <img src="{{../Config.RootUrl}}/photo/banner/{{id}}.png" style="width:100%" />
+                        </center>
+
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+            {{#if recruiterInfo.ByCustomer}}
+            <div id="lvBannerCarousel" class="lv-slider-banner carousel slide" data-ride="carousel" style="width:100%;max-height:400px">
+                <ol class="carousel-indicators">
+                    {{#each recruiterInfo.BannersPhoto}}
+                    
+                    <li data-target="#lvBannerCarousel" data-slide-to="{{index}}" class="{{classActive}}"></li>
+                    {{/each}}
+                </ol>
+                <div class="carousel-inner">
+                    {{#each recruiterInfo.BannersPhoto}}
+                    <div class="item {{classActive}}">
+                        <center>
+                            <img src="{{../Config.RootUrl}}/photo/{{id}}.png" style="height:400px;width:100%" />
+                        </center>
+                        
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+            <render>commons/SearchBox.html</render>
+        </div>
+        <section class="lv-main-content container">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 lv-group">
+                    
+                    <render>QuickJob.html</render>
+                </div>
+                
+            </div>
+        </section>
+        <render>../commons/footer.html</render>
+    </div>
+    
+    
+</body>
+</html>

@@ -1,0 +1,584 @@
+﻿.wrapper {
+  background-color: #EEEEEE;
+  min-height: 550px;
+  padding: 30px;
+}
+.wrapper .myresume-content {
+  /*.row {
+            display: table;
+        }
+
+        .row [class*="col-"] {
+            float: none;
+            display: table-cell;
+            vertical-align: top;
+        }*/
+}
+.wrapper .myresume-content .box-header {
+  background: #fff;
+  border-radius: 2px;
+  padding: 30px;
+}
+.wrapper .myresume-content .box-header .image {
+  padding: 0;
+  margin-top: 1%;
+}
+.wrapper .myresume-content .box-header .image img {
+  min-height: 95px;
+}
+.wrapper .myresume-content .box-header .infor-box-left h1 {
+  font-size: 25px;
+  margin: 0;
+  padding: 0;
+  color: #00b9f2;
+  padding-bottom: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-l {
+  font-size: 13px;
+  text-transform: capitalize;
+  margin-bottom: 0;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-f {
+  font-size: 13px;
+  text-transform: capitalize;
+  margin-bottom: 0;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-s {
+  font-size: 13px;
+  color: #606060;
+  margin-bottom: 0;
+  text-transform: capitalize;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-s span {
+  font-size: 13px;
+  color: #00b9f2;
+  text-transform: capitalize;
+  margin-bottom: 0;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-s span:last-child {
+  display: none;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-sa {
+  border: 1px solid #ddd;
+  padding: 2px 20px;
+  float: left;
+  margin-top: 8px;
+  border-radius: 3px;
+  background: #eee;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.wrapper .myresume-content .box-header .infor-box-left .p-sa span {
+  color: #faa916;
+  font-weight: 700;
+}
+.wrapper .myresume-content .box-header .box-header-left .box-header-left-logocompany {
+  float: left;
+  margin-top: 10px;
+  text-align: center;
+}
+.wrapper .myresume-content .box-header .box-header-left .box-header-left-logocompany table {
+  table-layout: fixed;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+}
+.wrapper .myresume-content .box-header .box-header-right .btn-apply {
+  margin-bottom: 5px;
+  margin-top: 4px;
+  font-size: 18px;
+  padding: 11px 20px;
+  color: #fff;
+  background-color: #f7941d;
+  border-color: #f28809;
+  border: 1px;
+  width: 100%;
+}
+.wrapper .myresume-content .box-header .box-header-right .btn-apply:hover {
+  background: #dd7b06;
+}
+.wrapper .myresume-content .box-header .box-header-right #share-buttons img {
+  width: 35px;
+  padding: 5px;
+  border: 0;
+  box-shadow: 0;
+  display: inline;
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn button {
+  margin: 10px 3px;
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn button i {
+  font-size: 20px;
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-twitter {
+  color: #fff;
+  background-color: #1da1f2;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-facebook {
+  color: #fff;
+  background-color: #3b5998;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-print {
+  color: #fff;
+  background-color: #738a8d;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-envelope {
+  color: #fff;
+  background-color: #848484;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-plus {
+  color: #fff;
+  background-color: #efdcbb;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-plus-c {
+  color: #ffa400;
+  background-color: #efdcbb;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-twitter:hover {
+  color: #fff;
+  background-color: #0094ef;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-facebook:hover {
+  color: #fff;
+  background-color: #1b459d;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-print:hover {
+  color: #fff;
+  background-color: #607376;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-envelope:hover {
+  color: #fff;
+  background-color: #767676;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-plus:hover {
+  color: #fff;
+  background-color: #f1d199;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .social-btn .btn-plus-c:hover {
+  color: #ffa400;
+  background-color: #f1d199;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.wrapper .myresume-content .box-header .box-header-right .info-bottom {
+  padding: 0;
+}
+.wrapper .myresume-content .box-header .box-header-right .info-bottom span {
+  font-size: 13px;
+  font-weight: 100;
+  color: #606060;
+}
+.wrapper .myresume-content .box-info-job {
+  background: #fff;
+  margin-top: 15px;
+  box-shadow: 0 1px 1px #ccc;
+  border-radius: 2px;
+  padding-bottom: 15px;
+}
+.wrapper .myresume-content .box-info-job .info-job {
+  font-size: 15px;
+  color: #595959;
+  text-align: justify;
+}
+.wrapper .myresume-content .box-info-job .info-job p {
+  font-size: 13px;
+}
+.wrapper .myresume-content .box-info-job .info-job p span {
+  font-size: 13px;
+}
+.wrapper .myresume-content .box-info-job h3 {
+  font-weight: 500;
+  font-size: 17px;
+}
+.wrapper .myresume-content .info-ct {
+  font-size: 13px;
+}
+.wrapper .myresume-content .info-ct p {
+  color: #727272;
+}
+.wrapper .myresume-content .info-ct p span {
+  font-weight: 600;
+  font-size: 13px;
+}
+.wrapper .myresume-content .box-info-ct {
+  background: #fff;
+  margin-top: 15px;
+  box-shadow: 0 1px 1px #ccc;
+  border-radius: 2px;
+  padding-bottom: 15px;
+}
+.wrapper .myresume-content .box-info-ct .info-ct p {
+  color: #727272;
+}
+.wrapper .myresume-content .box-info-ct .info-ct p span {
+  font-weight: 200;
+  font-size: 13px;
+}
+.wrapper .myresume-content .box-info-ct .info-ct p span {
+  font-weight: 200;
+  font-size: 13px;
+}
+.wrapper .myresume-content .box-info-ct .info-ct p a {
+  text-decoration: none;
+  color: #00b9f2;
+}
+.wrapper .myresume-content .box-info-ct .info-ct p a:hover {
+  color: #0083ac;
+}
+.wrapper .myresume-content .box-info-ct .p-f {
+  text-transform: capitalize;
+  font-size: 17px;
+  font-weight: 500;
+  color: #6a6a6a;
+}
+.wrapper .myresume-content .box-info-ct h2 {
+  font-weight: 400;
+  text-transform: capitalize;
+}
+.wrapper .myresume-content .box-body-right .item-job {
+  background: #fff;
+  margin-top: 15px;
+  box-shadow: 0 1px 1px #ccc;
+  border-radius: 2px;
+  padding-bottom: 15px;
+  padding: 8px 15px 1px;
+  /*display: flow-root;*/
+}
+.wrapper .myresume-content .box-body-right .item-job-list {
+  padding: 0;
+  margin-top: 10px;
+  background: #fff;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job {
+  padding: 5px 5px 5px 0;
+  border: 1px solid #e0e0e0;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job .col-xs-9 {
+  padding-left: 7px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job p {
+  margin-bottom: 0;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job .hcs-same-job-img {
+  display: flex;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job .hcs-same-job-img img {
+  margin: 0 auto;
+  max-height: 40px;
+  max-width: 50px;
+  padding: 5px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job .hcs-same-job-title {
+  font-weight: 500;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 0;
+  color: #555;
+  transition: color .3s;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job .hcs-same-job-company {
+  font-weight: 100;
+  font-size: 11px;
+  color: #777;
+}
+.wrapper .myresume-content .box-body-right .item-job-list .hcs-same-job .hcs-same-job-title:hover {
+  color: #00b9f2;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul {
+  float: left;
+  width: 100%;
+  list-style: none;
+  padding-left: 0;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li {
+  float: left;
+  padding: 10px 15px;
+  border-bottom: 1px solid #efefef;
+  width: 100%;
+  background: #fff;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-title {
+  width: auto;
+  margin-bottom: 5px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-title a {
+  font-weight: 500;
+  font-size: 13px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-align-center {
+  float: left;
+  width: 55px;
+  border: 1px solid #d3d3d3;
+  height: 55px;
+  margin-right: 10px;
+  text-align: center;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-align-center table {
+  table-layout: fixed;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-align-center table tbody tr td a img {
+  max-width: 52px;
+  max-height: 52px;
+  vertical-align: middle;
+  margin: 1px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-company {
+  margin-top: -4px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-company a {
+  color: #999;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-location {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 12px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-location a {
+  cursor: default;
+  text-decoration: inherit;
+  color: inherit;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-salary {
+  margin-top: -5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.wrapper .myresume-content .box-body-right .item-job-list ul li .item-job-list-salary span {
+  color: #f79c25;
+  font-weight: bold;
+  font-size: 11px;
+}
+.wrapper .myresume-content .box-body-right .item-job h2 {
+  font-size: 17px;
+  font-weight: 400;
+  margin-top: 0px;
+}
+.wrapper .myresume-content .box-body-right .item-job ul {
+  list-style: none;
+  padding: 0px;
+}
+.wrapper .myresume-content .box-body-right .item-job ul li {
+  color: #000;
+  text-transform: capitalize;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.wrapper .myresume-content .box-body-right .item-job ul li:nth-child(even) {
+  color: #909090;
+  text-transform: capitalize;
+}
+@media (max-width: 767px) {
+  .info-togger {
+    text-align: right;
+    margin-top: -10px !important;
+    margin-right: 10px;
+    background: 0 0 !important;
+  }
+  .myresume-user-infor {
+    background: #00b9f2;
+  }
+}
+@media only screen and (min-width: 792px) and (max-width: 811px) {
+  .container {
+    width: 730px ;
+  }
+}
+@media only screen and (min-width: 768px) and (max-width: 791px) {
+  .container {
+    width: 690px ;
+  }
+}
+@media only screen and (min-width: 1212px) and (max-width: 1231px) {
+  .container {
+    width: 1150px ;
+  }
+}
+@media only screen and (min-width: 1200px) and (max-width: 1211px) {
+  .container {
+    width: 1130px ;
+  }
+}
+@media only screen and (min-width: 1012px) and (max-width: 1032px) {
+  .container {
+    width: 950px ;
+  }
+}
+@media only screen and (min-width: 992px) and (max-width: 1012px) {
+  .container {
+    width: 930px ;
+  }
+}
+@media only screen and (max-width: 1200px) {
+  .wrapper .myresume-content .box-header .box-header-right .social-btn button i {
+    font-size: 13px;
+  }
+  .info-bottom {
+    display: grid;
+  }
+}
+@media only screen and (max-width: 991px) {
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+}
+@media only screen and (max-width: 980px) {
+  /*section {
+        padding: 15px !important;
+    }*/
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+  .info-bottom {
+    display: block;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+}
+@media only screen and (max-width: 780px) {
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+}
+@media only screen and (max-width: 720px) {
+  .infor-box-left {
+    padding: 0 !important;
+  }
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+  .box-header-right {
+    padding: 0px;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .infor-box-left {
+    padding: 0;
+  }
+  .infor-box-left .p-sa {
+    font-weight: 100 !important;
+  }
+  .infor-box-left .p-sa span {
+    font-weight: 100 !important;
+  }
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: auto;
+    height: auto;
+  }
+  .box-header-right {
+    padding: 0px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .infor-box-left {
+    padding: 0;
+  }
+  .infor-box-left h1 {
+    font-size: 18px !important;
+  }
+  .infor-box-left .p-sa {
+    font-weight: 100 !important;
+  }
+  .infor-box-left .p-sa span {
+    font-weight: 100 !important;
+  }
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: 100%;
+    height: auto;
+  }
+  .box-header-right {
+    padding: 0px;
+  }
+}
+@media only screen and (max-width: 568px) {
+  .infor-box-left {
+    padding: 0;
+  }
+  .infor-box-left h1 {
+    font-size: 18px !important;
+  }
+  .infor-box-left .p-sa {
+    font-weight: 100 !important;
+  }
+  .infor-box-left .p-sa span {
+    font-weight: 100 !important;
+  }
+  .image {
+    text-align: center;
+  }
+  .image img {
+    width: 100%;
+    height: auto;
+  }
+  .box-header-right {
+    padding: 0px;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .info-bottom {
+    display: grid;
+  }
+}

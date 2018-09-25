@@ -1,0 +1,977 @@
+﻿<html ng-app="app">
+<head>
+    <title>
+        page-caption:(Tuyển dụng)
+    </title>
+   
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_restatus.min.css" rel="stylesheet" />
+    
+    <render>../commons/header.html</render>
+</head>
+<body ng-controller="app" ng-cloak>
+    <render>navbar.html</render>
+    <div class="wrapper" id="listOfRequisitions">
+        <section class="container-fluid myresume-content">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-3">
+                    <div class="header_left">
+                        <div class="col-md-12 item_header_left">
+                            <div class="lv-dropdown-list">
+                                <span class="lv-icon icon-left fa fa-code-fork"></span>
+                                <input data-c-select2 data-source="lookup.listCodeRequisition" placeholder="res:(Chức danh công việc)" ng-model="search.RequistionID" class="lv-search-list" ng-change="doLoadRequisitionById" />
+                            </div>
+                        </div>
+                        <div class="col-md-12 item_header_left">
+                            <div class="lv-dropdown-list data-source-jobs">
+                                <span class="lv-icon icon-left fa fa-tasks"></span>
+                                <input onclick="fnOnClickData" id="customSelect2" data-c-select2 data-source="lookup.jobs" placeholder="res:(Mã yêu cầu tuyển dụng)" ng-change="onChangeJobs" ng-model="search.Code" class="lv-search-list" isBold="true"/>
+                            </div>
+                        </div>
+                    </div>
+                    <!--///-->
+                    <div class="body_left " ng-if="data.ListData != undefined && data.ListData.length > 0">
+                        <div class="col-md-12 item_left item_body_left" ng-repeat="item in data.ListData" ng-click="onSelectCandidate(item, $event)" style="cursor:pointer" >
+                            
+                            <div class="box_item_left">
+                                <div class="header_box_item_left">
+                                    ${item.LastName} ${item.FirstName}
+                                </div>
+                                <div class="body_box_item_left">
+                                    <table>
+                                        <tr>
+                                            <td valign="top">
+                                                <img ng-src="{{{Config.RootUrl}}}photo/candidate/${item.UserId}.png" style="width:40px;margin-right:4px" />
+                                            </td>
+                                            <td>
+                                                <p>${item.ExperienceYears||"0"} res:(năm)</p>
+                                                <p ng-if="item.RecentInfo.CompanyName != undefined">
+                                                    <i class="fa fa-building" aria-hidden="true"></i> 
+                                                    ${item.RecentInfo.CompanyName}
+                                                </p>
+                                                <p ng-if="item.RecentInfo.CompanyName != undefined">
+                                                    <i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                                                    ${item.TopDegree}
+                                                </p>
+                                                <p ng-if="item.RecentInfo.CompanyName != undefined">
+                                                    <i class="fa fa-star-half-o" aria-hidden="true"></i>
+                                                    ${item.RecentInfo.Job.JobName[lang]}&nbsp;(${item.RecentInfo.Job.GroupName[lang]})
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="body_left" ng-if="data.ListData == undefined || data.ListData.length <= 0">
+                        <div class="col-md-12 item_left">
+                            <div class="box_item_left">
+                                <span>res:(Không có dữ liệu)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="border: 0; text-align: center" class="footer_left item_left" ng-if="data.ListData != undefined && data.ListData.length > 0">
+                        <span>res:(Tổng số ứng viên): ${data.ListData.length}</span>
+                    </div>
+                    <div style="text-align: center" class="footer_left item_left" ng-if="data.ListData != undefined && data.ListData.length > 0">
+                        <div>
+                            <div class="pagination">
+                                <ul id="pagination-demo" class="pagination-sm"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-9">
+                    <div class="header_right">
+                        <div class="col-xs-12 col-sm-12 col-md-12" style="min-height: 60px;
+                        border-radius: 4px;
+                        background: white;
+                        box-shadow: 0 1px 2px #ccc; margin-bottom: 10px;">
+                            <div class="col-xs-12 col-sm-6 col-md-6 box_right_left tabbable-line">
+                                <span>res:(Tình trạng tuyển dụng)</span>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 box_right_right">
+                                <a href="#" title="res:(Thêm mới tuyển dụng)" class="btn btn-default" ng-click="addNewItemTask()" data-toggle="modal" data-target="#myModal">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </a>
+                                <!--<a href="#" class="btn btn-success">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                </a>-->
+                                <a href="#" class="btn btn-default" ng-click="onDeleteData()">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </a>
+                                <!--<a href="#" class="btn btn-success">
+                                    <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                                </a>-->
+                                <a href="#" class="btn btn-default">
+                                    <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--///-->
+                    <div class="body_right tab-content">
+                        <h3 ng-if="data.ListTask == undefined || data.ListTask.length <= 0">res:(Không có dữ liệu)</h3>
+                        <div id="tabMoTaCV" class="" ng-if="data.ListTask.length > 0">
+                            <table class="table table-striped table-vertical table-responsive table-bordered table-hover" >
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectall" ng-click="onClickToggle(this)"/></th>
+                                        <th>res:(Vòng)</th>
+                                        <th>res:(Bước công việc)</th>
+                                        <th>res:(Ngày)</th>
+                                        <th>res:(Người thực hiện)</th>
+                                        <th>res:(Kết quả)</th>
+                                        <th>res:(Ghi chú)</th>
+                                        <th>res:(File đính kèm)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="item in data.ListTask" data-toggle="modal" data-target="#myModal">
+                                        <td><input type="checkbox" ng-click="checkDataItem(item)"/></td>
+                                        <td>${item.TaskName}</td>
+                                        <td>${item.Description}</td>
+                                        <td>${item.ActionDate|date:'dd-MM-yyyy'}</td>
+                                        <td>${item.Actor}</td>
+                                        <td>${item.Result}</td>
+                                        <td>${item.Note}</td>
+                                        <td style="white-space: nowrap;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        vertical-align: middle;
+                                        min-height: 30px;">
+                                            <a ng-if="item.AttachmentFileName" href="{{Config.RootUrl}}/attachments/Tasks/${item.TaskID}" target="_blank">${item.AttachmentFileName}</a>
+                                        </td>
+                                        <td>
+                                            <i ng-if="item.IsInterview" class="fa fa-calendar" title="res:(Là lịch phỏng vấn)" aria-hidden="true"></i>
+                                        </td>
+                                        <td>
+                                            <i ng-if="item.IsInterview && item.Status == 1" class="fa fa-check" title="res:(Ứng viên đồng ý)" aria-hidden="true"></i>
+                                            <i ng-if="item.IsInterview && item.Status == 2" class="fa fa-times" title="res:(Ứng viên từ chối)" aria-hidden="true"></i>
+                                            <i ng-if="item.IsInterview && item.Status != 2 && item.Status != 1" class="fa fa-spinner" title="res:(Ứng viên chưa xác nhận)" aria-hidden="true"></i>
+                                            <!--<i ng-if="!item.IsInterview || !item.Status" class="fa fa-spinner" title="res:(Ứng viên chưa xác nhận)" aria-hidden="true"></i>-->
+                                        </td>
+                                        <td>
+                                            <i class="fa fa-pencil-square-o" aria-hidden="true" ng-click="viewItemTable(item)"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Table ngang để responsive-->
+                            <table class="table table-horizontal table-bordered table-hover">
+                                <tbody ng-repeat="item in data.ListTask" ng-click="viewItemTable(item)">
+                                    <tr>
+                                        <th>res:(Vòng)</th>
+                                        <td>${item.TaskName}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>res:(Bước công việc)</th>
+                                        <td>${item.Description}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>res:(Ngày)</th>
+                                        <td>${item.ActionDate|date:'dd-MM-yyyy'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>res:(Người thực hiện)</th>
+                                        <td>${item.Actor}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>res:(Kết quả)</th>
+                                        <td>${item.Result}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>res:(Ghi chú)</th>
+                                        <td>${item.Note}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>res:(File đính kèm)</th>
+                                        <td><a ng-if="item.HasAttachment" href="{{Config.RootUrl}}/attachments/Task/${item.TaskID}" target="_blank">res:(Download attachment)</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <td>
+                                            <i ng-if="item.IsInterview" class="fa fa-calendar" title="res:(Là lịch phỏng vấn)" aria-hidden="true"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Modal -->
+        
+    </div>
+
+
+
+    <script server>
+       ["./../libs/lv.utils",
+           "./../modules/node.sys.categories",
+           "./../modules/node.sys.customer",
+           "./../libs/lv.authenticate",
+           "./../modules/lv.db",
+           "./../modules/lv.model",
+           (utils, categories, customer, aut, Data, models, app) => {
+               app.loadListOfJobs = (event) => {
+                   categories.getListOfJobs(utils.getCurrentLanguageCode(event), (err, lst) => {
+                       if (err) event.done(err);
+                       else {
+                           utils.writeData(event, lst);
+                           event.done();
+                       }
+                   })
+               };
+               app.doLoad_listCodeRequisition = (event) => {
+                   utils._try(() => {
+                       var user = aut.getUser(event.req);
+                       var recruiter = models.ls_recruiters()
+                           .where("UserEmail==Email", user)
+                           .toItem.sync();
+
+                       var requisitions = models.ls_requisition()
+                           .where("RecruiterId==_id", recruiter)
+                           .select({
+                               id: "_id",
+                               text: "Code",
+                               listType: { $type: "$CandidateApplyList" },
+                               CandidateApplyList: 1
+                           })
+                           .where("listType=='array'")
+                           .select({
+                               id: 1,
+                               text: 1,
+                               totalCandidate: { $size: "$CandidateApplyList" }
+                           })
+                           .where("totalCandidate>0")
+                           .toArray.sync();
+                       utils.writeData(event, requisitions);
+                       event.done(err);
+
+                     
+                   }, event)
+			   };
+			   app.doLoadCodeDataTask = (event) => {
+				   var clientData = utils.readData(event);
+				   utils._try(() => {
+					   try {
+						   Data.cnn((err, db) => {
+							   if (err) event.done(err);
+							   db.collection("ls_requisition").aggregate([
+								   {
+									   $match: {
+										   Code: clientData.id
+									   }
+
+								   },
+								   {
+									   $unwind: "$CandidateApplyList"
+								   }, {
+									   $replaceRoot: {
+										   newRoot: "$CandidateApplyList"
+									   }
+
+								   }, {
+									   $unwind: "$Tasks"
+								   }, {
+									   $replaceRoot: {
+										   newRoot: "$Tasks"
+									   }
+								   }, {
+									   $match: {
+										   IsParent: true
+									   }
+								   }
+							   ]).toArray((err, list) => {
+									   utils.writeData(event, list);
+									   event.done();
+								   })
+						   });
+					   } catch (ex) {
+						   utils.writeData(event, {ex: ex});
+						   event.done();
+					   }
+				   })
+			   }
+			   app.doLoadCandidateByRequisitionId = (event) => {
+                   var clientData = utils.readData(event);
+                   utils._try(() => {
+                       var user = aut.getUser(event.req);
+                       var list = null;
+                       var recruiter = models.ls_recruiters()
+                           .where("UserEmail==Email", user)
+						   .toItem.sync();
+					  
+                       if (clientData.id != null && clientData.id != "" && clientData.id != 'all' && clientData.id != undefined) {
+                           list = models.ls_requisition().where("(Code==code)and(RecruiterId==_id)", {
+                               code: clientData.id,
+                               _id: recruiter._id
+                           })
+                               .unwind("CandidateApplyList")
+                               .where("(CandidateApplyList.Status==1)or(CandidateApplyList.Status==3)")
+                               .lookup("sys_Users", "CandidateApplyList.CandidateEmail", "Email", "User")
+                               .unwind("User")
+                               .lookup(models.ls_candidate(), "CandidateApplyList.CandidateEmail", "UserEmail", "Candidate")
+                               .unwind("Candidate")
+                               .select({
+                                   FirstName: "User.FirstName",
+                                   LastName: "User.LastName",
+                                   ExperienceYears: "Candidate.TotalExpYear",
+                                   Mobile: "Candidate.Mobile",
+                                   TopDegree: "Candidate.TopDegree",
+                                   UserId: "User.UserId",
+                                   RecentInfo: "Candidate.RecentInfo",
+                                   Email: "User.Email"
+                               }).toArray.sync();
+                       } else {
+                           list = models.ls_requisition().where("RecruiterId==_id", recruiter)
+                               .unwind("CandidateApplyList")
+                               .where("(CandidateApplyList.Status==1)or(CandidateApplyList.Status==3)")
+                               .lookup("sys_Users", "CandidateApplyList.CandidateEmail", "Email", "User")
+                               .unwind("User")
+                               .lookup(models.ls_candidate(), "CandidateApplyList.CandidateEmail", "UserEmail", "Candidate")
+                               .unwind("Candidate")
+                               .select({
+                                   FirstName: "User.FirstName",
+                                   LastName: "User.LastName",
+                                   ExperienceYears: "Candidate.TotalExpYear",
+                                   Mobile: "Candidate.Mobile",
+                                   TopDegree: "Candidate.TopDegree",
+                                   UserId: "User.UserId",
+                                   RecentInfo: "Candidate.RecentInfo",
+                                   Email: "User.Email"
+                               }).toArray.sync();
+                       }
+					   utils.writeData(event, { list: list, dataRequisiton: {} });
+                       event.done();
+                   }, event)
+               };
+               app.doLoadTaskOfRequisitionByRequisitionID = (event) => {
+                   var clientData = utils.readData(event);
+                   utils._try(() => {
+                       var user = aut.getUser(event.req);
+                       var recruiter = models.ls_recruiters()
+                           .where("UserEmail==Email", user)
+                           .toItem.sync();
+                       var qr = {};
+                       if (clientData.code === "all") {
+                           qr = models.ls_requisition().lookup("ls_recruiters", "RecruiterId", "_id", "recruiter").query();
+                       } else {
+                           qr = models.ls_requisition()
+                               .where("(Code==id)and(RecruiterId==_id)", {
+                                   id: clientData.code,
+                                   _id: recruiter._id
+                               })
+                               .lookup("ls_recruiters", "RecruiterId", "_id", "recruiter").query();
+                       }
+                       qr.unwind("recruiter")
+                           .where("recruiter.UserEmail", user.Email)
+                           .unwind("CandidateApplyList")
+                           .where("CandidateApplyList.CandidateEmail", clientData.email)
+                           .unwind("CandidateApplyList.Tasks")
+                           .sort("CandidateApplyList.Tasks.ActionDate", 1)
+                           .select({
+                               TaskName: "CandidateApplyList.Tasks.TaskName",
+                               Description: "CandidateApplyList.Tasks.Description",
+                               ActionDate: "CandidateApplyList.Tasks.ActionDate",
+                               Actor: "CandidateApplyList.Tasks.Actor",
+                               Result: "CandidateApplyList.Tasks.Result",
+                               Note: "CandidateApplyList.Tasks.Note",
+                               TaskID: "CandidateApplyList.Tasks.TaskID",
+                               IsInterview: "CandidateApplyList.Tasks.IsInterview",
+                               Status: "CandidateApplyList.Tasks.Status",
+                               AttachmentFileName: "CandidateApplyList.Tasks.AttachmentFileName",
+                               HasAttachment: {
+                                   $cond: {
+                                       if: {
+                                           $ne: ["CanididateApplyList.Tasks.AttachmentFileContent", null]
+                                       },
+                                       then: true,
+                                       else: false
+                                   }
+							   },
+							   dataFile: "CandidateApplyList.dataFile",
+							   fileName: "CandidateApplyList.fileName",
+							   ApplyType: "CandidateApplyList.ApplyType",
+							   IsParent: "CandidateApplyList.Tasks.IsParent",
+							   IsFromATS: "CandidateApplyList.Tasks.IsFromATS",
+							   Ordinal: "CandidateApplyList.Tasks.Ordinal",
+							   ParentID: "CandidateApplyList.Tasks.ParentID",
+							   CodeStepMonitorIdTask: "CandidateApplyList.Tasks.CodeStepMonitorIdTask"
+                           })
+						   .toArray((err, result) => {
+							   var data = [];
+							   for (var i = 0; i < result.length; i++) {
+								   if (result[i].IsParent) {
+									   data.push(result[i]);
+									   if (result[i].IsFromATS) {
+										   var filter = result.filter(function (x) {
+											   return x.Ordinal == result[i].Ordinal && !x.IsParent
+										   });
+										   for (var z = 0; z < filter.length; z++) {
+											   data.push(filter[z]);
+										   }
+									   } else {
+										   var filter = result.filter(function (x) {
+											   return x.ParentID == result[i].TaskID.toString()
+										   });
+										   for (var z = 0; z < filter.length; z++) {
+											   data.push(filter[z]);
+										   }
+									   }
+								   }
+							   }
+                               if (err) event.done(err);
+                               else {
+                                   utils.writeData(event, data);
+                                   event.done();
+                               }
+                           })
+                       
+                   }, event)
+               };
+               // Load mã yêu cầu tuyển dụng
+               app.onLoadMaYeuCauTD = (event) => {
+				   utils._try(() => {
+                       var user = aut.getUser(event.req);
+                       var clientData = utils.readData(event);
+                       var recruiter = models.ls_recruiters()
+                           .where("UserEmail==Email", user)
+                           .toItem.sync();
+
+                       var requisitions = null;
+                       if (clientData.code == null || clientData.code == undefined || clientData.code == 'all') {
+                           requisitions = models.ls_requisition()
+                               .where("RecruiterId==_id", recruiter)
+                               .select({
+                                   text: "Code",
+								   id: "Code",
+								   IsPublished: 1,
+								   ReceiveTo: 1,
+								   IsPosting: {
+									   $cond: {
+										   if: {
+											   $and: [
+												   { IsPublished: true },
+												   {
+													   $gte: [
+														   "$ReceiveTo", new Date()
+													   ]
+												   }
+											   ]
+										   },
+										   then: true, else: false
+									   }
+								   }
+							   })
+							   .sort("IsPosting", -1)
+							   .sort("ReceiveTo", -1)
+                               .toArray.sync();
+                           utils.writeData(event, requisitions);
+                           event.done(err);
+                       } else {
+                           if (clientData.code.indexOf(",") > -1) {
+                               var data = clientData.code.split(",");
+                               var arrIn = [];
+                               data.forEach(item => {
+                                   arrIn.push(utils.objectID(item))
+                               })
+                               Data.cnn((err, db) => {
+                                   if (err) event.done(err);
+                                   else {
+                                       db.collection("ls_requisition")
+                                           .aggregate([
+                                               {
+                                                   $match: {
+                                                       _id: { $in: arrIn }
+                                                   }
+                                               }, {
+                                                   $project: {
+                                                       text: "$Code",
+                                                       id: "$Code",
+													   _id: 0,
+													   IsPublished: 1,
+													   ReceiveTo: 1,
+													   IsPosting: {
+														   $cond: {
+															   if: {
+																   $and: [
+																	   { IsPublished: true },
+																	   {
+																		   $gte: [
+																			   "$ReceiveTo", new Date()
+																		   ]
+																	   }
+																   ]
+															   },
+
+															   then: true, else: false
+
+														   }
+													   }
+                                                   }
+											   }, {
+												   $sort: {
+
+													   IsPosting: -1,
+													   ReceiveTo: -1
+
+												   }
+											   }
+                                           ]).toArray((err, list) => {
+                                               if (err) event.done(err);
+                                               else {
+                                                   utils.writeData(event, list);
+                                                   event.done();
+                                                   return;
+                                               }
+                                           })
+                                   }
+                               });
+                           } else {
+                               requisitions = models.ls_requisition()
+                                   .where("(RecruiterId==_id)and(_id==code)", { _id: recruiter._id, code: utils.objectID(clientData.code) })
+                                   .select({
+                                       text: "Code",
+									   id: "Code",
+									   IsPublished: 1,
+									   ReceiveTo: 1,
+									   IsPosting: {
+										   $cond: {
+											   if: {
+												   $and: [
+													   { IsPublished: true },
+													   {
+														   $gte: [
+															   "$ReceiveTo", new Date()
+														   ]
+													   }
+												   ]
+											   },
+											   then: true, else: false
+										   }
+									   }
+								   })
+								   .sort("IsPosting", -1)
+								   .sort("ReceiveTo", -1)
+                                   .toArray.sync();
+                               utils.writeData(event, requisitions);
+                               event.done(err);
+                           }
+                       }
+                      
+                   }, event)
+               };
+
+               // Load chức danh công việc
+               app.onLoadChucDanhCV = (event) => {
+                   var clientData = utils.readData(event);
+                   utils._try(() => {
+                       try {
+                           var user = aut.getUser(event.req);
+                           var recruiter = models.ls_recruiters()
+                               .where("UserEmail==Email", user)
+                               .toItem.sync();
+                           var requisitions = null;
+                           if (clientData.code == null || clientData.code == undefined || clientData.code == 'all') {
+                               //requisitions = models.ls_requisition()
+                               //    .where("RecruiterId==_id", recruiter)
+                               //    .select({
+                               //        id: "_id",
+                               //        text: "JobTitle"
+                               //    })
+                               //    .toArray.sync();
+                               Data.cnn((err, db) => {
+                                   if (err) event.done(err);
+                                   db.collection("ls_requisition")
+                                       .aggregate([
+                                           {
+                                               $match: {
+                                                   RecruiterId: recruiter._id
+                                               }
+                                           }, {
+                                               $group: {
+                                                   "_id": "$JobTitle",
+                                                   "id": {
+                                                       $addToSet: "$_id"
+                                                   }
+                                               }
+                                           }, {
+                                               $project: {
+                                                   text: "$_id",
+                                                   id: 1,
+                                                   _id: 0
+                                               }
+										   }, {
+											   $sort: {
+												   text: 1
+											   }
+										   }
+                                       ]).toArray((err, list) => {
+                                           utils.writeData(event, list);
+                                           event.done();
+                                       })
+                               });
+                           } else {
+                               //var qr = models.ls_requisition()
+                               //    .where("(RecruiterId==_id) and (Code==code)", { _id: recruiter._id, code: clientData.code })
+                               //    .select({
+                               //        id: "_id",
+                               //        text: "JobTitle"
+                               //    }).query();
+
+                               //requisitions=qr.toArray.sync();
+                               //var x = requisitions
+                               Data.cnn((err, db) => {
+                                   if (err) event.done(err);
+                                   db.collection("ls_requisition")
+                                       .aggregate([
+                                           {
+                                               $match: {
+                                                   RecruiterId: recruiter._id,
+                                                   Code: clientData.code
+                                               }
+                                           }, {
+                                               $group: {
+                                                   "_id": "$JobTitle",
+                                                   "id": {
+                                                       $addToSet: "$_id"
+                                                   }
+                                               }
+                                           }, {
+                                               $project: {
+                                                   text: "$_id",
+                                                   id: 1,
+                                                   _id: 0
+                                               }
+                                           }
+                                       ]).toArray((err, list) => {
+                                           utils.writeData(event, list);
+                                           event.done();
+                                       })
+                               });
+                           }
+                           
+                       } catch (e) {
+                           event.done(e);
+                       }
+                       
+                   }, event)
+               };
+               app.doChangeLanguage = (event) => {
+                   var clientData = utils.readData(event);
+                   event.res.cookie('language', event.form.lang || clientData.lang || 'vn');
+                   //event.res.end(JSON.stringify({
+                   //    action: {
+                   //        refresh: true
+                   //    }
+                   //}));
+                   utils.writeData(event, {});
+                   event.done();
+               };
+               //
+               app.doDelete = (event) => {
+                   var recruiter;
+                   var user = aut.getUser(event.req);
+                   var clientData = utils.readData(event);
+                   var indexOfCandidate = -1;
+                   var indexOfTask = -1;
+                   var sys_global_language_setting_item;
+                   var ls_requisition_item;
+                   var candidateUser;
+                   var lan = utils.getCurrentLanguageCode(event);
+                   utils._try(() => {
+                       try {
+                           recruiter = models.ls_recruiters()
+                               .where("UserEmail==Email", user)
+                               .toItem.sync();
+                           if (clientData.data.length > 0) {
+                               clientData.data.forEach(item => {
+                                   var idxOfCandidate = models.ls_requisition()
+                                       .where("_id", item._id.toObjectID())
+                                       .selectIndex("indexOfCandidate", "CandidateApplyList.CandidateEmail", clientData.email)
+                                       .toItem.sync();
+								   if (idxOfCandidate) {
+									   if (item.TaskID) {
+										   models.ls_requisition()
+											   .where("(Code==id)and(_id==idR)", {
+												   id: clientData.code,
+												   idR: (utils.objectID(item._id))
+											   })
+											   .pull("CandidateApplyList." + idxOfCandidate.indexOfCandidate + ".Tasks", { TaskID: utils.objectID(item.TaskID) })
+											   .commit.sync();
+									   } else if (item.CodeStepMonitorIdTask) {
+										   models.ls_requisition()
+											   .where("(Code==id)and(_id==idR)", {
+												   id: clientData.code,
+												   idR: (utils.objectID(item._id))
+											   })
+											   .pull("CandidateApplyList." + idxOfCandidate.indexOfCandidate + ".Tasks", { CodeStepMonitorIdTask: item.CodeStepMonitorIdTask })
+											   .commit.sync();
+									   }
+                                   }
+                               })
+                               utils.writeData(event, {});
+                               event.done();
+                           } else {
+                               utils.writeData(event, { Error: "NoData" });
+                               event.done();
+                           }
+                       }
+                       catch (ex) {
+                           event.done(ex);
+                       }
+                   }, event);
+               }
+           }
+       ]
+    </script>
+
+    <script>
+
+        ng_app([], function (app) {
+            app.lang="{{Language.Current.Code}}"
+            app.lookup = {
+
+            }
+            app.isFirst = true;
+            app.data = {
+                ListTask:[]
+            };
+            app.dataDel = [];
+            app.search = {};
+            history_navigator(app.$root);
+            // Load mã yêu cầu td
+			app.onLoadMaYeuCauTD = function (code) {
+				function formatOutput(optionElement) {
+					if (!optionElement.id) { return optionElement.text; }
+					var $state = $(
+						'<span><strong>' + optionElement.element.value + '</strong> ' + optionElement.text + '</span>'
+					);
+					return $state;
+				};
+                //app.search.RequistionID = code;
+                var ajax = "server.page://onLoadMaYeuCauTD";
+                ajax.data({
+                    code: code
+                }).done(function (res) {
+                    var data = [];//[{ "id": "all", "text": "res:(Tất cả)" }];
+                    for (var i = 0; i < res.length; i++) {
+                        var obj = {};
+                        if (res[i].id != undefined && res[i].text != undefined) {
+                            obj["id"] = res[i].id;
+                            obj["text"] = res[i].text.toString();
+                            data.push(obj);
+                        }
+                    }
+					app.lookup.jobs = data;
+                    app.$applyAsync();
+                })
+            }
+            app.onLoadMaYeuCauTD("all");
+            // thay đổi khi  chọn vào mã yctd
+			app.onChangeJobs = function (item) {
+				console.log(123);
+                app.doLoadCandidateByRequisitionId(item);
+            }
+
+            // Load chức danh công việc
+            app.onLoadChucDanhCV = function (code) {
+                var ajax = "server.page://onLoadChucDanhCV";
+                ajax.data({ code: code }).done(function (res) {
+                    var data = [{ "id": "all", "text": "res:(Tất cả)"}];
+                    for (var i = 0; i < res.length; i++) {
+                        var obj = {};
+                        if (res[i].id != undefined && res[i].text != undefined) {
+                            obj["id"] = res[i].id;
+                            obj["text"] = res[i].text.toString();
+                            data.push(obj);
+                        }
+                    }
+                    app.lookup.listCodeRequisition = data;
+                    app.$applyAsync();
+                })
+            }
+            app.onLoadChucDanhCV('all');
+
+            app.doLoadRequisitionById = function (id) {
+                app.currentRequisitionID = id;
+                app.onLoadMaYeuCauTD(id);
+			}
+
+			app.doLoadCodeDataTask = function (id) {
+				var ajax = "server.page://doLoadCodeDataTask";
+				ajax.data({ id: id }).done(function (res) {
+					app.data.CodeTaskParentData = res;
+					app.$applyAsync();
+				})
+			}
+			app.doLoadCandidateByRequisitionId = function (id) {
+				app.RequisitionIdData = id;
+                var ajax = "server.page://doLoadCandidateByRequisitionId";
+                ajax.data({ id: id }).done(function (res) {
+                    app.data.ListData = res.list;
+					if (res.list.length > 0) {
+						app.onSelectCandidate(res.list[0]);
+                        if (app.isFirst)
+                            $($(".item_body_left")[0]).addClass("active_item");
+					}
+					app.doLoadCodeDataTask(id);
+                    app.$applyAsync();
+                })
+            }
+            app.onSelectCandidate = function (item, event) {
+                if (item) {
+                    app.candidateEmail = item.Email;
+                    app.$root.CandidateEmail = item.Email;
+                }
+                var ajax = "server.page://doLoadTaskOfRequisitionByRequisitionID";
+                ajax.data({
+                    id: app.currentRequisitionID,
+                    code: app.search.Code,
+                    email: app.candidateEmail
+                })
+                    .done(function (res) {
+                        app.data.ListTask = res;
+                        if (event) {
+                            if (event.currentTarget) {
+                                $(".item_body_left").removeClass("active_item");
+                                $(event.currentTarget).addClass("active_item");
+                            }
+                        } else {
+                            if (!$(".item_body_left").hasClass("active_item")) {
+                                $($(".item_body_left")[0]).addClass("active_item");
+                            }
+                        }
+                        app.isFirst = false;
+                        app.$applyAsync();
+                    })
+            };
+            app.viewItemTable = function (item) {
+                app.currentTask = item;
+                dialog(app)
+                    .url("Requisition-Task-Editor")
+                    .done();
+            }
+            app.addNewItemTask = function () {
+                app.currentTask = {
+                    Email: app.candidateEmail,
+					id: app.currentRequisitionID,
+					isNew: true
+                }
+                if (app.currentTask.Email) {
+                    dialog(app)
+                        .url("Requisition-Task-Editor")
+                        .done();
+                } else {
+                    toastr.warning("res:(Vui lòng chọn ứng viên để thêm mới tuyển dụng)");
+                }
+            }
+            app.getDownLoadLink = function (id) {
+                if (id) {
+                    return "{{Config.RootUrl}}/attachments/task/" + id;
+                }
+            }
+            app.$root.doChangeLanguage = function (code) {
+                var ajax = "server.page://doChangeLanguage";
+                ajax.data({
+                    lang: app.$root.lang
+                }).done(function (res) {
+                    location.reload();
+                })
+            }
+			app.checkDataItem = function (item) {
+				if (app.dataDel.length > 0) {
+					if (item.TaskID) {
+						var data = app.dataDel.filter(function (el) {
+							return el.TaskID === item.TaskID;
+						});
+						if (data.length > 0) {
+							app.dataDel = app.dataDel.filter(function (el) {
+								return el.TaskID !== item.TaskID;
+							});
+						} else {
+							app.dataDel.push(item);
+						}
+					} else if (item.CodeStepMonitorIdTask) {
+						var data = app.dataDel.filter(function (el) {
+							return el.CodeStepMonitorIdTask === item.CodeStepMonitorIdTask;
+						});
+						if (data.length > 0) {
+							app.dataDel = app.dataDel.filter(function (el) {
+								return el.CodeStepMonitorIdTask !== item.CodeStepMonitorIdTask;
+							});
+						} else {
+							app.dataDel.push(item);
+						}
+					}
+                } else {
+                    app.dataDel.push(item);
+                }
+                if (app.data.ListTask.length == app.dataDel.length) {
+                    $("#selectall").prop('checked', true);
+                } else {
+                    $("#selectall").prop('checked', false);
+                }
+            }
+			app.onClickToggle = function (item) {
+                var ckb = $("#selectall");
+                if (ckb[0].checked) {
+                    $(':checkbox').each(function () {
+                        this.checked = true;
+                    });
+                    app.dataDel = app.data.ListTask;
+                } else {
+                    $(':checkbox').each(function () {
+                        this.checked = false;
+                    });
+                    app.dataDel = [];
+                }
+            }
+            app.onDeleteData = function () {
+                dialog(app).url("{{Config.RootUrl}}company/confirmDelete")
+                    .done();
+            }
+			app.doDeleteData = function () {
+                var ajax = "server.page://doDelete";
+                ajax.data({
+                    id: app.currentRequisitionID,
+                    code: app.search.Code,
+                    email: app.CandidateEmail,
+                    data: app.dataDel
+                }).done(function (res) {
+                    $('#myModal').modal('toggle');
+                    if (res.Error) {
+                        if (res.Error == "NoData") {
+                            toastr.error("res:(Vui lòng chọn dữ liệu cần xóa)");
+                        }
+                    } else {
+                        toastr.success("res:(Xóa dữ liệu thành công)");
+                        app.onSelectCandidate();
+                        app.$doClose();
+                        app.$applyAsync();
+                    }
+                })
+            }
+        })
+
+        setTimeout(function () {
+            $("#tuyendung").css({ "fontWeight": "bold", "color": "black" });
+		}, 200);
+		var fnOnClickData = function () {
+			alert();
+		}
+		
+    </script>
+    
+</body>
+</html>

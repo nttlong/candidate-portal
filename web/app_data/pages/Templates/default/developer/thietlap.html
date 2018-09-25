@@ -1,0 +1,811 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8" />
+
+	<link href="{{Config.RootUrl}}/admin-content/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{Config.RootUrl}}/admin-content/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<script src="{{Config.RootUrl}}/admin-content/vendors/jquery/dist/jquery.min.js"></script>
+
+</head>
+<body>
+	<script server>
+		[
+			"./../libs/lv.utils",/*Tien ich*/
+			"./../modules/node.sys.customer" /*Quan ly khac hang*/,
+			"./../libs/lv.authenticate" /*Dung de lay User hien tai*/,
+			"./../modules/lv.startup",
+			"./../modules/node.Email",
+			"./../modules/lv.db",
+			"./../modules/lv.model",
+			(utils, cust, aut, startUp, email, Data, models, page) => {
+				utils.debug();
+				page.doLoadData = (event) => {
+					utils._try(() => {
+						try {
+							debugger
+							var clientData = utils.readData(event);
+							var recruiter = models.ls_recruiters()
+								.where("_id", utils.objectID(clientData.id))
+								.toItem.sync();
+							if ((!recruiter.EmailInterviewTemplate) ||
+								(!recruiter.EmailInterviewTemplate[clientData.lang]) ||
+								(recruiter.EmailInterviewTemplate[clientData.lang].Template == "")) {
+								var templateEmail = email.getTemplateEmailFromFile.sync(null, "EmailInterviewTemplate", clientData.lang, "", "", [], "");
+								if (!recruiter.EmailInterviewTemplate) recruiter.EmailInterviewTemplate = {};
+								if (!utils.isNull(templateEmail.Body)) {
+									recruiter.EmailInterviewTemplate[clientData.lang] = {
+										Template: templateEmail.Body,
+										SchemaModel: templateEmail.DatasourceSchema,
+										Subject: templateEmail.Subject
+									};
+								}
+							}
+							recruiter._EmailInterviewTemplate = recruiter.EmailInterviewTemplate[clientData.lang].Template;
+							recruiter._EmailInterviewSubject = recruiter.EmailInterviewTemplate[clientData.lang].Subject;
+							if ((!recruiter.EmailRejectTemplate) ||
+								(!recruiter.EmailRejectTemplate[clientData.lang]) ||
+								(recruiter.EmailRejectTemplate[clientData.lang].Template == "")) {
+								var template = email.getTemplateEmailFromFile.sync(null, "EmailRejectTemplate", clientData.lang, "", "", [], "");
+								if (!utils.isNull(template.Body)) {
+									if (!recruiter.EmailRejectTemplate) recruiter.EmailRejectTemplate = {};
+									recruiter.EmailRejectTemplate[clientData.lang] = {
+										Template: template.Body,
+										SchemaModel: template.DatasourceSchema,
+										Subject: template.Subject
+									};
+
+
+								}
+
+
+							}
+							recruiter._EmailRejectTemplateBody = recruiter.EmailRejectTemplate[clientData.lang].Template;
+							recruiter._EmailRejectTemplateSubject = recruiter.EmailRejectTemplate[clientData.lang].Subject;
+							utils.writeData(event, recruiter);
+							event.done(err);
+						}
+						catch (ex) {
+							event.done(ex);
+						}
+
+					}, event);
+				};
+				page.doSaveData = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var data = clientData.data;
+							var user = aut.getUser(event.req);
+							var ret = utils.checkRequireFields([
+								"RecruiterCode",
+								"ShortName",
+								"RecruiterName",
+								"Address",
+								"CandidateSite",
+								"ContactInfo.Tel",
+								"ContactInfo.Fax",
+								"ContactInfo.Email"
+							], data);
+							if (ret.length > 0) {
+								utils.writeData(event, { api_Error: ret[0] });
+								event.done();
+								return;
+							}
+							if (data._id) {
+								data.EmailInterviewTemplate[clientData.lang].Template = data._EmailInterviewTemplate;
+								data.EmailInterviewTemplate[clientData.lang].Subject = data._EmailInterviewSubject;
+								data.EmailInterviewTemplate[clientData.lang].Files = clientData.multiFile ? JSON.parse(clientData.multiFile) : null;
+								data.EmailRejectTemplate[clientData.lang].Template = data._EmailRejectTemplateBody;
+								data.EmailRejectTemplate[clientData.lang].Subject = data._EmailRejectTemplateSubject;
+								data.EmailRejectTemplate[clientData.lang].Files = clientData.multiFile_Refuse ? JSON.parse(clientData.multiFile_Refuse) : null;
+								delete data._EmailInterviewTemplate;
+								delete data._EmailInterviewSubject;
+								delete data._EmailRejectTemplateBody;
+								delete data._EmailRejectSubject;
+								data.LimitDate = data.LimitDate ? new Date(data.LimitDate) : null;
+								data.ModifiedBy = user.Email;
+								models.ls_recruiters()
+									.where("_id==id", { id: utils.objectID(data._id) })
+									.set(data)
+									.commit.sync();
+								startUp.addCustometSiteToCache(data.CandidateSite);
+								utils.writeData(event, data);
+								event.done();
+							}
+							else {
+
+								var checkEmailUser = models.ls_recruiters()
+									.where("UserEmail==email", {
+										email: data.ContactInfo.Email
+									})
+									.toItem.sync();
+								var checkRecruiterCode = models.ls_recruiters()
+									.where("RecruiterCode==code", {
+										code: data.RecruiterCode
+									})
+									.toItem.sync();
+								var checkCandidateSite = models.ls_recruiters()
+									.where("CandidateSite==site", {
+										site: data.CandidateSite
+									})
+									.toItem.sync();
+								if (checkEmailUser) {
+									utils.writeData(event, {
+										api_Error: {
+											field: "ContactInfo.Email",
+											errorType: "EmailMatch"
+										}
+									});
+									event.done();
+									return;
+								}
+								if (checkRecruiterCode) {
+									utils.writeData(event, {
+										api_Error: {
+											field: "RecruiterCode",
+											errorType: "RecruiterCodeMatch"
+										}
+									});
+									event.done();
+									return;
+								}
+								if (checkCandidateSite) {
+									utils.writeData(event, {
+										api_Error: {
+											field: "CandidateSite",
+											errorType: "CandidateSiteMatch"
+										}
+									});
+									event.done();
+									return;
+								}
+								data.CreatedBy = user.Email;
+								data.UserEmail = data.ContactInfo.Email;
+								data.CreatedOn = new Date();
+								data.CreatedOnUTC = utils.getUTCDate(new Date());
+								var template = email.getTemplateEmailFromFile.sync(null, "EmailRejectTemplate", clientData.lang, "", "", [], "");
+								if (template) {
+									if (!utils.isNull(template.Body)) {
+										if (!data.EmailRejectTemplate) data.EmailRejectTemplate = {};
+										data.EmailRejectTemplate[clientData.lang] = {
+											Template: template.Body,
+											SchemaModel: template.DatasourceSchema,
+											Subject: template.Subject
+										};
+									}
+								}
+
+								var template = email.getTemplateEmailFromFile.sync(null, "EmailRejectTemplate", clientData.lang, "", "", [], "");
+								if (template) {
+									if (!utils.isNull(template.Body)) {
+										if (!data.EmailRejectTemplate) data.data.EmailRejectTemplate = {};
+										data.EmailRejectTemplate[clientData.lang] = {
+											Template: template.Body,
+											SchemaModel: template.DatasourceSchema,
+											Subject: template.Subject
+										};
+									}
+								}
+								data = models.ls_recruiters()
+									.insert(data)
+									.commit.sync();
+								startUp.addCustometSiteToCache(data.CandidateSite);
+								utils.writeData(event, data);
+								event.done();
+							}
+						}
+						catch (ex) {
+							event.done(ex);
+						}
+
+					}, event);
+
+				};
+				page.doDelete = (event) => {
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							models.ls_recruiters()
+								.where("_id==id", { id: utils.objectID(clientData.id) })
+								.delete()
+								.commit.sync();
+							utils.writeData(event, {});
+							event.done();
+						}
+						catch (ex) {
+							event.done(ex);
+						}
+
+					}, event);
+
+				};
+				page.doDeleteBanner = (event) => {
+					utils._try(() => {
+						var clientData = utils.readData(event);
+						var id = clientData.id;
+						try {
+							id = utils.objectID(clientData.id)
+						}
+						catch (ex) {
+
+						}
+
+						Data.cnn((err, db) => {
+							if (err) event.done(err);
+							else {
+								db.collection("ls_recruiters")
+									.updateOne({
+										_id: id
+									}, {
+											$pull: {
+												Banners: utils.objectID(clientData.banner)
+											}
+										}, (err, result) => {
+											if (err) event.don(err);
+											else {
+												utils.writeData(event, {});
+												event.done();
+											}
+										});
+							}
+						});
+					}, event);
+				}
+			}]
+	</script>
+	<render>../company/navbar.html</render>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div id="exTab2" class="container">
+				<ul class="nav nav-tabs">
+					<li role="presentation" class="active"><a data-toggle="tab" href="#info" ng-click="doClickTab(1)">res:(Info)</a></li>
+					<li role="presentation"><a data-toggle="tab" href="#overview" ng-click="doClickTab(2)">res:(Overview)</a></li>
+					<li role="presentation"><a data-toggle="tab" href="#banners" ng-click="doClickTab(3)">res:(Banners)</a></li>
+					<li role="presentation"><a data-toggle="tab" href="#recruitementEmail" ng-click="doClickTab(4)">res:(Recruitment template email)</a></li>
+					<li role="presentation"><a data-toggle="tab" href="#rejectEmail" ng-click="doClickTab(5)">res:(Refuse template email)</a></li>
+				</ul>
+				<div class="tab-content clearfix">
+					<div class="tab-pane active" id="info" style="padding:10px">
+						<form role="form">
+							<div class="form-group row">
+								<div class="col-sm-3">
+									<table>
+										<tr>
+											<td>
+												<img id='output' style="height:100px" ng-src="${data.Logo}">
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<input type="file" accept='image/*' onchange='openFile(event)' />
+											</td>
+										</tr>
+
+									</table>
+
+
+								</div>
+								<div class="col-sm-9">
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Code) <span style="color: red">*</span></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="form-group-input" placeholder="res:(Code)" ng-model="data.RecruiterCode">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Short Name) <span style="color: red">*</span></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="form-group-input" placeholder="res:(Short Name)" ng-model="data.ShortName">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Name) <span style="color: red">*</span></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="form-group-input" placeholder="res:(Name)" ng-model="data.RecruiterName">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Address) <span style="color: red">*</span></label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="form-group-input" placeholder="res:(Address)" ng-model="data.Address">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Web site)</label>
+										<div class="col-sm-10">
+											<input type="text" class="form-control" id="form-group-input" placeholder="res:(Web site)" ng-model="data.RecruiterSite">
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Canidate site) <span style="color: red">*</span></label>
+										<div class="col-sm-10">
+											<div class="input-group">
+												<span class="input-group-addon">{{Config.RootUrl}}</span>
+												<input type="text" class="form-control" id="form-group-input" placeholder="res:(Canidate site)" ng-model="data.CandidateSite">
+											</div>
+
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class="col-sm-2 control-label" for="form-group-input">res:(Expiration)</label>
+										<div class="col-sm-10">
+											<div c-date-picker class="input-group" ng-model="data.LimitDate"></div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<div class="col-sm-12">
+									<fieldset>
+										<legend>res:(Contact info)</legend>
+										<div class="form-group row">
+
+											<label class="col-sm-2 control-label" for="form-group-input">res:(Tel) <span style="color: red">*</span></label>
+											<div class="col-sm-10">
+												<input type="text" class="form-control" id="form-group-input" placeholder="res:(Tel)" ng-model="data.ContactInfo.Tel">
+											</div>
+											<label class="col-sm-2 control-label" for="form-group-input">res:(Fax) <span style="color: red">*</span></label>
+											<div class="col-sm-10">
+												<input type="text" class="form-control" id="form-group-input" placeholder="res:(Fax)" ng-model="data.ContactInfo.Fax">
+											</div>
+											<label class="col-sm-2 control-label" for="form-group-input">res:(Email) <span style="color: red">*</span></label>
+											<div class="col-sm-10">
+												<input type="text" class="form-control" id="form-group-input" placeholder="res:(Email)" ng-model="data.ContactInfo.Email">
+											</div>
+											<label class="col-sm-2 control-label" for="form-group-input">res:(Tên người liên hệ)</label>
+											<div class="col-sm-10">
+												<input type="text" class="form-control" id="form-group-input" placeholder="res:(Tên người liên hệ)" ng-model="data.ContactInfo.ContactName">
+											</div>
+										</div>
+									</fieldset>
+								</div>
+								<div class="col-sm-12">
+									<fieldset>
+										<legend>res:(Admin info)</legend>
+										<div class="form-group row">
+
+											<label class="col-sm-2 control-label" for="form-group-input">res:(Admin user)</label>
+											<div class="col-sm-10">
+												<div class="input-group">
+
+													<input type="text" class="form-control" placeholder="res:(Admin user)" ng-model="data.UserEmail">
+													<span class="input-group-addon" ng-click="doAddNewUser()">res:(Create)</span>
+												</div>
+
+											</div>
+
+										</div>
+										<div class="form-group row">
+											<label class="col-sm-2 control-label" for="form-group-input">res:(Description)</label>
+											<div class="col-sm-10">
+												<textarea class="form-control" id="form-group-input" placeholder="res:(Description)" ng-model="data.Description"></textarea>
+											</div>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+
+
+						</form>
+					</div>
+					<div id="overview" class="tab-pane" style="padding:10px">
+						<div c-html-box-lang ng-model="data.OverView" style="height:400px" lang="${lang}">
+
+						</div>
+					</div>
+					<div id="banners" class="tab-pane">
+						<ul class="list-group">
+							<li class="list-group-item" ng-repeat="item in data.Banners">
+								<img src="{{Config.RootUrl}}/photo/${item}.png" style="width:200px" />
+								<div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+									<div class="btn-group" role="group" aria-label="First group">
+										<button type="button" class="btn btn-default" ng-click="doDeleteBanner(item)">res:(Delete)</button>
+									</div>
+								</div>
+							</li>
+						</ul>
+						<div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+							<div class="btn-group" role="group" aria-label="First group">
+								<button type="button" class="btn btn-default" ng-click="doAddNewBanner()">res:(Add banner)</button>
+							</div>
+
+						</div>
+					</div>
+					<div id="recruitementEmail" class="tab-pane">
+						<form role="form" class="form-inline">
+							<div class="form-group">
+								<label class="control-label" for="exampleInputEmail">res:(Subject)</label>
+								<input type="text" class="form-control" id="exampleInputEmail" ng-model="data._EmailInterviewSubject">
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="exampleInputEmail">res:(Template)</label>
+								<div c-html-box ng-model="data._EmailInterviewTemplate" style="height:300px" ng-instance="EmailInterviewTemplateEditor">
+
+								</div>
+							</div>
+							<div class="form-group" style="width: 100%">
+								<label for="attachment">res:(Attachment)</label>
+								<button onclick="fnAttachment();">Attachment</button>
+								<span ng-show="dataMultiFile.length > 0">
+									${dataMultiFile.length} files
+								</span>
+								<input style="opacity: 0" type="file" class="form-control" id="attachment" onchange='openMultiFile(event);' multiple>
+								<p ng-repeat="file in dataMultiFile">
+									<span>File: ${file.fileName}</span>
+									<span>
+										<button ng-click="delFile(file)">X</button>
+									</span>
+								</p>
+
+							</div>
+							<div class="form-group">
+								<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+									<div class="btn-group" role="group" aria-label="First group">
+										<button type="button" class="btn btn-default" ng-click="doShowDatasource('EmailInterviewTemplateEditor','EmailInterviewTemplate')">res:(Datasource)</button>
+
+									</div>
+									<div class="btn-group" role="group" aria-label="Second group">
+										<button type="button" class="btn btn-default" ng-click="doInsertShortFormatDate('EmailInterviewTemplateEditor')">res:(Short date format)</button>
+										<button type="button" class="btn btn-default">res:(Long date format)</button>
+
+									</div>
+									<div class="btn-group" role="group" aria-label="Third group">
+										<button type="button" class="btn btn-default" ng-click="doInsertCurrentTime('EmailInterviewTemplateEditor')">res:(Current time)</button>
+									</div>
+								</div>
+							</div>
+						</form>
+
+					</div>
+					<div id="rejectEmail" class="tab-pane">
+						<form role="form">
+							<div class="form-group">
+								<label class="control-label" for="exampleInputEmail">res:(Subject)</label>
+								<input type="text" class="form-control" id="exampleInputEmail" ng-model="data._EmailRejectTemplateSubject">
+							</div>
+							<div class="form-group">
+								<label class="control-label" for="exampleInputEmail">res:(Template)</label>
+								<div c-html-box ng-model="data._EmailRejectTemplateBody" style="height:300px" ng-instance="EmailRejectTemplateEditor">
+
+								</div>
+							</div>
+							<div class="form-group" style="width: 100%">
+								<label for="attachment_refuse">res:(Attachment)</label>
+								<button onclick="fnAttachment_Refuse();">Attachment</button>
+								<span ng-show="dataMultiFile_Refuse.length > 0">
+									${dataMultiFile_Refuse.length} files
+								</span>
+								<input style="opacity: 0" type="file" class="form-control" id="attachment_refuse" onchange='openMultiFile_Refuse(event);' multiple>
+								<p ng-repeat="file in dataMultiFile_Refuse">
+									<span>File: ${file.fileName}</span>
+									<span>
+										<button ng-click="delFile_Refuse(file)">X</button>
+									</span>
+								</p>
+
+							</div>
+							<div class="form-group">
+								<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+									<div class="btn-group" role="group" aria-label="First group">
+										<button type="button" class="btn btn-default" ng-click="doShowDatasource('EmailRejectTemplateEditor','EmailRejectTemplate')">res:(Datasource)</button>
+
+									</div>
+									<div class="btn-group" role="group" aria-label="Second group">
+										<button type="button" class="btn btn-default" ng-click="doInsertShortFormatDate('EmailRejectTemplateEditor')">res:(Short date format)</button>
+										<button type="button" class="btn btn-default">res:(Long date format)</button>
+
+									</div>
+									<div class="btn-group" role="group" aria-label="Third group">
+										<button type="button" class="btn btn-default" ng-click="doInsertCurrentTime('EmailRejectTemplateEditor')">res:(Current time)</button>
+									</div>
+								</div>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<div class="row">
+				<div class="col-sm-12">
+					<input type="button" value="res:(Update)" class="btn btn-primary pull-right" ng-click="doUpdate()" />
+					<input type="button" value="res:(Delete)" ng-if="!isHidden" class="btn btn-default pull-right" ng-click="doDelete()" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		debugger
+		(app => {
+			
+			app.lang = window.currentLanguage;
+			window.onChangeLanguage(function () {
+				app.lang = window.currentLanguage;
+				app.$applyAsync();
+			})
+			window.openFile = function (file) {
+				var input = file.target;
+
+				var reader = new FileReader();
+				reader.onload = function () {
+					var dataURL = reader.result;
+					var output = $('#output')[0];
+					output.src = dataURL;
+					app.data.Logo = dataURL;
+				};
+				reader.readAsDataURL(input.files[0]);
+			};
+			fnAttachment = function () {
+				$("#attachment").click();
+			}
+			window.openMultiFile = function (file) {
+				var fnReader = function (listFile, i, callback) {
+					var dataMain = {};
+					var dataFile = listFile[i];
+					var reader = new FileReader();
+					reader.onload = function () {
+						var dataURL = reader.result;
+						var output = $('#output')[0];
+						output.src = dataURL;
+						//dataFile.dataURL = dataURL;
+						//dataFile.id = i;
+						dataMain.id = i;
+						dataMain.fileName = listFile[i].name;
+						dataMain.size = listFile[i].size;
+						dataMain.type = listFile[i].type;
+						dataMain.dataURL = dataURL;
+						callback(dataMain);
+					};
+					reader.readAsDataURL(listFile[i]);
+				}
+
+				var files = file.target;
+				var listFile;
+				app.dataMultiFile = [];
+				if (files) {
+					listFile = files.files;
+					for (var i = 0; i < listFile.length; i++) {
+						var dataFile = fnReader(listFile, i, function (dataFile) {
+							app.dataMultiFile.push(dataFile);
+							app.$applyAsync();
+						});
+					}
+				}
+
+			}
+
+			app.delFile = function (file) {
+				var data = [];
+				for (var i = 0; i < app.dataMultiFile.length; i++) {
+					if (app.dataMultiFile[i].id != file.id) {
+						data.push(app.dataMultiFile[i]);
+					}
+				}
+				app.dataMultiFile = data;
+				app.$applyAsync();
+			}
+
+			fnAttachment_Refuse = function () {
+				$("#attachment_refuse").click();
+			}
+			window.openMultiFile_Refuse = function (file) {
+				var fnReader = function (listFile, i, callback) {
+					var dataMain = {};
+					var dataFile = listFile[i];
+					var reader = new FileReader();
+					reader.onload = function () {
+						var dataURL = reader.result;
+						var output = $('#output')[0];
+						output.src = dataURL;
+						//dataFile.dataURL = dataURL;
+						//dataFile.id = i;
+						dataMain.id = i;
+						dataMain.fileName = listFile[i].name;
+						dataMain.size = listFile[i].size;
+						dataMain.type = listFile[i].type;
+						dataMain.dataURL = dataURL;
+						callback(dataMain);
+					};
+					reader.readAsDataURL(listFile[i]);
+				}
+
+				var files = file.target;
+				var listFile;
+				app.dataMultiFile_Refuse = [];
+				if (files) {
+					listFile = files.files;
+					for (var i = 0; i < listFile.length; i++) {
+						var dataFile = fnReader(listFile, i, function (dataFile) {
+							app.dataMultiFile_Refuse.push(dataFile);
+							app.$applyAsync();
+						});
+					}
+				}
+
+			}
+
+			app.delFile_Refuse = function (file) {
+				var data = [];
+				for (var i = 0; i < app.dataMultiFile_Refuse.length; i++) {
+					if (app.dataMultiFile_Refuse[i].id != file.id) {
+						data.push(app.dataMultiFile_Refuse[i]);
+					}
+				}
+				app.dataMultiFile_Refuse = data;
+				app.$applyAsync();
+			}
+
+			app.data = {
+				ContactInfo: {}
+			};
+
+			app.doLoadData = () => {
+				debugger
+				if (app.$root.$history.data().id) {
+					var ajaxLoadData = "server.page://doLoadData";
+					ajaxLoadData.data({
+						id: app.$root.$history.data().id,
+						lang: app.lang
+					})
+						.done(res => {
+							if (res.ContactInfo == null) {
+								res.ContactInfo = {};
+							}
+							var OverView = {
+
+							};
+
+							if (res.OverView) {
+								if (typeof res.OverView === "string") {
+
+									OverView[app.lang] = res.OverView;
+									app.data.OverView = OverView
+								}
+							}
+
+							app.data = res;
+							app.dataMultiFile = res.EmailInterviewTemplate[app.lang].Files;
+							app.dataMultiFile_Refuse = res.EmailRejectTemplate[app.lang].Files;
+							app.$applyAsync();
+						});
+				}
+
+			};
+			app.doLoadData();
+			app.doUpdate = () => {
+				toastrError = function (error, model) {
+					toastr.error(error);
+					$("[ng-model='" + model + "']").focus(
+						function () {
+							$(this).css({ "border-color": "red" })
+						}
+					);
+					$("[ng-model='" + model + "']").blur(
+						function () {
+							$(this).css({ "border-color": "#ccc" })
+						}
+					);
+					$("[ng-model='" + model + "']").trigger("click");
+					$("[ng-model='" + model + "']").select();
+				}
+
+				var ajax = "server.page://doSaveData";
+				app.data.id = app.$root.$history.data().id;
+				ajax.data({
+					lang: app.lang,
+					data: app.data,
+					multiFile: angular.toJson(app.dataMultiFile),
+					multiFile_Refuse: angular.toJson(app.dataMultiFile_Refuse)
+				})
+					.done(res => {
+						if (!res.api_Error) {
+							toastr.success("res:(Update data is successfull)")
+						}
+						else {
+							if (res.api_Error.errorType == "RecruiterCodeIsEmpty") {
+								toastrError("res:(Xin nhập vào Code)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "ShortNameIsEmpty") {
+								toastrError("res:(Xin nhập vào ShortName)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "RecruiterNameIsEmpty") {
+								toastrError("res:(Xin nhập vào RecruiterName)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "AddressIsEmpty") {
+								toastrError("res:(Xin nhập vào Address)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "CandidateSiteIsEmpty") {
+								toastrError("res:(Xin nhập vào CandidateSite)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "ContactInfo.TelIsEmpty") {
+								toastrError("res:(Xin nhập vào Tel)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "ContactInfo.FaxIsEmpty") {
+								toastrError("res:(Xin nhập vào Fax)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "ContactInfo.EmailIsEmpty") {
+								toastrError("res:(Xin nhập vào Email)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "EmailMatch") {
+								toastrError("res:(Email đã tồn tại)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "RecruiterCodeMatch") {
+								toastrError("res:(RecruiterCode đã tồn tại)", "data." + res.api_Error.field);
+							}
+							if (res.api_Error.errorType == "CandidateSiteMatch") {
+								toastrError("res:(CandidateSite đã tồn tại)", "data." + res.api_Error.field);
+							}
+						}
+					});
+			};
+			app.doDelete = () => {
+				if (confirm("res:(Bạn muốn xóa Nhà tuyển dụng này?)")) {
+					var ajaxDeleteData = "server.page://doDelete";
+					ajaxDeleteData.data({ id: app.$root.$history.data().id })
+						.done(res => {
+							toastr.success("res:(Delete data is successfull)");
+							setTimeout(() => {
+								window.location.href = "#view=customers"
+							}, 700);
+						});
+				}
+			}
+			app.doShowDatasource = (key, source) => {
+				app[key] = app.data[source][app.lang].SchemaModel;
+				app["Template"] = app.data[source][app.lang].Template;
+				app["Source"] = source;
+				dialog(app).url("email-template-datasource").done();
+			}
+
+			app.doAddNewBanner = function () {
+				dialog(app).url("customer-add-banner").done();
+			};
+			app.doInsertShortFormatDate = function (key) {
+				app[key].insertText("\{\{date_format [data-source-param] 'dd/MM/yyyy'\}\}");
+			}
+			app.doInsertCurrentTime = function (key) {
+				app[key].insertText("\{\{current_time  'dd/MM/yyyy'\}\}");
+			}
+			app.insertText = function (text) {
+				//app.EmailInterviewTemplateEditor.insertText(text);
+				if (app.idxTab == 4) {
+					app.data._EmailInterviewTemplate += ' ' + text;
+				} else if (app.idxTab == 5) {
+					app.data._EmailRejectTemplateBody += ' ' + text;
+				}
+			};
+			app.doDeleteBanner = function (item) {
+				if (confirm("res:(Do you want to delete this banner?)")) {
+					var ajax = "server.page://doDeleteBanner";
+					ajax.data({
+						id: app.data._id,
+						banner: item
+					})
+						.done(function () {
+							toastr.success("res:(Xóa banner thành công)")
+							app.doLoadData();
+						});
+				}
+			}
+			app.doAddNewUser = function () {
+				dialog(app).url("customer-add-user").done();
+			}
+
+			app.doClickTab = function (i) {
+				app.idxTab = i;
+				if (i == 1) {
+					app.isHidden = false;
+				} else {
+					app.isHidden = true;
+				}
+			}
+		});
+	</script>
+	<script src="{{Config.RootUrl}}/admin-content/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+﻿
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/lv.db",
+        (utils,DB,app) => {
+            app.onLoad = (event) => {
+                utils._try(() => {
+                    DB.cnn((err, db) => {
+                        if (err) event.done(err);
+                        else {
+                            //db.collection("ls_recruiters")
+                            //    .aggregate([
+                            //        {
+                            //            $project: {
+                            //                CandidateSite: 1,
+                            //                RecruiterCode: 1,
+                            //                Logo: 1
+                            //            }
+                            //        }
+                            //    ]).toArray((err, list) => {
+                            //        if (err) event.done(err);
+                            //        else {
+                            //            event.setModel("recruiters", list);
+                            //            event.done();
+                            //        }
+                            //    })
+                            db.collection("ls_recruiters").aggregate([
+                                {
+                                    $lookup: {
+                                        from: "ls_requisition",
+                                        localField: "_id",
+                                        foreignField: "RecruiterId",
+                                        as: "RequisitionOfRecrutier"
+                                    }
+
+                                }, {
+                                    $unwind: { path: "$RequisitionOfRecrutier", preserveNullAndEmptyArrays: true }
+                                }, {
+                                    $project: {
+                                        CandidateSite: 1,
+                                        RecruiterCode: 1,
+                                        Logo: 1,
+                                        CreatedOn: "$RequisitionOfRecrutier.CreatedOn"
+                                    }
+                                }, {
+                                    $group: {
+                                        _id: "$_id",
+                                        CandidateSite: { $first: "$CandidateSite" },
+                                        RecruiterCode: { $first: "$RecruiterCode" },
+                                        Logo: { $first: "$Logo" },
+                                        CreatedOn: {
+                                            $max: "$CreatedOn"
+                                        }
+                                    }
+                                }, {
+                                    $sort: {
+                                        CreatedOn: -1
+                                    }
+                                }
+                            ]).toArray((err, list) => {
+                                if (err) event.done(err);
+                                else {
+                                    event.setModel("recruiters", list);
+                                    event.done();
+                                }
+                            })
+                        }
+                    })
+                }, event);
+            
+        }
+    }]
+</script>
+
+
+<div class="lv-list-company">
+    <div class="lv-header">res:(Nhà Tuyển Dụng Hàng Đầu)</div>
+    <div class="lv-content lv-custom-scrollbar">
+        {{#each recruiters}}
+        {{#if Logo}}
+        <a class="logo" href="{{../Config.RootUrl}}{{CandidateSite}}">
+            <img src="{{../Config.RootUrl}}/photo/logo/{{RecruiterCode}}.png" style="max-width:100px;max-height:100px" />
+        </a>
+        {{/if}}
+        {{/each}}
+      
+    </div>
+</div>
+

@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Settings)</title>
+    <render>../commons/header.html</render>
+
+</head>
+<body ng-controller="app" ng-cloak>
+    <render>navbar.html</render>
+    <div class="container" id="app">
+        <style>
+            input[readonly="readonly"]{
+                background-color:#fff !important;
+            }
+        </style>
+        <form role="form">
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">ID</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" ng-model="data.Id">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">Code</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" ng-model="data.Code">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" ng-model="data.ShortName">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">App Id</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" ng-model="data.AppId">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 control-label" for="form-group-input">App access token</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                       
+                        <input type="text" class="form-control" id="form-group-input" placeholder="My label" readonly="readonly" ng-model="data.AccessToken">
+                        <span class="input-group-addon" ng-click="doGenerate()">res:(Generate)</span>
+                    </div>
+                    
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.model",
+            "./../libs/lv.authenticate",
+            (utils, model,aut, page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var user = aut.getUser(event.req);
+                            if (!user) {
+                                utils.writeData(event, {});
+                                event.done();
+                                return;
+                            }
+                            var recruiter = model.ls_recruiters()
+                                .where("UserEmail==Email", user)
+                                .toItem.sync();
+                            if (!recruiter) {
+                                utils.writeData(event, {});
+                                event.done();
+                                return;
+                            }
+                            if (!recruiter.ClientEndPointService) {
+                                recruiter.ClientEndPointService = {
+                                    AppId: utils.sha(utils.newGuid()),
+                                    AccessToken: utils.sha(utils.newGuid()),
+                                }
+                                model.ls_recruiters()
+                                    .where("UserEmail==Email", user)
+                                    .set("ClientEndPointService", recruiter.ClientEndPointService)
+                                    .commit.sync();
+                            }
+                            utils.writeData(event, {
+                                Code: recruiter.RecruiterCode,
+                                ShortName: recruiter.RecruiterCode,
+                                Id: recruiter._id,
+                                AppId: recruiter.ClientEndPointService.AppId,
+                                AccessToken: recruiter.ClientEndPointService.AccessToken,
+                            });
+                            event.done();
+                            return;
+
+                        }
+                        catch (e) {
+                            event.done(e);
+                        }
+                    }, event);
+                };
+                page.doGenerate = (event) => {
+                    utils._try(() => {
+                        try {
+                            var user = aut.getUser(event.req);
+                            if (!user) {
+                                utils.writeData(event, {});
+                                event.done();
+                                return;
+                            }
+                            var recruiter = model.ls_recruiters()
+                                .where("UserEmail==Email", user)
+                                .toItem.sync();
+                            if (!recruiter) {
+                                utils.writeData(event, {});
+                                event.done();
+                                return;
+                            }
+                            var AccessToken = utils.sha(utils.newGuid());
+                            model.ls_recruiters()
+                                .where("UserEmail==Email", user)
+                                .set("ClientEndPointService.AccessToken", recruiter.ClientEndPointService)
+                                .commit.sync();
+                            utils.writeData(event, {
+                                AccessToken: AccessToken,
+                            });
+                            event.done();
+                            return;
+
+                        }
+                        catch (e) {
+                            event.done(e);
+                        }
+                    }, event);
+				}
+				page.doChangeLanguage = (event) => {
+					var clientData = utils.readData(event);
+					event.res.cookie('language', event.form.lang || clientData.lang || 'vn');
+					//event.res.end(JSON.stringify({
+					//    action: {
+					//        refresh: true
+					//    }
+					//}));
+					utils.writeData(event, {});
+					event.done();
+				};
+            }]
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            scope.doLoadData = function () {
+                var a = "server.page://doLoadData";
+                a.done(function (res) {
+                    scope.data = res;
+                    scope.$applyAsync();
+                });
+            };
+            scope.doGenerate = function () {
+                var a = "server.page://doGenerate";
+                a.done(function (res) {
+                    scope.data.AccessToken = res.AccessToken;
+                    scope.$applyAsync();
+                });
+            };
+            scope.doLoadData();
+        })
+    </script>
+</body>
+</html>

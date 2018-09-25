@@ -1,0 +1,1 @@
+var validate=(db,data,callback)=>{ return new Promise((resolve, reject) => { if(callback) callback(undefined,true);else resolve(true)});}; module.exports = { validate: validate }

@@ -1,0 +1,18 @@
+{
+  "rootWebServerDir1": "ncp/",
+  "rootWebServerDir": "",
+  "login": "account/login",
+  "default": "home",
+  "defaultLanguage": "vn",
+  "port": 1124,
+  "minifier": "true",
+  "template_path": "./views",
+  "routes": [
+    { "url": "~/pages/*" },
+    { "url": "~/index" },
+    {
+      "url": "~/api_process/{key}",
+      "handler": "(nodejs)libs/lv.api.process@exec"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    
+    <title>res:(Documenttation of):{{data.Name}}</title>
+    <render>header.html</render>
+</head>
+<body>
+    <render>navbar.html</render>
+   
+    <div class="container">
+        <h1>
+            res:(Documentation of):{{data.Name}}
+        </h1>
+        <section>
+            <h3>
+                res:(Input params)
+            </h3>
+            <table class="table table-bordered">
+                {{#each data.InputParams}}
+                <tr>
+                    <td>
+                        {{Name}}
+                    </td>
+                    <td>
+                        {{Type}}
+                    </td>
+                    <td>
+                        {{IsRequire}}
+                    </td>
+                    <td>
+                        {{Description}}
+                    </td>
+                </tr>
+                
+                {{/each}}
+            </table>
+        </section>
+        <section>
+            <h3>
+                res:(Output params)
+            </h3>
+            <table class="table table-bordered">
+                {{#each data.OutputParams}}
+                <tr>
+                    <td>
+                        {{Name}}
+                    </td>
+                    <td>
+                        {{Type}}
+                    </td>
+                    <td>
+                        {{Description}}
+                    </td>
+                </tr>
+
+                {{/each}}
+            </table>
+        </section>
+    </div>
+
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.account",
+            "./../modules/lv.model",
+            "./../libs/lv.authenticate",
+            "fs",
+            (utils, acc, models,aut,FS, page) => {
+                page.onLoad = (event) => {
+                    //debugger;
+                    utils._try(() => {
+                        var api_name = event.req.routeInfo.params.api_name;
+                        
+                        var content = FS.readFileSync("./app_data/api/public_api.json", "utf-8");
+                        var data = Function("return " + content)();
+                        var ret = {
+                            Name: api_name,
+                            Description: data[api_name],
+                            InputParams: [],
+                            OutputParams:[]
+                        }
+                        if (data[api_name].params) {
+                            Object.keys(data[api_name].params)
+                                .forEach(key => {
+                                    ret.InputParams.push({
+                                        Name: key,
+                                        Type: data[api_name].params[key].type,
+                                        IsRequire: data[api_name].params[key].isRequire ? "yes" : "no",
+                                        Description: data[api_name].params[key].description
+                                    })
+                                });
+                        }
+                        if (data[api_name].return) {
+                            Object.keys(data[api_name].return)
+                                .forEach(key => {
+                                    ret.OutputParams.push({
+                                        Name: key,
+                                        Type: data[api_name].return[key].type,
+                                        Description: data[api_name].return[key].description
+                                    })
+                                });
+                        }
+
+                        data[api_name].api_name = api_name;
+                        event.setModel("data", ret);
+                        event.done();
+                    }, event);
+                }
+            }]
+    </script>
+</body>
+</html>

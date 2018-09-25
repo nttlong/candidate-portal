@@ -1,0 +1,11 @@
+﻿<div class="container" onload="store:(st_sys_load_active_account_form)">
+    <form action="api:(lv.candidate.api/lv.candidate.api.accounts/do_active)">
+        {{#data}}
+        <div class="form-group">
+            <input type="hidden" value="{{getValue '/Token'}}" name="token" />
+            <button type="submit" value="doActive">res:(Kích hoạt tài khoản của bạn)</button>
+        </div>
+        {{/data}}
+    </form>
+  
+</div>

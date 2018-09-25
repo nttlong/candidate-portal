@@ -1,0 +1,25 @@
+﻿{
+  "data": [
+    {
+      "caption": {
+        "vi": "Lấy vị trí",
+        "en": "Get your location"
+      },
+      "view": "location"
+    },
+    {
+      "caption": {
+        "vi": "Kiểm tra camera",
+        "en": "Check your camera"
+      },
+      "view": "camera"
+    },
+    {
+      "caption": {
+        "vi": "Cài đặt",
+        "en": "Settings"
+      },
+      "view": "Settings"
+    }
+  ]
+}

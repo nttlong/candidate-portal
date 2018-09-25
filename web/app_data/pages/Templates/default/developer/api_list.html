@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>page-caption:(Sure hcs Candidate Portal developers)</title>
+    <render>header.html</render>
+</head>
+<body>
+    <render>navbar.html</render>
+    <div class="container">
+        <h1>
+            res:(List of APIs)
+        </h1>
+        <ul class="list-group">
+            {{#each data}}
+            <li class="list-group-item">
+            <a href="{{{../Config.RootUrl}}}developer/api_details/{{this.Name}}">{{this.Name}}</a><p>{{this.Data.description}}</p>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.account",
+            "./../modules/lv.model",
+            "./../libs/lv.authenticate",
+            "fs",
+            (utils, acc, models,aut,FS, page) => {
+                page.onLoad = (event) => {
+                  
+                    utils._try(() => {
+                        var content = FS.readFileSync("./app_data/api/public_api.json", "utf-8");
+                        var data = Function("return " + content)();
+                        var ret = [];
+                        Object.keys(data).forEach(key => {
+                            ret.push({
+                                Name: key,
+                                Data:data[key]
+                            })
+                        });
+                        event.setModel("data", ret);
+                        event.done();
+                    }, event);
+                }
+            }]
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+﻿body {
+}
+
+.mask {
+    background:url('../images/Loading.svg');
+    background-position:center center;
+    background-repeat:no-repeat;
+    position:fixed;
+    left:0;
+    top:0;
+    right:0;
+    bottom:0;
+    z-index:50000;
+}
+
+/*
+ * Start Bootstrap - Full Width Pics (http://startbootstrap.com/)
+ * Copyright 2013-2016 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+ */
+
+
+
+.image-bg-fluid-height,
+.image-bg-fixed-height {
+    text-align: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.image-bg-fluid-height {
+	background: url('http://lorempixel.com/g/1920/500/') no-repeat center center scroll;
+    padding: 100px 0;
+}
+
+.image-bg-fixed-height {
+	background: url('http://lorempixel.com/g/1920/500/') no-repeat center center scroll;
+    height: 450px;
+}
+
+.img-center {
+	margin: 0 auto;
+}
+
+section {
+    padding: 75px 0;
+}
+
+.section-heading {
+    margin: 30px 0;
+    font-size: 4em;
+}
+
+.section-lead {
+    margin: 30px 0;
+}
+
+.section-paragraph {
+    margin: 30px 0;
+}
+
+footer {
+    margin: 50px 0;
+}
+
+@media(max-width:768px) {
+    section {
+        padding-top: 25px;
+        padding-bottom: 25px;
+    }
+
+    .section-heading {
+        font-size: 2em;
+    }
+}
+.home {
+
+}
+.home.search-box{
+   
+    padding:20px;
+   background-color:rgba(0, 0, 0, 0.5);
+}
+.home .main-search-label{
+    color:#fff;
+    text-align:left;
+}
+.home .quick-list {
+    
+    min-height:400px;
+}
+.home .quick-list .quick-list-row{
+    border-bottom:solid #fcfcfc 1px;
+}
+.clearfix:before, .clearfix:after {content: " "; display: table;}
+.clearfix:after {clear: both;}
+.clearfix { *zoom: 1;}
+
+.large-icon-list {
+    margin-top: 5em; border-bottom: 1px solid #eee;
+    margin-left: 8.54701%; margin-right: 8.54701%;
+}
+
+.large-icon-list li {
+    min-height: 170px; width: 48.71795%;
+    float: left; margin-right: 2.5641%;
+    display: inline;
+}
+
+/* one class-rule for each image - here sheets */
+.large-icon-list li.icon-list-sheets .icon-list-image {
+  background: url("../icon-sheets.png?14....9") 
+  no-repeat top center;
+}
+
+.large-icon-list li .icon-list-image {
+  height: 100px; width: 23.07692%;
+  float: left; margin-right: 2.5641%;
+  display: inline;
+}
+
+.large-icon-list li .icon-list-content {
+  width: 74.35897%; float: right;
+  margin-right: 0; *margin-left: -30px;
+  display: inline;
+}

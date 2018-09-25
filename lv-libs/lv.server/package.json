@@ -1,0 +1,25 @@
+{
+  "name": "lv.server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nttlong",
+  "license": "ISC",
+  "dependencies": {
+    "hcs.routes": "./../hcs.routes",
+    "hcs.render.html": "./../hcs.render.html",
+    "hcs.render.api": "./../hcs.render.api",
+    "hcs.language": "./../hcs.language",
+    "hcs.register.api": "./../hcs.register.api",
+    "hcs.render.server.code": "./../hcs.render.server.code",
+    "lv.render.custom": "./../lv.render.custom",
+    "lv.authenticate": "./../lv.authenticate",
+    "GoogleAnalytics": "./../GoogleAnalytics",
+    "cookie-parser": "^1.4.3",
+    "express-session": "^1.15.5",
+    "express": "^4.15.5"
+  }
+}

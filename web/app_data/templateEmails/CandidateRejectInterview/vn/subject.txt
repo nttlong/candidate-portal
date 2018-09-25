@@ -1,0 +1,1 @@
+v/v: Thông báo xác nhận lịch phỏng vấn từ {{candidate.FirstName}} {{candidate.LastName}} 

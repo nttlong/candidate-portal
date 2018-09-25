@@ -1,0 +1,554 @@
+﻿<body style="border:solid 4px red">
+    <div class="container-fluid" ng-attr-title="${$root.title}" icon="{{Config.RootUrl}}photo/logo/${$parent.currentData.RecruiterCode}.png">
+        <p>
+            <div class="form-group row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Chức danh dự tuyển)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.JobTitle}
+                </div>
+            </div>
+
+
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Công ty)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.RecruiterName}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Ngày ứng tuyển)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.AppliedDate|date:'dd-MM-yyyy'}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Ngày phỏng vấn)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.InterviewDate|date:'dd-MM-yyyy'}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Thời gian)</label>
+                <div class="col-sm-8">
+                    res:(Từ): ${$parent.currentData.FromTime}&nbsp;res:(đến): ${$parent.currentData.ToTime}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Địa đểm)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.InterviewLocation}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Người liên hệ)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.Actor}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Mobile)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.ContactInfo.Tel}
+                </div>
+            </div>
+            <div class="form-group  row">
+                <label class="col-sm-4 control-label" for="form-group-input">res:(Email)</label>
+                <div class="col-sm-8">
+                    ${$parent.currentData.ContactInfo.Email}
+                </div>
+            </div>
+        </p>
+        <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group" ng-if="$root.status == 0">
+                <button type="button" class="btn btn-primary" ng-click="doConfirm(1)">res:(Đồng ý)</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="First group" ng-if="$root.status == 0">
+                <button type="button" class="btn btn-danger" ng-click="doConfirm(2)">res:(Từ chối)</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="Second group">
+                <button type="button" class="btn btn-default" ng-click="$doClose()">res:(Đóng)</button>
+
+            </div>
+
+        </div>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.db",
+            "./../modules/node.Email",
+            (utils, aut, Data, EMAIL, app) => {
+                app.doConfirm = (event) => {
+                    var indexOfRequisition = -1;// chỉ mục của requisition
+                    var indexOfCandidate = -1;//Chỉ mục của candidate trong requisition
+                    var indexOfTask = -1;//chỉ mục của task
+                    var clientData = utils.readData(event);
+                    var task;
+                    var contactUser;
+                    var emailLang = utils.getCurrentLanguageCode(event);
+                    var user = aut.getUser(event.req);
+                    var candidate; //thông tin của ứng viên
+                    var status = clientData.Status;
+                    utils._try(() => {
+                        Data.cnn((err, db) => {
+                            utils.sequences()
+                           
+                                .then(next => {
+                                    db.collection("ls_requisition")
+                                        .aggregate([{
+                                            $match: {
+                                                _id: utils.objectID(clientData.RequisitionID)
+                                            }
+                                        },
+                                        {
+                                            $lookup: {
+                                                from: "ls_recruiters",
+                                                localField: "RecruiterId",
+                                                foreignField: "_id",
+                                                as: "Recruiter"
+                                            }
+                                        },
+                                        {
+                                            $unwind: "$Recruiter"
+                                        },
+                                        {
+                                            $project: {
+                                                RecruiterCode: "$Recruiter.RecruiterCode",
+                                                RecruiterName: "$Recruiter.RecruiterName",
+                                                ContactInfo: "$Recruiter.ContactInfo",
+                                                CandidateApplyList: 1,
+                                                Recruiter: 1,
+                                                indexOfCandidate: {
+                                                    $indexOfArray: ["$CandidateApplyList.CandidateEmail", user.Email]
+                                                },
+                                                Job: 1,
+                                                JobTitle: 1,
+                                                Code: 1
+                                            }
+                                        },
+                                        {
+                                            $unwind: "$CandidateApplyList"
+                                        },
+                                        {
+                                            $project: {
+                                                RecruiterCode: "$Recruiter.RecruiterCode",
+                                                RecruiterName: "$Recruiter.RecruiterName",
+                                                ContactInfo: "$Recruiter.ContactInfo",
+                                                indexOfCandidate: 1,
+                                                Recruiter: 1,
+                                                Tasks: "$CandidateApplyList.Tasks",
+                                                indexOfTask: {
+                                                    $indexOfArray: ["$CandidateApplyList.Tasks.TaskID", utils.objectID(clientData.TaskID)]
+                                                },
+                                                Job: 1,
+                                                JobTitle: 1,
+                                                Code: 1
+                                            }
+                                        },
+                                        {
+                                            $match: {
+                                                indexOfTask: { $gt: -1 }
+                                            }
+                                        }
+                                        ]).toArray((err, list) => {
+                                            if (list && (list.length > 0)) {
+                                                indexOfCandidate = list[0].indexOfCandidate;
+                                                indexOfTask = list[0].indexOfTask;
+                                                task = list[0];
+                                                task.Task = list[0].Tasks[list[0].indexOfTask];
+                                            }
+                                            next(err);
+                                        })
+                                })
+                                .then(next => { // update status của tasks
+                                    if ((indexOfCandidate > -1) &&
+                                        (indexOfTask > -1)) {
+                                        var setter = {
+                                            $set: {}
+                                        };
+                                        if (status == 1) {
+                                            setter.$set["CandidateApplyList." + indexOfCandidate + ".Tasks." + indexOfTask + ".Status"] = 1;
+                                        } else if (status == 2) {
+                                            setter.$set["CandidateApplyList." + indexOfCandidate + ".Tasks." + indexOfTask + ".Status"] = 2;
+                                        }
+                                        db.collection("ls_requisition").updateOne({
+                                            _id: utils.objectID(clientData.RequisitionID)
+                                        }, setter, (err, result) => {
+                                            if (err)
+                                                next(err);
+                                            else
+                                                next();
+                                        })
+                                    } else {
+                                        next();
+                                    }
+                                })
+                                .then(next => {
+                                    db.collection("sys_Users")
+                                        .findOne({
+                                            Email: { $regex: new RegExp("^" + task.ContactInfo.Email + "$", "i") }
+                                        }, (err, result) => {
+                                            if (err) next(err);
+                                            else {
+                                                if (result && result.Settings && result.Settings.DefaultLanguage) {
+                                                    emailLang = result.Settings.DefaultLanguage
+                                                }
+                                                next();
+                                            }
+                                        })
+                                })
+                                .then(next => {
+                                    db.collection("ls_candidate")
+                                        .findOne({
+                                            UserEmail: { $regex: new RegExp("^" + user.Email + "$", "i") }
+                                        }, (err, result) => {
+                                            candidate = result;
+                                            next(err);
+                                        })
+                                }).then(next => {// gởi email đến nhà tuyển dụng
+                                    var mailTo;
+                                    if ((task.ContactInfo) && (task.ContactInfo.Email) && (utils.isEmail(task.ContactInfo.Email))) {
+                                        mailTo = task.ContactInfo.Email;
+                                    } //nếu thiếu thông tin bỏ qua
+                                    else if ((task.Task.Actor) && (utils.isEmail(task.Task.Actor))) {
+                                        mailTo = task.Task.Actor;
+                                    }
+                                    if (!mailTo) { next(); return }
+
+                                    var dateInterview = new Date(task.Task.ActionDate);
+                                    var sendData = {
+                                        candidate: candidate,
+                                        contact: task.ContactInfo,
+                                        interview: {
+                                            Location: task.Task.InterviewLocation,
+                                            From: task.Task.InterviewTime.From,
+                                            To: task.Task.InterviewTime.To,
+                                            Date: ("0" + dateInterview.getDate()).slice(-2) + '/' + ("0" + (dateInterview.getMonth() + 1)).slice(-2)
+                                            + dateInterview.getFullYear()
+                                        },
+                                        RootUrl: utils.getRootUrl(event.req),
+                                        RequisitionID: clientData.RequisitionID,
+                                        Task: task.Task,
+                                        task: {
+                                            JobName: task.Job.JobName.vn,
+                                            JobTitle: task.JobTitle,
+                                            Code: task.Code
+                                        },
+                                        Requisition: task
+                                    }
+                                    sendData.candidate.ProfileId = user.UserId;
+                                    sendData.candidate.FirstName = user.FirstName;
+                                    sendData.candidate.LastName = user.LastName;
+                                    sendData.candidate.Email = user.Email;
+                                    var strBody = "";
+                                    if (status == 1) {
+                                        strBody = "Hi {{contact.Email}} !<br>" +
+                                            "Ứng viên {{candidate.FirstName}} {{candidate.LastName}} (tài khoản {{candidate.Email}}), profile tại " +
+                                            "<a href=\"{{RootUrl}}/candidate/myresume/{{candidate.ProfileId}}\"> {{candidate.FirstName}} {{candidate.LastName}}</a>. " +
+                                            "Đã xác nhận lịch phỏng vấn tại {{interview.Location}} vào lúc từ {{interview.From}} đến {{interview.To}}, ngày {{interview.Date}}.<br/>" +
+                                            "Chức danh dự tuyển {{task.JobTitle}}. Chi tiết thông tin xem tại <a href=\"{{RootUrl}}company/requisition\">{{RootUrl}}company/requisition</a> với mã yêu cầu tuyển dụng là {{RequisitionID}}" +
+
+                                            "Trân trọng.";
+                                        var shcema = utils.getSchema(sendData);
+                                        var template = EMAIL.getTemplate("CandidateConfirmInterview", emailLang,
+                                            "v/v: Thông báo xác nhận lịch phỏng vấn từ {{candidate.FirstName}} {{candidate.LastName}} ",
+                                            strBody,
+                                            shcema,
+                                            "Email phát sinh mỗi khi ứng viên xác nhận thông tin tuyển dụng",
+                                            (err, template) => {
+                                                if (err) next(err);
+                                                else {
+                                                    EMAIL.sendEmail(mailTo, template.Subject, template.Body, sendData, (err, result) => {
+                                                        //gởi email không đợi
+                                                    });
+                                                    next(); //chuyển tiếp
+                                                }
+                                            })
+                                    } else if (status == 2) {
+                                        strBody = "Hi {{contact.Email}} !<br>" +
+                                            "Ứng viên {{candidate.FirstName}} {{candidate.LastName}} (tài khoản {{candidate.Email}}), profile tại " +
+                                            "<a href=\"{{RootUrl}}/candidate/myresume/{{candidate.ProfileId}}\"> {{candidate.FirstName}} {{candidate.LastName}}</a>. " +
+                                            "Đã từ chối lịch phỏng vấn tại {{interview.Location}} vào lúc từ {{interview.From}} đến {{interview.To}}, ngày {{interview.Date}}.<br/>" +
+                                            "Chức danh dự tuyển {{task.JobTitle}}. Chi tiết thông tin xem tại <a href=\"{{RootUrl}}company/requisition\">{{RootUrl}}company/requisition</a> với mã yêu cầu tuyển dụng là {{task.Code}}" +
+
+                                            "Trân trọng.";
+                                        var shcema = utils.getSchema(sendData);
+                                        var template = EMAIL.getTemplate("CandidateRejectInterview", emailLang,
+                                            "v/v: Thông báo xác nhận lịch phỏng vấn từ {{candidate.FirstName}} {{candidate.LastName}} ",
+                                            strBody,
+                                            shcema,
+                                            "Email phát sinh mỗi khi ứng viên xác nhận thông tin tuyển dụng",
+                                            (err, template) => {
+                                                if (err) next(err);
+                                                else {
+                                                    EMAIL.sendEmail(mailTo, template.Subject, template.Body, sendData, (err, result) => {
+                                                        //gởi email không đợi
+                                                    });
+                                                    next(); //chuyển tiếp
+                                                }
+                                            })
+                                    }
+
+                                    
+                                })
+                                .done(err => {
+                                    utils.writeData(event, status);
+                                            event.done();
+                                })
+                        });
+                        //Data.cnn((err, db) => {
+                        //    if (err) event.done(err);
+                        //    else {
+                        //        var ls_recruiters = db.collection("ls_recruiters");
+                        //        var user = aut.getUser(event.req);
+                        //        utils.sequences()
+                        //            .then(next => {//lấy chỉ mục của requisition
+                        //                ls_recruiters.aggregate([
+                        //                    {
+                        //                        $match: {
+                        //                            RecruiterCode: { $regex: new RegExp("^" + clientData.RecruiterCode + "$", "i") }
+                        //                        }
+                        //                    }, {
+                        //                        $project: {
+                        //                            RecruiterCode: 1,
+                        //                            RecruiterName: 1,
+                        //                            ContactInfo: 1,
+                        //                            indexOfRequisition: {
+                        //                                $indexOfArray: ["$Requisition.RequisitionID", clientData.RequisitionID]
+                        //                            },
+                        //                            Requisition: 1
+
+                        //                        }
+                        //                    }, { $match: { indexOfRequisition: { $gt: -1 } } }
+                        //                    , {
+                        //                        $unwind: "$Requisition"
+                        //                    }, {
+                        //                        $project: {
+                        //                            RecruiterCode: 1,
+                        //                            RecruiterName: 1,
+                        //                            ContactInfo: 1,
+                        //                            indexOfCandidate: {
+                        //                                $indexOfArray: ["$Requisition.CandidateApplyList.CandidateEmail", user.Email]
+                        //                            },
+                        //                            Requisition: 1,
+                        //                            indexOfRequisition: 1
+                        //                        }
+                        //                    }, { $match: { indexOfCandidate: { $gt: -1 } } },
+                        //                    { $unwind: "$Requisition.CandidateApplyList" },
+                        //                    {
+                        //                        $project: {
+                        //                            RecruiterCode: 1,
+                        //                            RecruiterName: 1,
+                        //                            ContactInfo: 1,
+                        //                            indexOfTask: {
+                        //                                $indexOfArray: ["$Requisition.CandidateApplyList.Tasks.TaskID", clientData.TaskID]
+                        //                            },
+                        //                            indexOfCandidate: 1,
+                        //                            indexOfRequisition: 1
+                        //                        }
+                        //                    },
+                        //                    {
+                        //                        $match: {
+                        //                            indexOfTask: { $gt: -1 }
+                        //                        }
+                        //                    }
+                        //                ]).toArray((err, list) => {
+                        //                    if ((!err) && (list.length > 0)) {
+                        //                        indexOfRequisition = list[0].indexOfRequisition;
+                        //                        indexOfCandidate = list[0].indexOfCandidate;
+                        //                        indexOfTask = list[0].indexOfTask;
+                        //                    }
+                        //                    next(err);
+                        //                })
+                        //            })
+                        //            .then(next => {//lấy thông tin requisition
+                        //                if ((indexOfCandidate > -1) &&
+                        //                    (indexOfRequisition > -1) &&
+                        //                    (indexOfTask > -1)) {
+                        //                    ls_recruiters.aggregate([
+                        //                        {
+                        //                            $match: {
+                        //                                RecruiterCode: { $regex: new RegExp("^" + clientData.RecruiterCode + "$", "i") }
+                        //                            }
+                        //                        }, {
+                        //                            $project: {
+                        //                                RecruiterCode: 1,
+                        //                                RecruiterName: 1,
+                        //                                ContactInfo: 1,
+                        //                                Requisition: {
+                        //                                    $arrayElemAt: ["$Requisition", indexOfRequisition]
+                        //                                }
+                        //                            }
+                        //                        }, {
+                        //                            $unwind: "$Requisition"
+                        //                        }, {
+                        //                            $project: {
+                        //                                RecruiterCode: 1,
+                        //                                RecruiterName: 1,
+                        //                                ContactInfo: 1,
+                        //                                Job: "$Requisition.Job",
+                        //                                Location: "$Requisition.Location",
+                        //                                LanguageCV: "$Requisition.LanguageCV",
+                        //                                Candidates: {
+                        //                                    $arrayElemAt: ["$Requisition.CandidateApplyList", indexOfCandidate]
+                        //                                }
+                        //                            }
+                        //                        }, {
+                        //                            $unwind: "$Candidates"
+                        //                        }, {
+                        //                            $project: {
+                        //                                RecruiterCode: 1,
+                        //                                RecruiterName: 1,
+                        //                                LanguageCV: 1,
+                        //                                ContactInfo: 1,
+                        //                                Job: 1,
+                        //                                Location: 1,
+                        //                                Task: {
+                        //                                    $arrayElemAt: ["$Candidates.Task", indexOfTask]
+                        //                                }
+                        //                            }
+                        //                        }
+                        //                    ]).toArray((err, list) => {
+                        //                        if ((!err) && (list.length > 0)) {
+                        //                            task = list[0];
+                        //                            emailLang = task.LanguageCV;
+                        //                        }
+                        //                        next(err);
+                        //                    })
+                        //                }
+                        //                else {
+                        //                    next();
+                        //                }
+                        //            })
+                        //            .then(next => {
+                        //                if ((indexOfCandidate > -1) &&
+                        //                    (indexOfRequisition > -1) &&
+                        //                    (indexOfTask > -1)) {
+                        //                    var setter = {
+                        //                        $set: {}
+                        //                    };
+                        //                    setter.$set["Requisition." + indexOfRequisition + ".CandidateApplyList." + indexOfCandidate + ".Tasks." + indexOfTask + ".Status"] = 1;
+                        //                    ls_recruiters.updateOne({
+                        //                        RecruiterCode: { $regex: new RegExp("^" + clientData.RecruiterCode + "$", "i") }
+                        //                    }, setter, (err, result) => {
+                        //                        next(err);
+                        //                    })
+                        //                }
+                        //            })
+                        //            .then(next => { //lấy thông tin user info của contact
+                        //                if (task && task.ContactInfo && task.ContactInfo.Email) {
+                        //                    db.collection("sys_Users")
+                        //                        .findOne({
+                        //                            Email: { $regex: new RegExp("^" + task.ContactInfo.Email + "$", "i") }
+                        //                        }, (err, result) => {
+                        //                            if (err) next(err);
+                        //                            else {
+                        //                                if (result.Settings && result.Settings.DefaultLanguage) {
+                        //                                    emailLang = result.Settings.DefaultLanguage
+                        //                                }
+                        //                                next();
+                        //                            }
+                        //                        })
+                        //                }
+                        //                else {
+                        //                    next();
+                        //                }
+
+                        //            })
+                        //            .then(next => {
+                        //                db.collection("ls_candidate")
+                        //                    .findOne({
+                        //                        UserEmail: { $regex: new RegExp("^" + user.Email + "$", "i") }
+                        //                    }, (err, result) => {
+                        //                        candidate = result;
+                        //                        next(err);
+                        //                    })
+                        //            })
+                        //            .then(next => {// gởi email đến nhà tuyển dụng
+                        //                var mailTo;
+                        //                if ((task.ContactInfo) && (task.ContactInfo.ContactName) && (utils.isEmail(task.ContactInfo.ContactName))) {
+                        //                    mailTo = task.ContactInfo.ContactName;
+                        //                } //nếu thiếu thông tin bỏ qua
+                        //                else if ((task.Task.Actor) && (utils.isEmail(task.Task.Actor))) {
+                        //                    mailTo = task.Task.Actor;
+
+                        //                }
+                        //                if (!mailTo) { next(); return }
+                        //                var sendData = {
+                        //                    candidate: candidate,
+                        //                    contact: task.ContactInfo,
+                        //                    interview: {
+                        //                        Location: task.Task.InterviewLocation,
+                        //                        From: task.Task.InterviewTime.From,
+                        //                        To: task.Task.InterviewTime.To
+
+                        //                    },
+                        //                    RootUrl: utils.getRootUrl(event.req),
+                        //                    RequisitionID: clientData.RequisitionID,
+                        //                    Task: task.Task
+                        //                }
+                        //                sendData.candidate.ProfileId = user.UserId;
+                        //                sendData.candidate.FirstName = user.FirstName;
+                        //                sendData.candidate.LastName = user.LastName;
+                        //                senData.candidate.Email = user.Email;
+                        //                var shcema = utils.getSchema(sendData);
+                        //                var template = EMAIL.getTemplate("CandidateConfirmInterview", emailLang,
+                        //                    "v/v: Thông báo xác nhận lịch phỏng vấn từ {{candidate.FirstName}} {{candidate.LastName}} ",
+                        //                    "Hi {{contact.Email}} !<br>" +
+                        //                    "Ứng viên {{candidate.FirstName}} {{candidate.LastName}} (tài khoản {{candidate.Email}}), profile tại " +
+                        //                    "<a href=\"{{RootUrl}}/company/candidate/myresume/{{candidate.ProfileId}}\"> {{candidate.FirstName}} {{candidate.LastName}}</a>. " +
+                        //                    "Đã xác nhận lịch phỏng vấn tại {{interview.Location}} vào lúc từ {{interview.Form}} đến {{interview.To}}, ngày {{interview.Date}}.<br/>" +
+                        //                    "Chức danh dự tuyển {{task.JobName}}. Chi tiết thông tin xem tại <a href=\"{{RootUrl}}company/requisition\">{{RootUrl}}company/requisition</a> với mã yêu cầu tuyển dụng là {{RequisitionID}}" +
+
+                        //                    "Trân trọng.",
+                        //                    shcema,
+                        //                    "Email phát sinh mỗi khi ứng viên xác nhận thông tin tuyển dụng",
+                        //                    (err, template) => {
+                        //                        if (err) next(err);
+                        //                        else {
+                        //                            EMAIL.sendEmail(mailTo, template.Subject, template.Body, sendData, (err, result) => {
+                        //                                //gởi email không đợi
+                        //                            });
+                        //                            next(); //chuyển tiếp
+                        //                        }
+                        //                    })
+
+                        //            })
+                        //            .done(err => {
+                        //                if (err) event.done(err);
+                        //                else {
+                        //                    utils.writeData(event, {});
+                        //                    event.done();
+                        //                }
+                        //            })
+                        //    }
+                        //})
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+            (function (scope) {
+                scope.doConfirm = function (status) {
+                    var ajax = "server.page://doConfirm";
+                    ajax.data({
+                        RequisitionID: scope.$parent.currentData.RequisitionID,
+                        RecruiterCode: scope.$parent.currentData.RecruiterCode,
+                        TaskID: scope.$parent.currentData.TaskID,
+                        Status: status
+                    })
+                        .done(function (res) {
+                            scope.$root.status = res;
+                            if (res == 1) {
+                                toastr.success("res:(Đã thực hiện xác nhận lịch phỏng vấn này)");
+                            } else if (res == 2) {
+                                toastr.success("res:(Đã thực hiện từ chối lịch phỏng vấn này)");
+                            }
+                            scope.$root.onLoadDataTask();
+                            scope.$applyAsync();
+                            scope.$doClose();
+                        });
+                }
+            });
+    </script>
+</body>

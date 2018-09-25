@@ -1,0 +1,189 @@
+{
+  "rootWebServerDir1": "ncp/",
+  "rootWebServerDir": "",
+  "login": "account/login",
+  "default": "home",
+  "defaultLanguage": "vn",
+  "port": 1212,
+  "connection": "mongodb://172.16.20.100:27017/candidate",
+  "minifier": "true",
+  "routes": [
+    { "url": "~/index" },
+
+    {
+      "url": "~/dev/api/{api_name}",
+      "handler": "(nodejs)/modules/recuiters_api@run"
+    },
+    {
+      "url": "~/candidate/myapplydetail/{RecruiterCode}/{RequisitionID}"
+    },
+    {
+      "url": "~/jobs/{byType}/{language}/{RecruiterCode}/{location}/{province}/{job-group}/{job}/{content}/{page-index}"
+    },
+    {
+      "url": "~/home/{page-index}"
+    },
+    {
+      "url": "~/jobs-advance-search/{key}/{byType}/{page-index}"
+    },
+    {
+      "url": "~/account/signin_by_google"
+    },
+    {
+      "url": "~/account/social-verify/{key}"
+    },
+    {
+      "url": "~/account/signout"
+    },
+    {
+      "url": "~/account/active/{token}"
+    },
+    {
+      "url": "~/account/reset_password/{token}"
+    },
+    {
+      "url": "~/job/{RecruiterCode}/{RequisitionID}"
+    },
+    {
+      "url": "~/account/login"
+    },
+    {
+      "url": "~/PrivacyPolicy"
+    },
+    {
+      "url": "~/TermsOfUse"
+    },
+    {
+      "url": "~/account/register"
+    },
+    {
+      "url": "~/users/{username}"
+    },
+    {
+      "url": "~/api/{key}",
+      "handler": "modules/api/caller/exec",
+      "authorizeBy": "modules/admin/accounts/auhtenticate"
+    },
+    {
+      "url": "~/photo/banner/{key}.png",
+      "handler": "modules/lv.static_file@getBanner"
+    },
+    {
+      "url": "~/photo/{key}.png",
+      "handler": "modules/lv.static_file@getAttachPhoto"
+    },
+    {
+      "url": "~/photo/logo/{key}.png",
+      "handler": "modules/lv.static_file@getLogo"
+    },
+    {
+      "url": "~/form_post/{key}",
+      "handler": "modules/lv.from_actions@run"
+    },
+    {
+      "url": "~/candidate/myresume/{userId}",
+      "authorizeBy": "modules/lv.candidate.api.accounts@verifyUser"
+    },
+    {
+      "url": "~/candidate/*",
+      "authorizeBy": "modules/lv.candidate.api.accounts@verifyUser"
+    },
+    {
+      "url": "~/candidate/apply-job/{recruiter-code}/{RequisitionID}",
+      "authorizeBy": "modules/lv.candidate.api.accounts@verifyUser"
+    },
+    {
+      "url": "~/company/*"
+    },
+    {
+      "url": "~/admin/*",
+      "authorizeBy": "(nodejs)modules/node.sys.account@verifyAdminUser"
+    },
+    {
+      "url": "~/company/login"
+    },
+    {
+      "url": "~/call.ashx",
+      "handler": "modules/lv.ajax.caller@exec"
+    },
+    {
+      "url": "~/account/passwordrecovery"
+    },
+    {
+      "url": "~/account/reg_by_google"
+    },
+    {
+      "url": "~/account/reg_by_linkedin"
+    },
+    {
+      "url": "~/account/reg_by_facebook"
+    },
+    {
+      "url": "~/account/reg_by_twitter"
+    },
+    {
+      "url": "~/account/signin_by_facebook"
+    },
+    {
+      "url": "~/account/signin_by_linkedin"
+    },
+    {
+      "url": "~/account/signin_by_twitter"
+    },
+    {
+      "url": "~/account/password-recovery-message"
+    },
+    {
+      "url": "~/api_process/{key}",
+      "handler": "(nodejs)libs/lv.api.process@exec"
+    },
+    {
+      "url": "~/scripts-bundles/{key}.js",
+      "handler": "(nodejs)libs/lv.bundle@getScript"
+    },
+    {
+      "url": "~/hrm/*"
+    },
+    {
+      "url": "~/test/*"
+    },
+    {
+      "url": "~/photo/candidate/{UserId}.png",
+      "handler": "(nodejs)/modules/resource@getCandidatePhoto"
+    },
+    {
+      "url": "~/photo/requisition/{RequisitionID}.png",
+      "handler": "(nodejs)/modules/resource@getRequisitionPhoto"
+    },
+    {
+      "url": "~/attachments/Tasks/{taskId}",
+      "handler": "(nodejs)/modules/resource@getAttachmentOfTask"
+    },
+    {
+      "url": "~/export/excel/{token}",
+      "handler": "(nodejs)/modules/resource@exportExcel"
+    },
+    {
+      "url": "~/captcha_test"
+    },
+    {
+      "url": "~/attachments/requisition/cv/{UserId}/{Requisition}",
+      "handler": "(nodejs)/modules/resource@downloadCandidateCVUpLoad"
+    },
+    {
+      "url": "~/attachments/candidate/cv/{UserId}",
+      "handler": "(nodejs)/modules/resource@downloadCandidateCVAttachment"
+    },
+
+    {
+      "url": "~/developer/api_details/{api_name}"
+    },
+    {
+      "url": "~/developer/*",
+      "authorizeBy": "(nodejs)modules/node.sys.account@verifyDeveloper"
+    },
+    {
+      "url": "~/page/*"
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+﻿<body>
+	<div title="res:(Chọn yêu cầu tuyển dụng)" class="container-fluid" >
+		<form class="form-horizontal">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th><input type="checkbox" id="selectalljob" ng-click="doCheckAllJob()"/></th>
+						<th>res:(Mã công việc)</th>
+						<th>res:(Tên công việc)</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in data">
+						<td>
+							<input type="checkbox" class="cls-job-check" ng-click="doCheckJob(item)" />
+						</td>
+						<td>
+							${item.Code}
+						</td>
+						<td>${item.JobTitle}</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		<div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+			<div class="btn-group" role="group" aria-label="First group">
+				<button type="button" class="btn btn-info" ng-click="saveCandidateApply()">res:(Lưu)</button>
+			</div>
+			<!--<div class="btn-group" role="group" aria-label="Second group">
+				<button ng-if="data.TaskID != undefined" type="button" class="btn btn-default" ng-click="deleteTaskItem()" data-dismiss="modal">res:(Xóa)</button>
+			</div>-->
+			<div class="btn-group" role="group" aria-label="Third group">
+				<button type="button" class="btn btn-default" ng-click="$doClose()">res:(Đóng)</button>
+			</div>
+		</div>
+	</div>
+	<script server>
+		[
+			"./../libs/lv.utils",
+			"./../modules/lv.db",
+			"./../libs/lv.authenticate",
+			"./../modules/node.Email",
+			"./../modules/lv.model",
+			(utils, Data, aut, EMAIL, models, app) => {
+				app.onLoadData = (event) => {
+					try {
+						var user = aut.getUser(event.req);
+						models.ls_recruiters().
+							where("UserEmail==Email", user)
+							.select({
+								'_id': 1
+							})
+							.toItem((err, result) => {
+								models.ls_requisition().
+									where("RecruiterId==id", { 'id': utils.objectID(result['_id']) }).
+									select({
+										Code: 1,
+										JobTitle: 1
+									}).toArray((err, arrItem) => {
+										utils.writeData(event, arrItem);
+										event.done();
+									})
+							})
+					} catch (ex) {
+						event.done(ex);
+					}
+				}
+				app.onSaveData = (event) => {
+					var execData = (dataJob, idx, email, callback) => {
+						var data = dataJob[idx];
+						if (data) {
+							models.ls_requisition()
+								.where("_id==id", {
+									id: utils.objectID(dataJob[idx]['_id'])
+								})
+								.unwind('CandidateApplyList')
+								.where('CandidateApplyList.CandidateEmail==email', {
+									email: email
+								})
+								.toItem((err, data) => {
+									if (!data) {
+										models.ls_requisition()
+											.where("_id==id", {
+												id: utils.objectID(dataJob[idx]['_id'])
+											})
+											.push("CandidateApplyList", {
+												"CandidateEmail": email,
+												"AppliedDate": new Date(),
+												"AppliedDateUTC": new Date(new Date().toISOString()),
+												"ApplyType": 2,
+												"Status": 0,
+											})
+											.commit((err, item) => {
+												if (idx < dataJob.length) {
+													execData(dataJob, idx + 1, email, callback);
+												}
+											})
+									} else {
+										if (idx < dataJob.length) {
+											execData(dataJob, idx + 1, email, callback);
+										} else {
+											if (callback) {
+												callback();
+											}
+										}
+									}
+								})
+						} else {
+							if (callback) {
+								callback();
+							}
+						}
+					}
+
+					try {
+						var user = aut.getUser(event.req);
+						var clientData = utils.readData(event);
+						if (!clientData) {
+							event.done();
+							return;
+						}
+						var dataJob = clientData.dataJob;
+						var dataCan = clientData.dataCan;
+
+						execData(dataJob, 0, dataCan.Email, () => {
+							utils.writeData(event, {});
+							event.done();
+						})
+					} catch (ex) {
+						event.done(ex);
+					}
+				}
+			}]
+	</script>
+	<script>
+		(function (scope) {
+			scope.data = {};
+			scope.dataJobChecked = [];
+			scope.doLoadData = function () {
+				var ajax = "server.page://onLoadData";
+				ajax.done(function (res) {
+					console.log(res)
+					scope.data = res;
+					scope.$applyAsync();
+				});
+
+			}
+			scope.doLoadData();
+			scope.saveCandidateApply = function () {
+				console.log(scope.dataJobChecked);
+				console.log(scope.$parent.dataCandidate);
+				var ajax = "server.page://onSaveData";
+				ajax.data({
+					dataJob: scope.dataJobChecked,
+					dataCan: scope.$parent.dataCandidate
+				}).done(function (res) {
+					toastr.success("res:(Thêm ứng viên thành công)");
+					scope.$applyAsync();
+				});
+			}
+
+			scope.doCheckJob = function (item) {
+				if (scope.dataJobChecked.length > 0) {
+					var data = scope.dataJobChecked.filter(function (el) {
+						return el.Code === item.Code;
+					});
+					if (data.length > 0) {
+						scope.dataJobChecked = scope.dataJobChecked.filter(function (el) {
+							return el.Code !== item.Code;
+						});
+					} else {
+						scope.dataJobChecked.push(item);
+					}
+				} else {
+					scope.dataJobChecked.push(item);
+				}
+
+				if (scope.data.length == scope.dataJobChecked.length) {
+					$("#selectalljob").prop('checked', true);
+				} else {
+					$("#selectalljob").prop('checked', false);
+				}
+			}
+			scope.doCheckAllJob = function () {
+				var ckb = $("#selectalljob");
+				if (ckb[0].checked) {
+					$('.cls-job-check:checkbox').each(function () {
+						this.checked = true;
+					});
+					scope.dataJobChecked = scope.data;
+				} else {
+					$('.cls-job-check:checkbox').each(function () {
+						this.checked = false;
+					});
+					scope.dataJobChecked = [];
+				}
+			}
+		});
+	</script>
+</body>

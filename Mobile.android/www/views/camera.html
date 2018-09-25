@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div>
+        <md-content>
+            <md-card>
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">Card with image</span>
+                        <span class="md-subhead">Large</span>
+                    </md-card-title-text>
+                    <md-card-title-media>
+                        <div class="md-media-lg card-media">
+                            <img src="{{src}}" style="max-height:200px" /><br />
+                        </div>
+                    </md-card-title-media>
+                </md-card-title>
+                <md-card-actions layout="row" layout-align="end center">
+                    <md-button>Action 1</md-button>
+                    <md-button>Action 2</md-button>
+                </md-card-actions>
+            </md-card>
+            
+
+        </md-content>
+        <md-button ng-click="doTestCamera()">
+            test
+        </md-button>
+        <md-button ng-click="doGetLocation()">Test location</md-button>
+    </div>
+    <script>
+        (function (scope) {
+            scope.doTestCamera = function () {
+                scope.$root.openCamera()
+                    .then(function (path) {
+                        scope.path = path;
+                       
+                        app.getArrayBufferOfFile(path)
+                            .then(function (array) {
+                                try {
+                                    
+                                    var src = app.arrayToImageBase64(array);
+                                    scope.src = src;
+                                    scope.$applyAsync();
+
+                                    
+                                }
+                                catch (ex) {
+                                    alert(ex.message || ex);
+                                }
+                            })
+                            .catch(function (ex) {
+                                alert(ex.message || ex);
+
+                            });
+
+                    })
+                    .catch(function (err) {
+                        alert(err);
+                    });
+            };
+            scope.doGetLocation = function () {
+                console.log("XXXXX");
+                scope.$root.getLocation()
+                    .then(function (info) {
+                        alert(JSON.stringify(info))
+                        scope.data = info;
+                        scope.$applyAsync();
+                    })
+                    .catch(function (ex) {
+                        alert(ex.message||ex)
+                        scope.error = ex;
+                        scope.$applyAsync();
+                    });
+            };
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <table class="table table-bordered ">
+            <thead>
+                <tr>
+                    <th>
+                        res:(Code)
+                    </th>
+                    <th>
+                        res:(Name)
+                    </th>
+                    <th>
+                        res:(Province)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in items">
+                    <td>
+                        ${item.Code}
+                    </td>
+                    <td>
+                        <a v-bind:href="'#view=location&id='+item._id">
+                            ${ getName(item.Name)}
+                        </a>
+
+                    </td>
+                    <td>
+                        <a v-bind:href="'#view=provinces&id='+getText(item._id)">
+                            res:(Provinces)(${item.TotalProvinces})
+                        </a>
+
+                    </td>
+                    <td>
+                        <a v-bind:href="'#view=location&id='+getText(item._id)" class="btn btn-primary">
+                            res:(Edit)
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-sm-12">
+                <a v-bind:href="'#view=location'" class="btn btn-primary pull-right">
+                    res:(Add)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (app=> {
+            window.getText = (obj) => {
+                if (obj["$oid"]) return obj["$oid"];
+                else return obj;
+            }
+            app.items = [];
+            var ajax = "ajax.store.st_admin_load_locations";
+            app.doLoadData = () => {
+                ajax.done(res=> {
+
+                    app.items = res.items;
+                });
+            }
+            app.doLoadData();
+        });
+
+    </script>
+</body>
+</html>

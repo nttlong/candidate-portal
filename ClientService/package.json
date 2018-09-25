@@ -1,0 +1,20 @@
+{
+  "name": "client-service",
+  "version": "0.0.0",
+  "description": "ClientService",
+  "main": "server.js",
+  "author": {
+    "name": "nttlong"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "exceljs": "^0.7.1",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "handlebars": "^4.0.11",
+    "mssql": "^4.1.0",
+    "node-windows": "^0.1.14",
+    "request-promise": "^4.2.2",
+    "sync": "^0.2.5"
+  }
+}

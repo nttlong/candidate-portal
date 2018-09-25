@@ -1,0 +1,121 @@
+﻿<body>
+    <div class="container-fluid" title="res:(Tải hồ sơ lên)">
+        <div class="row">
+            <div class="col-sm-12">
+                <div c-attach-file ng-model="data" title="res:(Chọn file)" file-size="fileSize" 
+                     file-name="fileName" accept=".doc, .docx, .pdf"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12" style="padding-top:12px">
+                <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" role="group" aria-label="First group">
+                        <button type="button" class="btn btn-primary" ng-click="doUpload()" ng-disabled="!data">res:(Tải lên)</button>
+                      
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Second group">
+                        <button type="button" class="btn btn-default" ng-click="$doClose()">res:(Đóng)</button>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+          
+        </div>
+
+    </div>
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/lv.db",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            (utils, Data, auth,models, app) => {
+                app.doUpload = (event) => {
+                    utils._try(() => {
+                        try {
+                            var user = auth.getUser(event.req);
+                            var clientData = utils.readData(event);
+
+                            if ((clientData.fileName.indexOf(".pdf") == -1) && (clientData.fileName.indexOf(".doc") == -1) && (clientData.fileName.indexOf(".docx") == -1)) {
+                                utils.writeData(event, {
+                                    apiError: "FormartError"
+                                });
+                                event.done();
+                                return;
+                            }
+
+                            if (clientData.fileSize > 2048 * 1024) {
+                                utils.writeData(event, {
+                                    apiError: "SizeError"
+                                });
+                                event.done();
+                                return;
+                            }
+
+                            var mimType = clientData.data.split(":")[1].split(';')[0];
+                            if (!user) {
+                                utils.writeData(event, {
+                                    apiError: null
+                                });
+                                event.done();
+                                return;
+                            }
+                            models.ls_candidate()
+                                .where("UserEmail==Email", user)
+                                .set({
+                                    CV_Attachment: {
+                                        FileName: clientData.fileName,
+                                        MimeType: mimType,
+                                        Data: clientData.data,
+                                        ModifiedOn: new Date(),
+                                        ModifiedOnUTC: utils.getUTCDate(new Date())
+                                    }
+                                }).commit.sync();
+                            utils.writeData(event, {
+                                apiError: null
+                            });
+                            event.done();
+                        } catch (e) {
+                            event.done(ex);
+                        }
+                    }, event);
+                }
+
+        }]
+    </script>
+    <script>
+        (function (scope) {
+            scope.data = null;
+            scope.doUpload = function (data) {
+                if (scope.data && scope.fileName && scope.fileSize) {
+                    var post = "server.page://doUpload";
+                    post.data({
+                        data: scope.data,
+                        fileName: scope.fileName,
+                        fileSize: scope.fileSize
+                    }).done(function (res) {
+                        if (res.apiError != null) {
+                            if (res.apiError == "FormartError") {
+                                toastr.error("res:(File sai định dạng. Chỉ hỗ trợ file .pdf, .doc, .docx)")
+                                return;
+                            }
+                            if (res.apiError == "SizeError") {
+                                toastr.error("res:(File lớn hơn 2048 Kb)")
+                                return;
+                            }
+                        } else {
+                            toastr.success("res:(Đã tải lên file hồ sơ của bạn thành công)");
+                            scope.$root.CvFileName = scope.fileName;
+                            scope.$root.DateUpdateCv = new Date();
+                            scope.$applyAsync();
+                            scope.$doClose();
+                        }
+                    })
+                } else {
+                    toastr.error("res:(Vui lòng chọn file cần tải lên)")
+                }
+            }
+        })
+    </script>
+</body>

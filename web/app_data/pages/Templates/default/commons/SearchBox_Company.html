@@ -1,0 +1,88 @@
+﻿<div class="container lv-search-container" onload="store:(st_widget_search_box_load)">
+    <div class="lv-search-widget">
+        <div class="lv-search-controls clearfix">
+            <form action="api:(lv.candidate.api/lv.candidate.api.jobs/find)"
+                  enctype="application/x-www-form-urlencoded">
+                <input type="hidden" name="bytype" value="by-post-date" />
+                <input type="hidden" name="recruiter" value="all" />
+                <div class="col-sm-12">
+                    <div class="lv-search-box">
+                        <span class="icon-search glyphicon glyphicon-search"></span>
+                        <input id="txtSearch" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí ...)" name="ByText" value="{{content}}">
+                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="lv-dropdown-list">
+                        <span class="lv-icon icon-left fa fa-list-ul"></span>
+                        <select class="lv-search-list" placeholder="res:(Tất cả các ngành nghề)" name="ByJob" style="width:100%" value="{{selectedLocation}}">
+                            <option value="all">res:(Tất cả các ngành nghề)</option>
+                            {{#data}}
+                            {{#eachItemInArray '$JobGroups'}}
+                            <optgroup label="{{getName '$Name'}}">
+                                {{#eachItemInArray '$Jobs'}}
+                                <option value="{{../Code}}/{{Code}}">{{getName '$Name'}}</option>
+                                {{/eachItemInArray}}
+                            </optgroup>
+                            {{/eachItemInArray}}
+                            {{/data}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="lv-dropdown-list">
+                        <span class="lv-icon icon-left glyphicon glyphicon-map-marker"></span>
+                        <select class="lv-search-list" placeholder="res:(Tất cả các địa điểm)" name="ByLocation" style="width:100%" value="{{selectedJob}}">
+                            <option value="all">res:(Tất cả các địa điểm)</option>
+                            {{#data}}
+                            {{#eachItemInArray '$locations'}}
+                            <optgroup label="{{getName '$Name'}}">
+                                {{#eachItemInArray '$Provinces'}}
+                                <option value="{{../Code}}/{{Code}}">{{getName '/Name'}}</option>
+                                {{/eachItemInArray}}
+                            </optgroup>
+                            {{/eachItemInArray}}
+                            {{/data}}
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="lv-button-search">
+                        <button type="submit" class="btn-search" name="CmdSearch">res:(Tìm việc)</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{#data}}
+<script>
+
+    $(document).ready(function () {
+        $("#txtSearch").bind("keyup", function (e) {
+            if (e.which == 27) {
+                $(this).val("");
+                $(this).parent().removeClass("has-text");
+            } else {
+                var $val = $(this).val();
+                if ($val && $val.trim()) {
+                    $(this).parent().addClass("has-text");
+                } else {
+                    $(this).parent().removeClass("has-text");
+                }
+            }
+        });
+        $("#txtSearch").siblings(".icon-remove").bind("click", function (e) {
+            $("#txtSearch").val("");
+            $("#txtSearch").parent().removeClass("has-text");
+        });
+        $("[name=by-post-date]").val("{{{getValue '/query/by-post-date'}}}")
+        $('[name="ByLocation"]').select2({ placeholder: 'res:(Search by location)' });
+        $('[name="ByLocation"]').val("{{{getValue '/selectedLocation'}}}").trigger("change")
+        $('[name="ByJob"]').select2({ placeholder: 'res:(Search by category)' });
+        $('[name="ByJob"]').val("{{{getValue '/selectedJob'}}}").trigger("change");
+    });
+</script>
+{{/data}}
+

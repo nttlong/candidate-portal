@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div class="container" style="max-width:600px">
+        <form role="form">
+            <div class="form-group row">
+                <label class="col-sm-3 control-label" for="form-group-input">User</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="User" ng-model="data.user">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 control-label" for="form-group-input">Password</label>
+                <div class="col-sm-9">
+                    <input type="password" class="form-control" id="form-group-input" placeholder="Password" ng-model="data.password">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 control-label" for="form-group-input">Server</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="Server" ng-model="data.server">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 control-label" for="form-group-input">Database</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="form-group-input" placeholder="Database" ng-model="data.database">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <button type="button" class="btn btn-default" ng-click="doTest()">Test</button>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="Second group">
+                            <button type="button" class="btn btn-default" ng-click="doSave()">Save</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../libs/sql_db",
+            (utils, sql, page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var config = sql.getConfig.sync();
+                            utils.writeData(event, config);
+                            event.done();
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex.message || ex });
+                            event.done();
+                        }
+
+                    }, event);
+                },
+                    page.doTest = (event) => {
+                        utils._try(() => {
+                         
+                            try {
+                                var clientData = utils.readData(event);
+                                var ret = sql.tryConfig.sync(null, clientData);
+                                if (ret) {
+                                    utils.writeData(event, { ok: true });
+                                }
+                                else {
+                                    utils.writeData(event, { ok: false, error: ret });
+                                }
+                                event.done();
+                            }
+                            catch (ex) {
+                                utils.writeData(event, { ok: false, error: ex });
+                                event.done();
+                            }
+                        }, event);
+                    },
+                    page.doSave = (event) => {
+                   
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var ret = sql.setConfig.sync(null, clientData);
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex.message || ex });
+                            event.done();
+                        }
+
+
+                        }, event)
+                    }
+            }
+        ]
+    </script>
+    <script>
+            (function (scope) {
+                scope.doLoadData = function () {
+                    var a = "server.page://doLoadData";
+                    a.done(function (res) {
+                        scope.data = res;
+                        scope.$applyAsync();
+                    });
+                };
+                scope.doTest = function () {
+                    var a = "server.page://doTest";
+                    a.data(scope.data).done(function (res) {
+                        if (!res.ok) {
+                            alert("Connect to database has been fail");
+                        }
+                        else {
+                            alert("Connect to database has been successful");
+                        }
+
+                    });
+                };
+                scope.doSave = function () {
+                    var a = "server.page://doSave";
+                    a.data(scope.data).done(function (res) {
+                        if (!res.error) {
+                            alert("Data has been saved!");
+                        }
+                        else {
+                            alert(res.error.message);
+                        }
+
+                    });
+                };
+                scope.doLoadData();
+            });
+    </script>
+</body>
+</html>

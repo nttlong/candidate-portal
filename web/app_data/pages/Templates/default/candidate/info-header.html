@@ -1,0 +1,111 @@
+﻿<div class="box">
+    <div class="myresume-user-infor">
+        <div class="row">
+            <div class="center-block col-xs-4 col-sm-3">
+                <div class="img-wrapper">
+                    <div class="img-content">
+                        <form id="avartar">
+                            <input type="hidden" name="myresume-id" />
+                            <span class="img-edit hidden-xs">
+                                <button type="button" class="btn btn-sm btn-default">
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                </button>
+                            </span>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" id="img-avartar">
+                                    <div class="avatar img-circle">
+                                        <img src="{{getValue '$user$Photo'}}" class="img-circle img-responsive" />
+                                    </div>
+                                </a>
+                                <span class="avatar-error"></span>
+                                <!--<ul class="dropdown-menu hidden-xs" role="menu" aria-labelledby="img-avartar"></ul>-->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-8 col-sm-9 myresume-header">
+                <form class="infor-wrapper">
+                    <input type="hidden" name="myresume-id" />
+                    <div class="box-info">
+                        <span class="info-edit">
+                            <button type="button" class="btn btn-sm btn-default">
+                                <i class="glyphicon glyphicon-pencil"></i>
+                            </button>
+                        </span>
+                        <div class="clearfix user-info mar-left">
+                            <div class="name pull-left">
+                                <div class="field-view" style="display:block">
+                                    <h3 class="name-profile">{{getValue '$user$Users$LastName'}}</h3>
+                                </div>
+                            </div>
+                            <div class="last-name pull-left">
+                                <div class="field-view" style="display:block">
+                                    <h3 class="name-profile">{{getValue '$user$Users$FirstName'}}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-info col-md-12">
+                            <div class="user-poisition">
+                                <div class="field-view" style="display:block">
+                                    <span class="position-text" data-update-tip="Hồ sơ của bạn đã hơn một năm tuổi!!!<br/> Đã đến lúc cần cập nhật rồi.<i class='fa fa-times-circle'></i>">
+                                        {{getValue '$user$CurrentJobName'}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="user-exp">
+                                <div class="field-view" style="display:block">
+                                    <span class="exp-year">
+                                        res:(Số năm kinh nghiệm): <span class="exp-year-text">{{getValue '$totalExpYear'}}</span> năm
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field-view" style="display: block;">
+                                <p>
+                                    <span class="text-gray-light">res:(Công ty gần đây nhất):</span>
+                                    <a class="current-company clickable">{{getValue '$nearCompany$Company'}}</a>
+                                    <br>
+                                    <span class="text-gray-light">res:(Bằng cấp cao nhất):</span>
+                                    <a class="current-highest-education clickable">Cao đẳng</a>
+                                </p>
+                            </div>
+                            <div class="row field-edit" style="display: none;">
+                                <div class="col-sm-6"></div>
+                                <div class="col-sm-6 text-right">
+                                    <button type="button" class="btn-cancel btn btn-sm btn-default" id="btnCancelSaveInfo">res:(Hủy)</button>
+                                    <button type="button" class="btn-save btn btn-sm btn-primary" id="btnSaveInfo">res:(Lưu)</button>
+                                </div>
+                            </div>
+                            <render>attach-file.html</render>
+                        </div>
+                    </div>
+                </form>
+                <div class="absolute-right mg-rt mg-tp visible-xs">
+                    <a href="#" class="btn btn-block btn-sm btn-default no-border box-gray-lighter info-togger">
+                        <i class="glyphicon glyphicon-briefcase"></i>
+                        <span class="hidden-xs">res:(Thông Tin Cá Nhân)</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row hidden-xs">
+            <div class="col-sm-12">
+                <div class="text-right bg-color">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-4 pull-right">
+                            <a href="#" class="btn btn-block btn-sm btn-default no-border info-togger">
+                                <i class="glyphicon glyphicon-briefcase"></i>
+                                <span>res:(Thông Tin Cá Nhân)</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script server>
+    [(app)=>{
+
+    }]
+</script>

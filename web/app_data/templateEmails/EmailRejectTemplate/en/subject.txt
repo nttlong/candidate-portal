@@ -1,0 +1,1 @@
+Rejection notice of {{candidate.FullName}}

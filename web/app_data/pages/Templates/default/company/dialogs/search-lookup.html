@@ -1,0 +1,73 @@
+﻿<!--<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div style="max-height:400px;overflow-y:auto">
+        <div class="col-sm-12">
+            <table class="table table-bordered" style="width:100%">
+                <thead>
+                    <tr >
+                        <th v-for="item in data.fields">
+                            ${data.captions[item]}
+                        </th>
+                      
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in data.items" v-on:click="doSelect(item)">
+                        <td v-for="f in data.fields">
+                            ${item[f]}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+   
+    <script>
+        (function (app) {
+            app.list = [];
+            app.data = { fields:[] }
+            app.onSelect = function (onSelecthandler) {
+                app._onSelect = onSelecthandler;
+            }
+            app.doLoadData = function (name) {
+                var ajax = "ajax.store.st_commons_load_lookup";
+                ajax.data({
+                    category: name,
+                    language: "{{{Language.Current.Code}}}"
+                }).done(function (res) {
+                    console.log(res);
+                    app.data = res;
+                });
+
+            };
+            app.doSelect = function (item) {
+                if (app._onSelect) {
+                    var text = "";
+                    var texts = [];
+                    for (var i = 0; i < app.data.fields.length; i++) {
+                        text += item[app.data.fields[i]] + "-";
+                        texts.push(item[app.data.fields[i]])
+                    }
+                    text = text.substring(0, text.length - 1);
+                    var values=[];
+                    for(var i=0;i<app.data.keys.length;i++){
+                        values.push(item[app.data.keys[i]]);
+                    }
+                    app._onSelect({
+                        key: app.data.key,
+                        text: text,
+                        values: values,
+                        texts:texts
+                    });
+                    app.doClose();
+                }
+            }
+        });
+    </script>
+</body>
+</html>-->

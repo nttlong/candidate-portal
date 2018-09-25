@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div>
+        <md-content layout-padding>
+            <md-grid-list md-cols-sm="2" md-cols="2" md-cols-md="4"
+                           md-cols-lg="6"
+                          md-row-height-gt-md="1:1" md-row-height="4:3"
+                          md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px">
+                <md-grid-tile ng-repeat="item in $root.menu.main"
+                              
+                              style="background-color:#ffccff" ng-click="$root.doOpen(item.view)">
+                    <h3>{{item.caption[$root.getLanguage()]}}</h3>
+                </md-grid-tile>
+            </md-grid-list>
+        </md-content>
+    </div>
+    
+</body>
+</html>

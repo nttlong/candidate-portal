@@ -1,0 +1,599 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title>page-caption:(Cổng thông tin dành cho nhà tuyển dụng)</title>
+	<meta charset="utf-8" />
+	<render>commons/header.html</render>
+	<link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_mainui_employer.min.css" rel="stylesheet" />
+
+</head>
+<body ng-controller="app" ng-cloak>
+	<render>company/navbar.html</render>
+	<div class="wrapper">
+		<section class="container myresume-content">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-8">
+					<div class="header_left">
+						<div class="col-md-12 item_header_left">
+							<span class="col-xs-12 col-sm-10 col-md-10">
+								res:(Việc làm đang hiển thị):
+								<span style="color: #f7941d; font-weight: bold;">
+									${pagerConfig.totalItems}
+								</span>
+								${getTextListMenu()}
+							</span>
+							<div class="col-xs-12 col-sm-2 col-md-2 box_left_right">
+								<div c-menu data-source="getMenuList()" ng-change="doReLoadRequisition()" ng-model="selectedReq"></div>
+							</div>
+						</div>
+					</div>
+
+					<!--///-->
+					<div class="body_left row">
+						<div class="col-md-6" ng-repeat="item in data.ListRequisition">
+							<div class="box_item_left item_left">
+								<div class="header_box_item_left" title="${item.JobTitle}">
+									${item.JobTitle}
+								</div>
+								<div class="body_box_item_left">
+									<p title="${item.Job.JobName[lang]}">${item.Job.JobName[lang]}</p>
+									<p class="body_box_item_left_slut" ng-if="item.TotalApplyCandidate == undefined">
+										0 res:(ứng tuyển)
+									</p>
+									<p class="body_box_item_left_slut" ng-if="item.TotalApplyCandidate != undefined">
+										${item.TotalApplyCandidate} res:(ứng tuyển)
+									</p>
+									<p ng-if="item.TotalViewByCandidate == undefined">
+										<span>0 res:(lượt xem) |</span>
+										<span ng-if="equalDateExpired(item.ReceiveTo) == 1"> res:(Hết hạn trong) ${convertDateExpired(item.ReceiveTo)}</span>
+										<span ng-if="equalDateExpired(item.ReceiveTo) == 0"> res:(Đã hết hạn)</span>
+									</p>
+									<p ng-if="item.TotalViewByCandidate != undefined">
+										<span>${item.TotalViewByCandidate} res:(lượt xem) |</span>
+										<span ng-if="equalDateExpired(item.ReceiveTo) == 1"> res:(Hết hạn trong) ${convertDateExpired(item.ReceiveTo)}</span>
+										<span ng-if="equalDateExpired(item.ReceiveTo) == 0"> res:(Đã hết hạn)</span>
+									</p>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="footer_left item_left" ng-if="data.ListRequisition.length > 0">
+						<div c-pager data-config="${pagerConfig}" data-on-change="onPageChane">
+
+						</div>
+					</div>
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-4">
+					<div class="header_right">
+						<div class="row">
+							<div class="col-md-12" style="padding-left: 0px;
+                        margin-bottom: 3px;">
+								<div class="col-xs-12 col-sm-10 col-md-10 tabbable-line">
+									<span style="font-size: 23px;">
+										res:(Việc làm trong năm):
+										<span style="font-weight: bold; color: #f7941d;">
+											${selectedYear}
+										</span>
+									</span>
+								</div>
+								<div class="col-xs-12 col-sm-2 col-md-2 box_right_right">
+
+									<div c-menu data-source="${dataSource}"
+										 ng-change="doLoad()" ng-model="selectedYear">
+
+									</div>
+									<!--<ul class="dropdown-menu">
+
+										<li ng-repeat="p in [2017,2016,2015]" ng-click="doLoad(2017)"><span>2017</span></li>
+										<li role="separator" class="divider"></li>
+										<li ng-click="doLoad(2016)"><span>2016</span></li>
+										<li role="separator" class="divider"></li>
+										<li ng-click="doLoad(2015)"><span>2015</span></li>
+										<li role="separator" class="divider"></li>
+										<li ng-click="doLoad(2014)"><span>2014</span></li>
+									</ul>-->
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="body_right">
+						<div class="gray-bg">
+							<table class="table">
+								<tbody>
+									<tr>
+
+										<td>
+											<div href="#" class="link-gray">
+												<a class="body_right_number_tb">
+													<div class="lv-number">${dataCount.totalRequisition}</div>
+												</a>
+												<a class="body_right_des_tb">res:(Việc làm đã đăng)</a>
+											</div>
+										</td>
+
+									</tr>
+									<tr>
+										<td>
+											<div href="#" class="link-gray">
+												<a class="body_right_number_tb">
+													<div class="lv-number">${dataCount.totalExpiredBef}</div>
+												</a>
+												<a class="body_right_des_tb">res:(Hết hạn trong 7 ngày tới)</a>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div href="#" class="link-gray">
+												<a class="body_right_number_tb">
+													<div class="lv-number">${dataCount.totalExpiredAft}</div>
+												</a>
+												<a class="body_right_des_tb">res:(Hết hạn sau 7 ngày tới)</a>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div href="#" class="link-gray">
+												<a class="body_right_number_tb">
+													<div class="lv-number">${dataCount.totalExpired}</div>
+												</a>
+												<a class="body_right_des_tb">res:(Hết hạn tuyển dụng)</a>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div href="#" class="link-gray">
+												<a class="body_right_number_tb">
+													<div class="lv-number">${dataCount.totalIsLock}</div>
+												</a>
+												<a class="body_right_des_tb">res:(Tạm ngừng nhận hồ sơ)</a>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div href="#" class="link-gray">
+												<a class="body_right_number_tb">
+													<div class="lv-number">${dataCount.totalIsPublished}</div>
+												</a>
+												<a class="body_right_des_tb">res:(Lưu nháp)</a>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<script server>
+		["./../libs/lv.utils",
+			"./../modules/node.sys.categories",
+			"./../modules/node.sys.customer",
+			"./../libs/lv.authenticate",
+			"./../modules/lv.db",
+			"./../modules/lv.model",
+
+			(utils, categories, customer, aut, Data, models, app) => {
+				app.onLoadDataCount = (event) => {
+					utils._try(() => {
+
+						var clientData = utils.readData(event);
+						var retData = {};
+						var firstDate = new Date(clientData.startDate);
+						var lastDate = new Date(clientData.endDate);
+						var user = aut.getUser(event.req);
+						if (!user) {
+							event.done();
+							return;
+						}
+						var recruiter = models.ls_recruiters()
+							.where("UserEmail==Email", user)
+							.toItem.sync();
+						utils.paralellCaller()
+							.call(emit => { // Việc làm đã đăng
+								models.ls_requisition()
+									.where("(RecruiterId==_id)and(CreatedOn>=firstDate)and(CreatedOn<=lastDate)and(IsPublished==_IsPublished)",
+										{
+											_id: recruiter._id,
+											_IsPublished: true,
+											firstDate: firstDate,
+											lastDate: lastDate
+										}
+									)
+									.count((e, r) => {
+
+										if (e) emit(ex);
+										else {
+											retData.totalRequisition = r;
+											//event.setModel("info.totalRequisition", r);
+											emit();
+										}
+									})
+									.catch(ex => {
+										emit(ex);
+									})
+							})
+							.call(emit => { // Hết hạn trong 7 ngày tới
+								var d = new Date();
+								d = new Date(d.setDate(d.getDate() + 7));
+								var _d = new Date();
+
+								models.ls_requisition()
+									.where("(RecruiterId==_id)and(IsPublished==_IsPublished)and(ReceiveTo<=_ReceiveTo)and(ReceiveTo>=_ReceiveFrom)and(CreatedOn>=firstDate)and(CreatedOn<=lastDate)", {
+										_ReceiveTo: d,
+										_IsPublished: true,
+										_id: recruiter._id,
+										_ReceiveFrom: _d,
+										firstDate: firstDate,
+										lastDate: lastDate
+									})
+
+									.count((e, r) => {
+										if (e) emit(ex);
+										else {
+											retData.totalExpiredBef = r;
+											//event.setModel("info.totalExpiredBef", r);
+											emit();
+										}
+									})
+									.catch(ex => {
+										emit(ex);
+									})
+							})
+							.call(emit => { // Hết hạn sau 7 ngày tới
+								var d = new Date();
+								d = new Date(d.setDate(d.getDate() + 7));
+								models.ls_requisition()
+									.where("(RecruiterId==_id)and(IsPublished==_IsPublished)and(ReceiveTo>_ReceiveTo)and(CreatedOn>=firstDate)and(CreatedOn<=lastDate)", {
+										_ReceiveTo: d,
+										_IsPublished: true,
+										_id: recruiter._id,
+										firstDate: firstDate,
+										lastDate: lastDate
+									})
+									.count((e, r) => {
+										if (e) emit(ex);
+										else {
+											retData.totalExpiredAft = r;
+											//event.setModel("info.totalExpiredAft", r);
+											emit();
+										}
+									})
+									.catch(ex => {
+										emit(ex);
+									})
+							})
+							.call(emit => { // Hết hạn tuyển dụng
+								var d = new Date();
+								models.ls_requisition()
+									.where("(RecruiterId==_id)and(IsPublished==_IsPublished)and(ReceiveTo<_ReceiveTo)and(CreatedOn>=firstDate)and(CreatedOn<=lastDate)", {
+										_ReceiveTo: d,
+										_IsPublished: true,
+										_id: recruiter._id,
+										firstDate: firstDate,
+										lastDate: lastDate
+									})
+									.count((e, r) => {
+										if (e) emit(ex);
+										else {
+											retData.totalExpired = r;
+											//event.setModel("info.totalExpired", r);
+											emit();
+										}
+									})
+									.catch(ex => {
+										emit(ex);
+									})
+							})
+							.call(emit => { // Tạm ngừng nhận hồ sơ
+								var d = new Date();
+								models.ls_requisition()
+									.where("(RecruiterId==_id)and(IsPublished==_IsPublished)and(ReceiveTo>=now)and (IsLocked==_IsLocked)and(firstDate<=CreatedOn)and(CreatedOn<=lastDate)", {
+										_IsLocked: true,
+										_IsPublished: true,
+										_id: recruiter._id,
+										firstDate: firstDate,
+										lastDate: lastDate,
+										now: d
+									})
+									.count((e, r) => {
+										if (e) emit(ex);
+										else {
+											retData.totalIsLock = r;
+											//event.setModel("info.totalIsLock", r);
+											emit();
+										}
+									})
+									.catch(ex => {
+										emit(ex);
+									})
+							})
+							.call(emit => { // Lưu nháp
+								var d = new Date();
+								models.ls_requisition()
+									.where("(RecruiterId==_id)and((IsPublished==_IsPublished)or(IsPublished==_ispublished))and(CreatedOn>=firstDate)and(CreatedOn<=lastDate)", {
+										_IsPublished: false,
+										_ispublished: null,
+										_id: recruiter._id,
+										firstDate: firstDate,
+										lastDate: lastDate
+									})
+									.count((e, r) => {
+										if (e) emit(ex);
+										else {
+											retData.totalIsPublished = r;
+											//event.setModel("info.totalIsPublished", r);
+											emit();
+										}
+									})
+									.catch(ex => {
+										emit(ex);
+									})
+							})
+							.done(ex => {
+								utils.writeData(event, retData);
+								event.done(ex);
+							})
+					}, event);
+
+				}
+				app.doLoadRequisition = (event) => {
+
+					var user = aut.getUser(event.req);
+					utils._try(() => {
+						try {
+							var clientData = utils.readData(event);
+							var user = aut.getUser(event.req);
+							var recruiter;
+							var qr;
+							var idx = clientData.idx;
+							var size = clientData.psize;
+
+							recruiter = models.ls_recruiters()
+								.where("UserEmail", user.Email)
+								.toItem.sync();
+
+
+							if (clientData.data == 5) { // tất cả
+								qr = models.ls_requisition()
+									.where("RecruiterId==_id", recruiter).query();
+
+							} else if (clientData.data == 1) { // đăng tuyển
+
+								qr = models.ls_requisition()
+									.where("(RecruiterId==_id) and (IsLocked==_islocked) and (IsPublished==_ispublished) and (ReceiveTo >= _receiveto)", {
+										_id: recruiter._id,
+										_islocked: false || null,
+										_ispublished: true,
+										_receiveto: new Date()
+									}).query();
+
+							} else if (clientData.data == 2) { // tạm dừng
+								qr = models.ls_requisition()
+									.where("(RecruiterId==_id) and (IsLocked==_islocked)", {
+										_id: recruiter._id,
+										_islocked: true
+									}).query();
+							} else if (clientData.data == 3) { // lưu nháp
+								qr = models.ls_requisition()
+									.where("(RecruiterId==_id) and (IsPublished==_ispublished)", {
+										_id: recruiter._id,
+										_ispublished: false || null
+									}).query();
+							} else if (clientData.data == 4) { // hết hạn
+								qr = models.ls_requisition()
+									.where("(RecruiterId==_id) and (ReceiveTo <= _receiveto)", {
+										_id: recruiter._id,
+										_receiveto: new Date()
+									}).query();
+							}
+
+							//
+							var qrCount = qr.clone();
+							qrCount = qrCount.select({
+								"_id": 1
+							}).query();
+							var count = qrCount.toArray.sync().length;
+							//
+							requisition = qr
+								.select({
+									"JobTitle": 1,
+									"Job": 1,
+									"TotalApplyCandidate": 1,
+									"TotalViewByCandidate": 1,
+									"ReceiveTo": 1
+								})
+								.toArray.sync();
+							if (requisition.length >= size) {
+								qr = qr.skip(idx * size).limit(size).query();
+							}
+
+
+							requisition = qr.toArray.sync();
+							utils.writeData(event, { items: requisition, totalItems: count });
+							event.done();
+						} catch (e) {
+							event.done(e);
+						}
+
+					}, event)
+				};
+				//
+				app.doChangeLanguage = (event) => {
+					var clientData = utils.readData(event);
+					event.res.cookie('language', event.form.lang || clientData.lang || 'vn');
+					//event.res.end(JSON.stringify({
+					//    action: {
+					//        refresh: true
+					//    }
+					//}));
+					utils.writeData(event, {});
+					event.done();
+				};
+			}
+		]
+	</script>
+
+	<script>
+        ng_app([], function (app) {
+            app.lang = "{{Language.Current.Code}}"
+            app.lookup = {
+
+            }
+            app.dataSource = [
+
+            ];
+            app.doLoadDateSource = function () {
+                for (var i = 0; i < 3; i++) {
+                    var obj = {};
+                    obj.text = new Date().getFullYear() - i;
+                    obj.value = new Date().getFullYear() - i;
+                    app.dataSource.push(obj);
+                }
+            }
+            //
+            app.pagerConfig = {
+                numOfPageSelector: 5, totalItems: 0, pageSize: 8, pageIndex: 0
+            }
+            app.doLoadDateSource();
+            app.pageSize = 3;
+            app.currentPage = 0;
+            app.selectedYear = new Date().getFullYear();
+            app.selectedReq = 1;
+            app.menuList = [
+                {
+                    text: "res:(Đăng tuyển)",
+                    value: "1"
+                }, {
+                    text: "res:(Tạm dừng)",
+                    value: "2"
+                }, {
+                    text: "res:(Lưu nháp)",
+                    value: "3"
+                }, {
+                    text: "res:(Hết hạn)",
+                    value: "4"
+                }, {
+                    text: "res:(Tất cả)",
+                    value: "5"
+                }
+            ];
+
+
+            app.equalDateExpired = function (date) {
+                if (new Date(date) > new Date()) {
+                    return 1;
+                }
+                return 0;
+            }
+            app.convertDateExpired = function (date) {
+                var lang = app.lang;
+                if (app.lang == 'vn') {
+                    lang = 'vi';
+                }
+                if (new Date(date) > new Date()) {
+                    return moment(new Date(date)).locale(lang).fromNow("LLLL");
+                }
+            }
+            app.data = {
+                ListTask: []
+            };
+            history_navigator(app.$root);
+            app.doLoadRequisition = function (idx, size) {
+                if (idx < 0) {
+                    app.currentPage = 0;
+                } else {
+                    app.currentPage = idx;
+                }
+                var ajax = "server.page://doLoadRequisition";
+                ajax.data({
+                    data: app.selectedReq,
+                    idx: idx,
+                    psize: size
+                }).done(function (res) {
+                    app.data.ListRequisition = res.items;
+                    app.pagerConfig.totalItems = res.totalItems;
+                    app.pagerConfig.pageIndex = idx;
+                    app.$applyAsync();
+                })
+            };
+            //
+            app.onPageChane = function (index) {
+                app.doLoadRequisition(index, app.pagerConfig.pageSize);
+            }
+            // lọc requisition
+            app.doReLoadRequisition = function () {
+                app.currentPage = 0;
+                app.pagerConfig.pageIndex = 0;
+                app.doLoadRequisition(app.pagerConfig.pageIndex, app.pagerConfig.pageSize);
+                app.$applyAsync();
+            }
+            // trả về text của list menu
+            app.getTextListMenu = function () {
+                var data = app.menuList;
+                data = data.filter(function (e) {
+                    return e.value == app.selectedReq.toString();
+                })
+                return data[0].text;
+            }
+            app.doReLoadRequisition();
+
+            // filter
+            app.filterRequisition = function (element) {
+                if (!app.selectedReq || app.selectedReq == 5) { // tất cả
+                    return true;
+                } else if (app.selectedReq == 1) { // đăng tuyển
+                    return element.IsPublished == true & element.IsLocked == false & new Date(element.ReceiveTo) > new Date();
+                } else if (app.selectedReq == 2) { // tạm dừng
+                    return element.IsLocked == true;
+                } else if (app.selectedReq == 3) { // lưu nháp
+                    return element.IsPublished == false;
+                } else if (app.selectedReq == 4) { // hết hạn
+                    return new Date(element.ReceiveTo) < new Date();
+                }
+            }
+
+            app.getMenuList = function () {
+                return app.menuList;
+            }
+
+            app.doLoad = function () {
+                var ajax = "server.page://onLoadDataCount";
+                // lấy ngày đầu tiên của năm truyền vào
+                var startDate = moment([app.selectedYear, 1 - 1]).toDate();
+                var endDate = moment(moment([app.selectedYear, 12 - 1]).toDate()).endOf('month').toDate();
+                ajax.data({
+                    startDate: startDate,
+                    endDate: endDate
+                }).done(function (res) {
+                    app.dataCount = res;
+                    app.$applyAsync();
+                })
+            }
+            app.doLoad(new Date().getFullYear());
+            // filter
+            app.selectedYearFilter = function (element) {
+                if (!app.year || app.year == "") return true;
+                return new Date(element.PublishDate).getFullYear() == app.year
+            }
+            app.$root.doChangeLanguage = function (code) {
+                var ajax = "server.page://doChangeLanguage";
+                ajax.data({
+                    lang: app.$root.lang
+                }).done(function (res) {
+                    location.reload();
+                })
+            }
+
+        })
+	</script>
+
+</body>
+</html>

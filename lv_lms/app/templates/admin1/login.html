@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+
+{% load admin_extras %}
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h2>{{}}</h2>
+    <form action="." method="post">
+        {% csrf_token %}
+        <input name="username" />
+    <input type="password" name="password" />
+    <input type="submit" value="Login" />
+    </form>
+     {% if form.errors %}
+                <p class="validation-summary-errors">Please enter a correct user name and password.</p>
+                {% endif %}
+</body>
+</html>

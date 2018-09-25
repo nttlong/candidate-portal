@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.content_manage",
+            "./../modules/lv.model",
+            (utils,
+                content_manager,
+                models,
+                page) => {
+                utils.debug();
+
+                page.loadData = (event) => {
+                    utils._try(() => {
+                       var list= models.sys_email_template()
+                            .toArray.sync();
+                       utils.writeData(event, list);
+                       event.done();
+                    }, event);
+                }
+            }];
+    </script>
+
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">res:(List of template email)</div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="item in data">
+                        <section>
+                            <h4><b>${item.TemplateName} (${item.Language})</b></h4>
+                            <p>
+                                ${item.Description}
+                            </p>
+                        </section>
+                        <section class="row">
+
+                            <p>
+                                ${item.Body}
+                            </p>
+                            <i class="pull-right">${(item.ModifiedOn||item.CreatedOn)|date:'dd-MM-yyyy'}</i>
+                            <span class="pull-right">|</span>
+                            <b class="pull-right">${item.ModifiedBy||item.CreatedBy}</b>
+
+
+
+                        </section>
+                        <section class="row">
+
+                            <div class="pull-right"> [<a href="#view=template-email-detail&id=${item._id}">res:(Edit)</a>]</div>
+                        </section>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        
+       
+       
+    </div>
+    <script>
+            (app => {
+                app.data = {};
+                app.doLoadData = () => {
+                    var ajax = "server.page://loadData";
+                    ajax.data({
+                        language: window.currentLanguage
+                    })
+                        .done(res => {
+                            app.data = res;
+                            console.log(res);
+                            app.$applyAsync();
+                        })
+                }
+                app.doLoadData();
+            });
+    </script>
+</body>
+</html>

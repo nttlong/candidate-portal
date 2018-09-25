@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Thiết lập cá nhân)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/Dialogs.js"></script>
+    <script>
+        $set_dialog_template_root_dir("{{Config.RootUrl}}candidate");
+    </script>
+</head>
+<body ng-controller="app" ng-cloak>
+    <render>../commons/navbar.html</render>
+    <div class="container" id="main">
+        <section>
+            <div class="page-header">
+                <h1>res:(Thông tin tối thiểu)</h1>
+            </div>
+            <form class="form-horizontal" role="form" action="api:(lv.candidate.api/lv.candidate.api.accounts/update_email)">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Email)</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="Email" placeholder="res:(Enter email)" ng-model="data.Email" readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" required="required">res:(Họ) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="Email" name="FirstName" ng-model="data.LastName">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="exampleInputEmail">res:(Tên) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="Email" name="LastName" ng-model="data.FirstName">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Giới tính) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" c-select2 ng-model="data.Sex" data-source="dataSex" />
+                        <!--<select class="form-control" ui-select2 ng-model="data.Sex">
+                            <option ng-repeat="item in dataSex" value="${item.id}">${item.text}</option>
+                        </select>-->
+                        <!--<select class="form-control" ng-model="data.Sex">
+                            <option value="male">res:(Nam)</option>
+                            <option value="female">res:(Nữ)</option>
+                        </select>-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Ngày sinh) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" c-date-picker ng-model="data.BirthDate" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Tình trạng hôn nhân) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" c-select2 ng-model="data.MarriageStatus.Code" data-source="ls_marriage_status" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Ảnh của bạn)</label>
+                    <div class="col-sm-10">
+                        <div c-photo-upload ng-model="data.Photo"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Địa chỉ) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" ng-model="data.FullAddress" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Tỉnh thành) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" c-select2 ng-model="data.Location.FullCode" data-source="ListOfLocations" placeholder="res:(Chọn tỉnh thành)" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Quốc gia) <span style="color: red"> *</span></label>
+                    <div class="col-sm-10">
+                        <input type="text" c-select2 ng-model="data.Nationality.Code" data-source="ls_nations" placeholder="res:(Chọn quốc gia)" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Điện thoại)</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" ng-model="data.Tel" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Di động)</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" ng-model="data.Mobile" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">res:(Nhận bản tin việc làm)</label>
+                    <div class="col-sm-2">
+                        <input type="checkbox" ng-model="data.IsAutoReceiveNews" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="exampleInputEmail">res:(Ngôn ngữ mặc định)</label>
+                    <div class="col-sm-10">
+                        <input type="text" c-select2 ng-model="data.DefaultLanguage" data-source="Language" placeholder="res:(Chọn ngôn ngữ)" />
+                        <!--<select class="form-control" ng-model="data.DefaultLanguage">
+                            <option value="vn">Tiếng Việt</option>
+                            <option value="en">English</option>
+                        </select>-->
+                    </div>
+                </div>
+            </form>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group" role="group" aria-label="First group">
+                            <button type="submit" class="btn btn-default" ng-click="doSaveData()">res:(Lưu)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section></section>
+        <div class="page-header">
+            <h1>res:(Chứng thực)</h1>
+        </div>
+        <form>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="exampleInputEmail">res:(Password)</label>
+                    <div class="col-sm-10">
+                        <input type="button" class="btn btn-info" value="res:(Đổi mật khẩu)" style="margin:4px" ng-click="doShowChangePasswordDialog()" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="form-group-input">Google</label>
+                    <div class="col-sm-10">
+
+                        <div class="input-group" ng-click="showDialog('Google')">
+                            <input type="text" class="form-control" placeholder="res:(Tài khoản Google)" aria-describedby="basic-addon2" ng-model="data.LinkToGoogle.Email">
+                            <span class="input-group-addon" id="basic-addon2">
+                                <!--<i class="fa fa-cog" aria-hidden="true" style="cursor:pointer"></i>-->
+                                <i class="fa fa-google-plus-square" style="font-size:20px;color:red"></i>
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="form-group-input">Facebook</label>
+                    <div class="col-sm-10">
+
+                        <div class="input-group" ng-click="showDialog('Facebook')">
+                            <input type="text" class="form-control" placeholder="res:(Tài khoản Facebbok)" aria-describedby="basic-addon2" ng-model="data.LinkToFacebook.Email">
+                            <span class="input-group-addon" id="basic-addon2">
+                                <!--<i class="fa fa-cog" aria-hidden="true"></i>-->
+                                <i class="fa fa-facebook-square" style="font-size:20px;color:#4867aa"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="form-group-input">LinkedIn</label>
+                    <div class="col-sm-10">
+                        <div class="input-group" ng-click="showDialog('LinkedIn')">
+                            <input type="text" class="form-control" placeholder="res:(Tài khoản LinkedIn)" aria-describedby="basic-addon2" ng-model="data.LinkToLinkedIn.Email">
+                            <span class="input-group-addon" id="basic-addon2">
+                                <!--<i class="fa fa-cog" aria-hidden="true"></i>-->
+                                <i class="fa fa-linkedin-square" style="font-size:20px;color:#0077b5"></i>
+                            </span>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="form-group-input">Twitter</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="res:(Tài khoản Twitter)" aria-describedby="basic-addon2" ng-model="data.LinkToTwitter.Email">
+                            <span class="input-group-addon" id="basic-addon2" ng-click="showDialog('Twitter')">
+                                <!--<i class="fa fa-cog" aria-hidden="true"></i>-->
+                                <i class="fa fa-twitter-square" style="font-size:20px;color:#1da1f2"></i>
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.db",
+            "./../modules/lv.model",
+            (utils, aut, Data, models, app) => {
+                app.doLoadData = (event) => {
+                    utils._try(() => {
+                        var user = aut.getUser(event.req);
+                        try {
+                            var candidateUser = models.ls_candidate().where("UserEmail==Email", user)
+                                .toItem.sync();
+                            if (candidateUser == null) {
+                                models.ls_candidate()
+                                    .insert({ UserEmail: user.Email })
+                                    .commit.sync();
+                            }
+                            var data = models.ls_candidate()
+                                .where("UserEmail==Email", user)
+                                .lookup(models.sys_Users(), "UserEmail", "Email", "user")
+                                .unwind("user")
+                                .select({
+                                    Email: "user.Email",
+                                    FirstName: "user.FirstName",
+                                    LastName: "user.LastName",
+                                    Sex: 1,
+                                    BirthDate: 1,
+                                    MarriageStatus: 1,
+                                    FullAddress: 1,
+                                    Location: 1,
+                                    Nationality: 1,
+                                    Mobile: 1,
+                                    Tel: 1,
+                                    IsAutoReceiveNews: 1,
+                                    DefaultLanguage: 1, //"user.Settings.DefaultLanguage",
+                                    Photo: 1,
+                                    LinkToGoogle: "user.LinkToGoogle",
+                                    LinkToFacebook: "user.LinkToFacebook",
+                                    LinkToLinkedIn: "user.LinkToLinkedIn",
+                                    LinkToTwitter:"user.LinkToTwitter"
+
+                                }).toItem.sync();
+                            utils.writeData(event, data);
+                            event.done();
+
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                app.doSaveData = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var user = aut.getUser(event.req);
+                        var checks = utils.checkRequireFields([
+                            "LastName",
+                            "FirstName",
+                            "Sex",
+                            "BirthDate",
+                            "MarriageStatus.Code",
+                            "FullAddress",
+                            "Location.FullCode",
+                            "Nationality.Code",
+                        ], clientData);
+                        if (checks.length > 0) {
+                            utils.writeData(event, { apiError: checks[0] });
+                            event.done();
+                            return;
+                        }
+                        var LocationCode = clientData.Location.FullCode.split("::")[0];
+                        var ProvinceCode = clientData.Location.FullCode.split("::")[1];
+                        var location = models.ls_locations()
+                            .unwind("Provinces")
+                            .where("(Code==LocationCode)and(Provinces.Code==ProvinceCode)", {
+                                LocationCode: LocationCode,
+                                ProvinceCode: ProvinceCode
+                            }).toItem.sync();
+                        location.FullCode = clientData.Location.FullCode;
+                        var MarriageStatus = models.ls_marriage_status()
+                            .where("Code==Code", clientData.MarriageStatus)
+                            .toItem.sync();
+                        var Nationality = models.ls_nations()
+                            .where("Code==Code", clientData.Nationality)
+                            .toItem.sync();
+                        var retUser = models.sys_Users()
+                            .where("Email==Email", user)
+                            .set({
+                                FirstName: clientData.FirstName,
+                                LastName: clientData.LastName
+                            }).commit.sync();
+
+                        var ret = models.ls_candidate()
+                            .where("UserEmail==Email", user)
+                            .set({
+                                FullAddress: clientData.FullAddress,
+                                BirthDate: new Date(clientData.BirthDate),
+                                MarriageStatus: MarriageStatus,
+                                Location: location,
+                                Nationality: Nationality,
+                                Sex: clientData.Sex,
+                                Photo: clientData.Photo,
+                                Tel: clientData.Tel,
+                                Mobile: clientData.Mobile,
+                                IsAutoReceiveNews: clientData.IsAutoReceiveNews,
+                                DefaultLanguage: clientData.DefaultLanguage
+                            }).commit.sync();
+                        utils.writeData(event, {});
+                        event.done();
+                       
+
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            scope.dataSex = [
+                {
+                    id: "true",
+                    text: "res:(Nam)"
+                }, {
+                    id: "false",
+                    text: "res:(Nữ)"
+                }
+            ]
+            scope.Language = [
+                {
+                    id: "vn",
+                    text: "res:(Tiếng việt)"
+                },
+                {
+                    id: "en",
+                    text: "res:(English)"
+                } 
+            ]
+            scope.doLoadData = function () {
+                var ajax = "server.page://doLoadData";
+				ajax.done(function (res) {
+					console.log(res);
+                    scope.data = res;
+                    scope.$applyAsync();
+                })
+            };
+            scope.load_ls_marriage_status = function () {
+                var ajax = "server.api://(nodejs)modules/node.sys.categories@load_ls_marriage_status";
+                ajax.done(function (res) {
+                    scope.ls_marriage_status = res;
+                    scope.$applyAsync();
+                })
+            }
+            scope.load_ListOfLocations = function () {
+                var ajax = "server.api://(nodejs)modules/node.sys.categories@load_ListOfLocations";
+                ajax.done(function (res) {
+                    scope.ListOfLocations = res;
+                    scope.$applyAsync();
+                })
+            }
+            scope.load_ls_nations = function () {
+                var ajax = "server.api://(nodejs)modules/node.sys.categories@load_ls_nations";
+                ajax.done(function (res) {
+                    scope.ls_nations = res;
+                    scope.$applyAsync();
+                })
+            }
+            scope.load_ls_marriage_status();
+            scope.load_ListOfLocations();
+            scope.load_ls_nations();
+            setTimeout(function () {
+                scope.doLoadData();
+            }, 0)
+            scope.doShowChangePasswordDialog = function () {
+                dialog(scope).url("{{Config.RootUrl}}/candidate/chang-password")
+                    .done();
+            };
+            scope.showDialog = function (key) {
+                scope.socialType = key;
+                scope.Email = scope.data.Email;
+                dialog(scope).url("{{Config.RootUrl}}/candidate/social-link")
+                    .done();
+            }
+            scope.doSaveData = function () {
+                toastrError = function (error, model) {
+                    toastr.error(error);
+                    $("[ng-model='" + model + "']").focus(
+                        function () {
+                            $(this).css({ "border-color": "red" })
+                        }
+                    );
+                    $("[ng-model='" + model + "']").blur(
+                        function () {
+                            $(this).css({ "border-color": "#ccc" })
+                        }
+                    );
+                    $("[ng-model='" + model + "']").trigger("click");
+                    $("[ng-model='" + model + "']").select();
+                }
+                if (scope.data.Photo.Error) {
+                    if (scope.data.Photo.Error == "nameError") {
+                        toastr.error('res:(Vui lòng chọn file có định dạng png, jpg)');
+                    } else if (scope.data.Photo.Error == "sizeError") {
+                        toastr.error('res:(Vui lòng chọn file nhỏ hơn 200 KB)');
+                    }
+                    return
+                }
+                var ajax = "server.page://doSaveData";
+                ajax.data(scope.data)
+                    .done(function (res) {
+                        
+                        if (res.apiError) {
+                            if (res.apiError.errorType === "BirthDateIsEmpty") {
+                                toastrError("res:(Xin nhập vào ngày sinh)", "data.BirthDate");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType === "LastNameIsEmpty") {
+                                toastrError("res:(Xin nhập vào tên)", "data.LastName");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType == "SexIsEmpty") {
+                                toastrError("res:(Xin chọn giới tính)", "data.Sex");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType === "FirstNameIsEmpty") {
+                                toastrError("res:(Xin nhập vào họ)", "data.FirstName");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType === "FullAddressIsEmpty") {
+                                toastrError("res:(Xin nhập vào địa chỉ)", "data.FullAddress");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType === "MarriageStatus.CodeIsEmpty") {
+                                toastrError("res:(Xin chọn tình trạng hôn nhân)", "data.MarriageStatus.Code");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType === "Location.FullCodeIsEmpty") {
+                                toastrError("res:(Xin chọn tỉnh thành)", "data.Location.FullCode");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                            if (res.apiError.errorType === "Nationality.CodeIsEmpty") {
+                                toastrError("res:(Xin chọn quốc gia)", "data.Nationality.Code");
+                                scope.$element.find("[ng-model='data.Info." + res.apiError.field + "']").trigger("click");
+                                return;
+                            }
+                        } else {
+                            toastr.success("res:(Lưu thông tin thành công)");
+                        }
+                        
+                        scope.$applyAsync();
+                    })
+            }
+        })
+    </script>
+
+
+</body>
+</html>

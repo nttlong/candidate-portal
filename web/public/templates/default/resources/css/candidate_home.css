@@ -1,0 +1,138 @@
+﻿.hcs-home-slide-background {
+  width: 100%;
+  background: url(../images/Banner-HCS_web_1500x730_2.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.hcs-tile-caption {
+  font-size: 1.6rem;
+  float: left;
+}
+.hcs-tile-descreption {
+  padding: 5px 15px;
+}
+.hcs-tile-descreption span {
+  font-size: 1.2rem;
+  float: left;
+  opacity: .8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: unset;
+}
+.hcs-tile-footer {
+  position: absolute;
+  bottom: 15px;
+  width: 100%;
+}
+.hcs-tile-navigation {
+  font-size: 2rem;
+  float: right;
+  padding-right: 5px;
+}
+.hcs-tile-number {
+  font-size: 1.8rem;
+  float: right;
+}
+.hcs-home-panel-group {
+  width: 100%;
+  margin-top: -80px;
+}
+.hcs-title-background {
+  background: url(http://localhost/OpenUIHCSPortal//Apps/portal/images/world_template.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  margin: -15px;
+  opacity: 0.3;
+}
+.hcs-home-panel-group-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hcs-home-tile-group {
+  padding: 0 60px;
+  border: none;
+}
+.hcs-tile-container {
+  border-color: transparent;
+  padding: 0;
+}
+.hcs-tile-style-top-1 {
+  background: #e0b101;
+  color: #fff;
+}
+@media (min-width: 1138px) {
+  .hcs-tile-3 {
+    float: left;
+    margin: 5px 3px;
+    /*width: 28rem !important;*/
+    height: 18rem !important;
+    border: 1px solid #cecece;
+    padding: 15px;
+    position: relative;
+    width: 98.5%;
+  }
+}
+@media (max-width: 1137px) {
+  .hcs-tile-3 {
+    float: left;
+    margin: 5px 3px;
+    height: 18.25rem !important;
+    border: 1px solid #cecece;
+    padding: 15px;
+    position: relative;
+    width: 98.5%;
+  }
+}
+@media only screen and (max-width: 1024px) {
+  .hcs-tile-3 {
+    height: 18.25rem !important;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .hcs-tile-3 {
+    height: 18.25rem !important;
+  }
+}
+@media only screen and (max-width: 640px) {
+  .hcs-home-tile-group {
+    padding: 0 30px;
+    border: none;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .hcs-home-tile-group {
+    padding: 0 10px;
+    border: none;
+  }
+  .hcs-tile-3 {
+    height: 18.25rem !important;
+  }
+  .hcs-tile-descreption span {
+    font-size: 1.1rem;
+  }
+}
+@media only screen and (max-width: 360px) {
+  .hcs-tile-3 {
+    height: 16.25rem !important;
+  }
+  .hcs-tile-caption {
+    font-size: 1.4rem;
+  }
+  .hcs-tile-descreption span {
+    font-size: 1rem;
+  }
+  .hcs-tile-number {
+    font-size: 1.4rem;
+  }
+  .hcs-tile-navigation {
+    font-size: 1.6rem;
+  }
+}

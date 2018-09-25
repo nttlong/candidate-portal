@@ -1,0 +1,1 @@
+﻿export declare var apply_handlebar: () => void;

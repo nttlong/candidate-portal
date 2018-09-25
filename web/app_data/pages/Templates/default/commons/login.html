@@ -1,0 +1,178 @@
+﻿{{^user}}
+<div class="wrapper">
+    <div class="container box animated fadeInDown">
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+                <div class="box_body">
+                    <div class="box_body_content fadeInRight animated">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row section-form em-log-in">
+                                    <div class="box box-lg">
+                                        <h1 class="text-center">
+                                            res:(Đăng Nhập)
+                                        </h1>
+                                        <form role="form"  name="frm_login" data-toggle="validator"
+                                              class="form-horizontal">
+                                            <fieldset class="push-top-xs">
+                                                <hr>
+                                                <p class="text-center">res:(Đăng nhập bằng tài khoản SureHCS)</p><br>
+                                                <div class="form-group">
+                                                    <div class="col-md-8 col-md-offset-2">
+                                                        <input type="text" class="form-control" id="username" placeholder="res:(Enter Username or email)" name="username" required data-error="res:(Xin nhập vào Email hoặc Username)">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-8 col-md-offset-2">
+                                                        <input type="password" class="form-control" id="password" placeholder="res:(Enter password)" name="password" required data-error="res:(Xin nhập vào Password)">
+                                                        <span class="pull-right push-top-xs small"><a href="{{Config.RootUrl}}account/passwordrecovery" ng-keypress="onPress($event)">res:(Quên mật khẩu?)</a></span>
+                                                        <!--<div class="pull-left lv-check-remember">
+                                                            <input type="checkbox" id="remember" name="remember">
+                                                            <label class="control-label" for="remember">res:(Ghi nhớ đăng nhập này)</label>
+                                                        </div>-->
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-offset-2 col-md-8">
+                                                        <button type="button" id="form_sign_in" class="btn btn-primary btn-block">res:(Đăng Nhập)</button>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="text-center push-top-xs">res:(Đăng nhập hoặc đăng ký thành viên nhanh bằng tài khoản)</div>
+                                                <div class="social-bar text-center">
+                                                    <a id="link_login_facebook" class="btn btn-sm btn-fb control-label push-top-xs">
+                                                        <i class="fa fa-facebook left"></i> res:(Facebook)
+                                                    </a>
+                                                    <a id="link_login_google" class="btn btn-sm btn-gplus control-label push-top-xs">
+                                                        <i class="fa fa-google-plus left"></i> res:(Google)
+                                                    </a>
+                                                    <a id="link_login_linkedin" class="btn btn-sm btn-li control-label push-top-xs">
+                                                        <i class="fa fa-linkedin left"></i> res:(Linkedin)
+                                                    </a>
+                                                    <!--<a id="link_login_twitter" class="btn btn-sm btn-li control-label push-top-xs">
+                                                        <i class="fa fa-twitter left"></i> res:(Twitter)
+                                                    </a>-->
+                                                </div>
+                                                <!-- Begin Content-->
+                                                <hr>
+                                                <p class="text-center">
+                                                    res:(Bạn chưa có tài khoản?)
+                                                    <a class="register" href="{{Config.RootUrl}}account/register">res:(Đăng kí ngay!)</a>
+                                                </p>
+                                            </fieldset>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/user}}
+<script server>
+    [
+        "./../modules/node.sys.categories",
+        "./../libs/lv.utils",
+        "./../modules/node.candidate.profiles",
+        "./../libs/lv.authenticate",
+        (categories, utils, profiles, aut, app) => {
+            app.onLoad = (event) => {
+                utils._try(() => {
+                    var user = aut.getUser(event.req);
+                    event.setModel("user", user);
+                    event.done();
+                }, event);
+            }
+        }]
+</script>
+<script>
+    $(document).ready(function () {
+
+        var user = "{{{user.Email}}}";
+        if(user) {
+            window.location.href = "{{Config.RootUrl}}";
+        }
+
+        var retUrl = "";
+        if (window.location.href.indexOf("?retUrl=") > -1) {
+            retUrl = window.location.href.split("?retUrl=")[1];
+            $("#link_login_google").attr("href", "{{Config.RootUrl}}account/signin_by_google?retUrl=" + retUrl);
+            $("#link_login_facebook").attr("href", "{{Config.RootUrl}}account/signin_by_facebook?retUrl=" + retUrl);
+            $("#link_login_linkedin").attr("href", "{{Config.RootUrl}}account/signin_by_linkedin?retUrl=" + retUrl);
+            $("#link_login_twitter").attr("href", "{{Config.RootUrl}}account/signin_by_twitter?retUrl=" + retUrl);
+        }
+        else {
+            $("#link_login_google").attr("href", "{{Config.RootUrl}}account/signin_by_google");
+            $("#link_login_facebook").attr("href", "{{Config.RootUrl}}account/signin_by_facebook");
+            $("#link_login_linkedin").attr("href", "{{Config.RootUrl}}account/signin_by_linkedin");
+            $("#link_login_twitter").attr("href", "{{Config.RootUrl}}account/signin_by_twitter");
+        }
+
+        $("#username").keypress(function ($event) {
+            if ($event.keyCode == 13) {
+                funcLogin();
+            }
+        });
+
+        $("#password").keypress(function ($event) {
+            if ($event.keyCode == 13) {
+                funcLogin();
+            }
+        });
+
+        $("#form_sign_in").click(
+            function () {
+                funcLogin();
+            }
+        );
+
+        var funcLogin = function () {
+            var ajax = "server.api://(nodejs)modules/node.sys.account@doLogin";
+            ajax.data({
+                Username: $('[name="username"]').val(),
+                Password: $('[name="password"]').val(),
+                Url: (window.location.href.indexOf("?retUrl=") > -1) ? window.location.href.split("?retUrl=")[1] : "{{{Config.RootUrl}}}"
+            })
+                .done(function (res) {
+                    console.log(res);
+                    if (res.apiError) {
+                        if (res.apiError.errorType == "UsernameIsEmpty") {
+                            toastr.error("res:(Xin nhập email)");
+                        }
+                        if (res.apiError.errorType == "PasswordIsEmpty") {
+                            toastr.error("res:(Xin nhập mật khẩu)");
+                        }
+                        if (res.apiError.errorType == "EmailOrPasswordIsIncorrect") {
+                            toastr.error("res:(Email hoặc mật khẩu không đúng)");
+                        }
+                        if (res.apiError.errorType == "UserWasNotFound") {
+                            toastr.error("res:(Tài khoản không tìm thấy)");
+                        }
+                    }
+					else {
+						window.location.ref = "{{Config.RootUrl}}candidate/myresume";
+                        if (res.action && res.action.redirect) {
+                            window.location.href = res.action.redirect;
+                        }
+                        else {
+                            window.location.ref = "{{Config.RootUrl}}"
+                        }
+                    }
+                })
+        }
+
+        //afterSubmit("frm_login", (data) => {
+        //    if (data.formError) {
+        //        if (data.formError.errorType == "UsernameOrPasswordIsIncorrect") {
+        //            toastr.error("res:(Email hoặc mật khẩu không đúng)", "res:(Đăng nhập không thành công)");
+        //        }
+        //    }
+        //    console.log(data);
+        //})
+    });
+
+</script>

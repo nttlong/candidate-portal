@@ -1,0 +1,702 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Ứng viên)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <script src="{{Config.RootUrl}}Scripts/jquery.twbsPagination.min.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/Dialogs.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/toastr.js"></script>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_uvienlist.min.css" rel="stylesheet" />
+
+</head>
+<body ng-controller="app" ng-cloak>
+    <render>navbar.html</render>
+    <div class="wrapper" id="app">
+        <section class="container myresume-content">
+            <div>
+                <div class="lv-search-container">
+                    <div class="lv-search-widget">
+                        <div class="lv-search-controls clearfix">
+                            <div>
+                                <input type="hidden" name="bytype" value="by-post-date" />
+                                <input type="hidden" name="recruiter" value="all" />
+                                <div class="col-sm-4">
+                                    <div class="lv-search-box">
+                                        <span class="icon-search glyphicon glyphicon-search"></span>
+                                        <input id="txtSearch" class="input" ng-keyup="$event.keyCode == 13 && doSearch()" type="text" placeholder="res:(Nhập bằng cấp, chuyên ngành, chứng chỉ...)" name="ByText" ng-model="data.search.content">
+                                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="lv-dropdown-list">
+                                        <span class="lv-icon icon-left fa fa-list-ul"></span>
+                                        <input type="text" data-c-select2 data-source="data.JobGroups" ng-model="data.search.fullJobCode" class="lv-search-list" placeholder="res:(Chọn công việc)" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="lv-dropdown-list">
+                                        <span class="lv-icon icon-left glyphicon glyphicon-map-marker"></span>
+                                        <input data-c-select2 data-source=" data.Locations" ng-model="data.search.fullLocationCode" class="lv-search-list" placeholder="res:(Chọn khu vực)" />
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="lv-button-search">
+                                        <button ng-click="doSearch()" class="btn-search">res:(Tìm kiếm)</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="lv-table-content">
+                <div class="lv-table-content-header">
+                    <h1>res:(Tìm  thấy) <span>${totalCandidate}</span> res:(hồ sơ)</h1>
+                    <button class="btn btn-default" ng-click="doGetLinkExport()"><i class="fa fa-arrow-down" aria-hidden="true"></i></button>
+                </div>
+                <table class="table table-vertical">
+                    <thead>
+						<tr>
+							<th width="1%">
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" id="selectall" value="" ng-click="doCheckAllCandidate()">
+										<span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+									</label>
+								</div>
+							</th>
+							<th width="7%"></th>
+							<th>res:(Ứng viên)</th>
+							<th>res:(Công việc hiện tại)</th>
+							<th>res:(Ngày tạo/Cập nhật)</th>
+							<th>res:(Đã có)</th>
+							<th></th>
+						</tr>
+                    </thead>
+                    <tbody>
+						<tr style="border-bottom: 1px solid #ddd;" ng-repeat="item in data.CandidateList">
+							<td>
+								<div class="checkbox">
+									<label>
+										<input type="checkbox" value="" ng-click="doCheckCandidate(item)">
+										<span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+									</label>
+								</div>
+							</td>
+							<td>
+								<a target="_blank" href="{{Config.RootUrl}}candidate/myresume/${item.UserId}">
+									<img width="64" height="64" style="border-radius: 50%" ng-src="{{Config.RootUrl}}/photo/candidate/${item.UserId}.png" />
+								</a>
+							</td>
+							<td class="no-bottom-line" width="35%">
+
+								<a target="_blank" href="{{Config.RootUrl}}candidate/myresume/${item.UserId}">
+									<p><strong>${item.LastName} ${item.FirstName} </strong></p>
+								</a>
+								<p>${item.TotalExpYear||"_"} res:(năm)</p>
+								<p><i class="fa fa-building" aria-hidden="true"> ${item.RecentInfo.CompanyName}</i></p>
+								<p><i class="fa fa-graduation-cap" aria-hidden="true"></i> ${item.TopDegree}</p>
+							</td>
+							<td>${item.RecentInfo.Job.JobName[lang]}</td>
+							<td>
+								<span>
+									${item.CreatedOn | date:'dd-MM-yyyy'}
+								</span> /
+								<span>
+									${item.LatestModifiedOn | date:'dd-MM-yyyy'}
+								</span>
+							</td>
+							<td ng-if="item.TotalRecruiterReviews != undefined">${item.TotalRecruiterReviews} res:(lần xem hồ sơ)</td>
+							<td ng-if="item.TotalRecruiterReviews == undefined">res:(0 lần xem hồ sơ)</td>
+							<td style="text-align: center">
+								<button type="button" class="btn btn-default btn-sm" ng-click="doAddCandidate(item)">
+									res:(Thêm ứng viên)
+								</button>
+							</td>
+						</tr>
+                    </tbody>
+                </table>
+                <!--Table ngang-->
+                <table class="table table-horizontal">
+                    <tbody ng-repeat="item in data.CandidateList">
+                        <tr>
+                            <th></th>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+
+
+                            </th>
+                            <td><img width="64" height="64" style="border-radius: 50%" ng-src="{{Config.RootUrl}}/photo/candidate/${item.UserId}.png" /></td>
+                        </tr>
+                        <tr>
+                            <th>res:(Ứng viên)</th>
+                            <td>
+                                <p><strong>${item.FirstName}&nsub; ${item.LastName}</strong></p>
+                                <p>${item.ExperienceYears} res:(năm)</p>
+                                <p>
+                                    <i class="fa fa-building" aria-hidden="true"></i>
+
+                                </p>
+                                <p><i class="fa fa-graduation-cap" aria-hidden="true"></i> Cử nhân</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>res:(Công việc hiện tại)</th>
+                            <td>
+                                <p>${item.ExperienceYears} res:(năm)</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>res:(Ngày tạo/Cập nhật)</th>
+                            <td>
+
+                                <span>${item.CreatedOn | date:'MM/dd/yyyy'}</span> /
+                                <span> ${item.LatestModifiedOn | date:'MM/dd/yyyy'}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>res:(Đã có)</th>
+                            <td>${item.TotalRecruiterReviews} res:(lần xem hồ sơ) ${item.TotalRequisition}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!--Phân trang-->
+                <div style="text-align: center" class="footer_left item_left" ng-if="data.CandidateList.length > 0">
+                    <div c-pager data-config="${pagerConfig}" data-on-change="onPageChane">
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.categories",
+            "./../modules/node.sys.customer",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            (utils, categories, customer, aut, model, app) => {
+                app.loadListOfJobs = (event) => {
+                    categories.getListOfJobs(utils.getCurrentLanguageCode(event), (err, lst) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, lst);
+                            event.done();
+                        }
+                    })
+                };
+                app.loadListOfLocations = (event) => {
+                    categories.getListOfLocations(utils.getCurrentLanguageCode(event), (err, lst) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, lst);
+                            event.done();
+                        }
+                    })
+                }
+                app.loadListOfExperincelevel = (event) => {
+                    categories.get_ls_experience_levels(utils.getCurrentLanguageCode(event), (err, lst) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, lst);
+                            event.done();
+                        }
+                    })
+                };
+                app.loadListOfRecruiters = (event) => {
+                    categories.get_ls_recruiters(utils.getCurrentLanguageCode(event), (err, lst) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, lst);
+                            event.done();
+                        }
+                    })
+                };
+				app.doSearchCandidate = (event) => {
+                    var recruiter;
+                    var user = aut.getUser(event.req);
+                    var listOfCandidate;
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event) || {};
+
+                            var idx = clientData.idx;
+                            var size = clientData.size;
+                            var datafilter = clientData.filter;
+
+                            var filter = {
+                                job: {},
+                                location: {},
+                                content: (datafilter.content && (datafilter.content != "")) ? datafilter.content : undefined
+                            };
+                            if ((datafilter.fullJobCode) && (datafilter.fullJobCode != "all")) {
+                                filter.job.GroupCode = datafilter.fullJobCode.split("::")[0];
+                                filter.job.JobCode = datafilter.fullJobCode.split("::")[1];
+
+                            }
+                            if ((datafilter.fullLocationCode) && (datafilter.fullLocationCode != "all")) {
+                                filter.location.LocationCode = datafilter.fullLocationCode.split("::")[0];
+                                filter.location.ProvinceCode = datafilter.fullLocationCode.split("::")[1];
+                            }
+                            var recruiter = model.ls_recruiters().where("UserEmail", user.Email)
+                                .toItem.sync();
+                            // #region tao query
+                            var qr = model.ls_candidate()
+                                .where("(AllowSearch==isAllowSearch)and(LatestModifiedOn!=data)", {
+                                    isAllowSearch: true,
+                                    data: null
+                                })
+                                .lookup("ls_requisition", "UserEmail", "CandidateApplyList.CandidateEmail", "requisition")
+                                // .where("requisition.RecruiterId", "=", recruiter._id)
+                                .lookup("sys_Users", "UserEmail", "Email", "user")
+                                .unwind("user")
+                                .select({
+                                    FirstName: "user.FirstName",
+                                    LastName: "user.LastName",
+                                    Email: "user.Email",
+                                    UserEmail: 1,
+                                    requisition: 1,
+                                    RecruiterId: "requisition.RecruiterId",
+                                    CandidateApplyList: "$requisition.CandidateApplyList",
+                                    typeOfCandidateApplyList: {
+                                        $type: "$requisition.CandidateApplyList"
+                                    },
+                                    Desier: 1,
+                                    TopDegree: 1,
+                                    TotalExpYear: 1,
+                                    RecentInfo: 1,
+                                    UserId: "user.UserId",
+                                    CreatedOn: "user.CreatedOn",
+                                    ModifedOn: 1,
+                                    TotalRecruiterReviews: 1,
+                                    AllowSearch: 1,
+                                    TypeOfRequisition: { $type: "$requisition" },
+                                    TotalRequisition: { $size: "$requisition" },
+                                    user: 1,
+                                    Location: 1,
+                                    Desire: 1,
+                                    Cer: 1,
+                                    Degree: 1,
+                                    LatestModifiedOn: 1
+                                })
+                                .query()
+                                .select({
+                                    FirstName: 1,
+                                    UserId: 1,
+                                    LastName: 1,
+                                    ExperienceYears: 1,
+                                    Email: 1,
+                                    UserEmail: 1,
+                                    TotalExpYear: 1,
+                                    Desier: 1,
+                                    TopDegree: 1,
+                                    RecentInfo: 1,
+                                    CreatedOn: 1,
+                                    ModifedOn: 1,
+                                    TotalRecruiterReviews: 1,
+                                    AllowSearch: 1,
+                                    RecruiterId: 1,
+                                    len: {
+                                        $cond: {
+                                            if: { $eq: ["$typeOfCandidateApplyList", "array"] },
+                                            then: { $size: "$requisition.CandidateApplyList" },
+                                            else: 0
+                                        }
+                                    }, TypeOfRequisition: 1,
+                                    TotalRequisition: 1,
+                                    user: 1,
+                                    Location: 1,
+                                    Desire: 1,
+                                    Cer: 1,
+                                    Degree: 1,
+                                    LatestModifiedOn: 1
+                                })
+                                //.query()
+                                //.where("(len>number)or(RecruiterId==id)", {
+                                //    number: 0,
+                                //    //isAllowSearch: true,
+                                //    id: recruiter._id
+                                //})
+                                .query();
+                            if (filter.location.LocationCode && filter.location.ProvinceCode) {
+                                qr = qr.where("(Location.FullCode==fullLocationCode)or " +
+                                    "contains(Desire.dataFullLocCode, fullLocationCode)",
+                                    { fullLocationCode: datafilter.fullLocationCode }).query();
+                            }
+                            if (filter.job.GroupCode && filter.job.JobCode) {
+                                qr = qr.where("(RecentInfo.Job.FullCode==fullJobCode)or " +
+                                    "contains(Desire.dataFullJobCode, fullJobCode)",
+                                    { fullJobCode: datafilter.fullJobCode }).query();
+                            }
+                            if (filter.content) {
+                                var dataOr = [];
+                                var str = 'Đã tốt nghiệp';
+                                var _str = 'Da tot nghiep';
+                                if (filter.content.toLowerCase() === str.toLowerCase() || filter.content.toLowerCase() === _str.toLowerCase()) {
+                                    dataOr.push({
+                                        'Degree': {
+                                            '$elemMatch': {
+                                                'IsGraduated': true
+                                            }
+                                        }
+                                    });
+                                }
+                                dataOr.push({
+                                    'Cer': {
+                                        '$elemMatch': {
+                                            'Name': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Cer': {
+                                        '$elemMatch': {
+                                            'CerIssuedPlace': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Cer': {
+                                        '$elemMatch': {
+                                            'Level': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Cer': {
+                                        '$elemMatch': {
+                                            'Rank': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Degree': {
+                                        '$elemMatch': {
+                                            'Major': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Degree': {
+                                        '$elemMatch': {
+                                            'MajorLevel': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Degree': {
+                                        '$elemMatch': {
+                                            'SchoolName': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+                                });
+                                dataOr.push({
+                                    'Degree': {
+                                        '$elemMatch': {
+                                            'Rank': { '$regex': new RegExp(filter.content, "i") }
+                                        }
+                                    }
+								});
+								dataOr.push({
+									'TopDegree': { '$regex': new RegExp(filter.content, "i") }
+								});
+                                qr._operators.push({
+                                    $match: {
+                                        $or: dataOr
+                                    }
+                                });
+                                //qr = qr.where("contains(user.MetaGroupSearch.PublishSearch.FullName,content) or " +
+                                //    "contains(MetaGroupSearch.PublishSearch.DesireMajor_Name_vn,content) or " +
+                                //    "contains(MetaGroupSearch.PublishSearch.DesireMajor_Name_en,content) or " +
+                                //    "contains(MetaGroupSearch.PublishSearch.Location_Name_vn,content) or " +
+                                //    "contains(MetaGroupSearch.PublishSearch.Location_Name_en,content)"
+                                //    , filter).query();
+                            }
+                            // #endregion
+                            listOfCandidate = qr.sort("TotalRequisition", -1)
+                                .query()
+                                .sort("FirstName", -1)
+                                .query()
+                                .sort("LastName", -1)
+                                .select({
+                                    AllowSearch: 1,
+                                    FirstName: 1,
+                                    UserId: 1,
+                                    LastName: 1,
+                                    ExperienceYears: 1,
+                                    Email: 1,
+                                    TotalExpYear: 1,
+                                    Desier: 1,
+                                    TopDegree: 1,
+                                    RecentInfo: 1,
+                                    CreatedOn: 1,
+                                    ModifedOn: 1,
+                                    TotalRecruiterReviews: 1,
+                                    LatestModifiedOn: 1
+                                });
+
+                            // count
+                            var qrCount = qr.clone();
+                            var count = qrCount.count.sync();
+                            //
+                            listOfCandidate = listOfCandidate
+                                .skip(idx * size)
+                                .limit(size)
+                                .toArray.sync();
+                            utils.writeData(event, { data: listOfCandidate, totalItems: count });
+                            event.done();
+                        } catch (e) {
+                            event.done(e);
+                        }
+                    }, event);
+                }
+                app.doChangeLanguage = (event) => {
+                    var clientData = utils.readData(event);
+                    event.res.cookie('language', event.form.lang || clientData.lang || 'vn');
+                    //event.res.end(JSON.stringify({
+                    //    action: {
+                    //        refresh: true
+                    //    }
+                    //}));
+                    utils.writeData(event, {});
+                    event.done();
+                };
+
+                app.doGetExportLink = (event) => {
+                    utils._try(() => {
+                        var operators;
+                        var source = "ls_candidate";
+                        var lang = "vn";
+                        var operators;
+                        var dataOpe = [];
+                        var operator = {};
+                        var clientData = utils.readData(event);
+                        var dataCandidate = clientData.dataCandidate;
+                        
+                        operator["$match"] = {};
+                        operator["$match"]["AllowSearch"] = true;
+                        operator["$match"]["LatestModifiedOn"] = { "$ne": null};
+                        dataOpe.push(operator);
+                        // tìm ứng viên có email giống
+                        if (dataCandidate.length > 0) {
+                            var or = [];
+                            for (var i = 0; i < dataCandidate.length; i++) {
+                                var obj = {};
+                                obj["UserEmail"] = dataCandidate[i].Email;
+                                or.push(obj);
+                            }
+
+                            operator = {};
+                            operator["$match"] = {};
+                            operator["$match"]["$or"] = or;
+                            dataOpe.push(operator);
+                        }
+                        //
+                        operator = {};
+                        operator["$lookup"] = {};
+                        operator["$lookup"]["from"] = "sys_Users";
+                        operator["$lookup"]["localField"] = "UserEmail";
+                        operator["$lookup"]["foreignField"] = "Email";
+                        operator["$lookup"]["as"] = "userData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$unwind"] = "$userData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$project"] = {};
+                        operator["$project"]["_id"] = 0;
+                        operator["$project"]["Họ"] = "$userData.LastName";
+                        operator["$project"]["Tên"] = "$userData.FirstName";
+                        operator["$project"]["Email"] = "$UserEmail";
+                        operator["$project"]["Giới thiệu chung"] = "$Overview";
+                        operator["$project"]["Công việc hiện tại"] = "$RecentInfo.Job.JobName." + lang;
+                        operator["$project"]["Số năm kinh nghiệm"] = "$TotalExpYear";
+                        operator["$project"]["Bằng cấp cao nhất"] = "$TopDegree";
+                        operator["$project"]["Công ty gần đây nhất"] = "$RecentInfo.CompanyName";
+                        operator["$project"]["Ngày sinh"] = "$BirthDate";
+                        operator["$project"]["Giới tính"] = "$Sex";
+                        operator["$project"]["Điện Thoại"] = "$Mobile";
+                        operator["$project"]["Địa Chỉ"] = "$FullAddress";
+                        operator["$project"]["Quốc Tịch"] = "$Nationality.Name.vn";
+                        operator["$project"]["Tình Trạng Hôn Nhân"] = "$MarriageStatus.Name." + lang;
+                        operator["$project"]["Tỉnh/Thành Phố"] = "$Location.Province.Name." + lang;
+
+                        dataOpe.push(operator);
+                        
+                        operators = JSON.stringify(dataOpe);
+                        var ret = model.sys_export_token()
+                            .insert({
+                                Type: "excel",
+                                Source: source,
+                                Language: 'vn',
+                                FileName: 'test',
+                                Operators: JSON.stringify(operators)
+                            }).commit.sync();
+                        utils.writeData(event, { id: ret._id });
+                        event.done();
+
+                    }, event);
+                }
+
+            }
+        ]
+    </script>
+    <script>
+        ng_app([], function (app) {
+            app.lang = "{{Language.Current.Code}}"
+            app.data = {
+                JobGroups: [],
+                Locations: [],
+                CandidateList: [],
+                search: {}
+            };
+            app.lstCandidateCheck = [];
+            app.totalCandidate = 0;
+            app.pagerConfig = {
+                numOfPageSelector: 10, totalItems: 1, pageSize: 20, pageIndex: 0
+            }
+            history_navigator(app.$root);
+            app.loadLocation = function () {
+                var ajax = "server.page://loadListOfLocations";
+                ajax.done(function (res) {
+                    var data = {};
+                    data.id = "all";
+                    data.text = "res:(Tất cả khu vực)";
+                    res.unshift(data);
+                    app.data.Locations = res;
+                    app.$applyAsync();
+                })
+            };
+            app.loadLocation();
+            app.loadJobs = function () {
+                var ajax = "server.page://loadListOfJobs";
+                ajax.done(function (res) {
+                    var data = {};
+                    data.id = "all";
+                    data.text = "res:(Tất cả công việc)";
+                    res.unshift(data);
+                    app.data.JobGroups = res;
+                    app.$applyAsync();
+                })
+            };
+            app.loadJobs();
+            app.loadData = function (filter, idx, size) {
+                var ajax = "server.page://doSearchCandidate";
+                filter.content = filter.content ? decodeURIComponent(escape(filter.content)) : undefined;
+                ajax
+                    .data({
+                        filter: filter || {},
+                        idx: idx,
+                        size: size
+                    })
+                    .done(function (res) {
+                        app.data.CandidateList = res.data;
+                        app.pagerConfig.totalItems = res.totalItems;
+                        app.totalCandidate = res.totalItems;
+                        app.pagerConfig.pageIndex = idx;
+                        app.$applyAsync();
+                    })
+            }
+            // app.loadData();
+            app.doSearch = function () {
+                $url().param("job", app.data.search.fullJobCode || "all")
+                    .param("location", app.data.search.fullLocationCode || "all")
+                    .param("content", app.data.search.content || "all")
+                    .apply();
+            }
+            //
+            app.onPageChane = function (idx) {
+                app.loadData(app.data.search, idx, app.pagerConfig.pageSize);
+            }
+            app.$root.$history.change(function (data) {
+                app.data.search = {}
+                app.data.search.fullJobCode = data.job;
+                app.data.search.fullLocationCode = data.location;
+                app.data.search.content = (data.content == "all") ? undefined : data.content;
+                app.$applyAsync();
+                app.loadData(app.data.search, app.pagerConfig.pageIndex, app.pagerConfig.pageSize);
+            })
+            app.$root.doChangeLanguage = function (code) {
+                var ajax = "server.page://doChangeLanguage";
+                ajax.data({
+                    lang: app.$root.lang
+                }).done(function (res) {
+                    location.reload();
+                })
+            }
+            app.doGetLinkExport = function (fileName, dialogScope) {
+                var a = "server.page://doGetExportLink";
+                a.data({
+                    dataCandidate: app.lstCandidateCheck
+                }).done(function (res) {
+                    var url = "{{Config.RootUrl}}export/excel/" + res.id;
+                    window.open(url, '_blank');
+                    app.$applyAsync();
+                })
+            }
+            app.doCheckCandidate = function (item) {
+                if (app.lstCandidateCheck.length > 0) {
+                    var data = app.lstCandidateCheck.filter(function (el) {
+                        return el.UserId === item.UserId;
+                    });
+                    if (data.length > 0) {
+                        app.lstCandidateCheck = app.lstCandidateCheck.filter(function (el) {
+                            return el.UserId !== item.UserId;
+                        });
+                    } else {
+                        app.lstCandidateCheck.push(item);
+                    }
+                } else {
+                    app.lstCandidateCheck.push(item);
+                }
+
+                if (app.data.CandidateList.length == app.lstCandidateCheck.length) {
+                    $("#selectall").prop('checked', true);
+                } else {
+                    $("#selectall").prop('checked', false);
+                }
+            }
+            app.doCheckAllCandidate = function () {
+                var ckb = $("#selectall");
+                if (ckb[0].checked) {
+                    $(':checkbox').each(function () {
+                        this.checked = true;
+                    });
+                    app.lstCandidateCheck = app.data.CandidateList;
+                } else {
+                    $(':checkbox').each(function () {
+                        this.checked = false;
+                    });
+                    app.lstCandidateCheck = [];
+                }
+			}
+			app.doAddCandidate = function (item) {
+				app.dataCandidate = item;
+				dialog(app)
+					.url("add_candidate_to_job")
+					.done();
+			}
+        })
+
+        setTimeout(function () {
+            $("#ungvien").css({ "fontWeight": "bold", "color": "black" });
+        }, 200);
+
+    </script>
+
+</body>
+</html>

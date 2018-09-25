@@ -1,0 +1,112 @@
+﻿
+<div class="container lv-search-container-recruiter" >
+    <div class="lv-search-widget"  id="searchBox">
+        <h1>res:(Tìm Công Việc Mơ Ước.)<br class="break-title"><strong> res:(Nâng Bước Thành Công)!</strong></h1>
+        <div class="lv-search-controls clearfix">
+            <div>
+               <input type="hidden" name="bytype" value="by-post-date" />
+                <input type="hidden" name="recruiter" value="all" />
+                <div class="col-sm-6 lv-search-by-job magin-search-box">
+                    <div class="lv-dropdown-list-recruiter">
+                        <span class="lv-icon icon-left fa fa-list-ul"></span>
+                        <select class="lv-search-list" placeholder="res:(Tất cả các ngành nghề)" name="ByJob" style="width:100%" value="{{{values.location}}}::{{{values.province}}}">
+                            <option value="all::all">res:(Tất cả các ngành nghề)</option>
+                            {{#each categories.jobs}}
+                            <optgroup label="{{text}}">
+                                {{#each this.children}}
+                                <option value="{{id}}">{{text}}</option>
+                                {{/each}}
+                            </optgroup>
+                            {{/each}}
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 lv-search-by-location magin-search-box">
+                    <div class="lv-dropdown-list-recruiter">
+                        <span class="lv-icon icon-left glyphicon glyphicon-map-marker"></span>
+                        <select class="lv-search-list" placeholder="res:(Tất cả các địa điểm)" name="ByLocation" style="width:100%" value="{{selectedJob}}">
+                            <option value="all::all">res:(Tất cả các địa điểm)</option>
+                            {{#each categories.location }}
+                            <optgroup label="{{text}}">
+                                {{#each this.children}}
+                                <option value="{{id}}">{{text}}</option>
+                                {{/each}}
+                            </optgroup>
+                            {{/each}}
+
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-12 lv-search-by-text magin-search-box">
+                    <div class="lv-search-box-recruiter">
+                        <span class="icon-search glyphicon glyphicon-search"></span>
+                        <input id="txtSearch" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí, kỹ năng...)" name="ByText" ng-model="searchInfo.content">
+                        <span class="icon-remove glyphicon glyphicon-remove"></span>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="lv-button-search-recruiter">
+                        <button  class="btn-search" name="CmdSearch"  id="btnSearchJobs">res:(Tìm việc)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/node.sys.categories",
+        (utils, categories, app) => {
+           
+            app.onLoad = (event) => {
+                var cate = categories;
+                utils._try(() => {
+                    var language = utils.getCurrentLanguageCode(event);
+                    var listOfLocation;
+                    var listOfJobs;
+                    utils.paralellCaller()
+                        .call(emit => {
+                            cate.getListOfLocations(language, (err, list) => {
+                                listOfLocation = list;
+                                emit(err);
+                            })
+                        })
+                        .call(emit => {
+                            cate.getListOfJobs(language, (err, list) => {
+                                listOfJobs = list;
+                                emit(err);
+                            })
+                        })
+                        .done((err) => {
+                            if (err) event.done(err);
+                            else {
+                                event.setModel("categories.location", listOfLocation);
+                                event.setModel("categories.jobs", listOfJobs);
+                                if ((event.req.routeInfo)&&(event.req.routeInfo.params)) {
+                                    event.req.routeInfo.params.jobGroup = event.req.routeInfo.params["job-group"]
+                                    event.req.routeInfo.params.content = (event.req.routeInfo.params.content == "all") ? "" : event.req.routeInfo.params.content;
+                                    event.setModel("values", event.req.routeInfo.params);
+                                }
+                                event.done();
+                            }
+                        })
+                }, event);
+            }
+        }
+    ]
+</script>
+<script>
+    $(document).ready(function () {
+        $('[name="ByLocation"]').select2({ placeholder: 'res:(Search by location)' });
+        $('[name="ByJob"]').select2({ placeholder: 'res:(Search by category)' });
+        $("#btnSearchJobs").click(function () {
+            var txtSearch = ($("#txtSearch").val() != "") ? $("#txtSearch").val() : "all";
+            window.location.href = "{{Config.RootUrl}}jobs/by-post-date/{{Language.Current.Code}}/all/" + $('[name="ByLocation"]').val().replace("::", "/") + "/" + $('[name="ByJob"]').val().replace("::", "/")
+                + "/" + txtSearch + "/0";
+        })
+    });
+    
+</script>
+

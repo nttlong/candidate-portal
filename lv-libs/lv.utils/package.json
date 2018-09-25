@@ -1,0 +1,32 @@
+{
+  "name": "lv.utils",
+  "version": "1.0.1",
+  "description": "Thu vien tien ich",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nttlong",
+  "license": "ISC",
+  "dependencies": {
+    "content-disposition": "^0.5.2",
+    "exceljs": "^0.6.2",
+    "fast-csv": "^2.4.1",
+    "guid": "0.0.12",
+    "lv.logs": "./../lv.logs",
+    "moment": "^2.20.1",
+    "mongodb": "^2.2.31",
+    "sync": "^0.2.5"
+  },
+  "devDependencies": {
+    "lv.logs": "./../lv.logs"
+   
+  },
+  "repository": {
+    "type": "git",
+    "url": "lv.utils"
+  },
+  "keywords": [
+    "lv.utils"
+  ]
+}

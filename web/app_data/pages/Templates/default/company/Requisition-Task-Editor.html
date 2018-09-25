@@ -1,0 +1,503 @@
+﻿
+<body>
+    <div title="res:(Thêm mới hoặc chỉnh sửa tuyển dụng)" class="container-fluid" icon="{{Config.RootUrl}}photo/logo/{{data.RecruiterCode}}.png">
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Vòng tuyển dụng) <span style="color: red">*</span></label>
+				<div class="col-sm-9">
+					<input type="text" ng-model="data.TaskName" class="form-control" placeholder="res:(Vòng tuyển dụng)">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Bước công việc)</label>
+				<div class="col-sm-9">
+					<input type="text" ng-model="data.Description" class="form-control" placeholder="res:(Bước công việc)">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Ngày thực hiện) <span style="color: red">*</span></label>
+				<div class="col-sm-9">
+					<div c-date-picker ng-model="data.ActionDate" placeholder="res:(Ngày thực hiện)"></div>
+
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Người thực hiện)</label>
+				<div class="col-sm-9">
+					<input type="text" ng-model="data.Actor" class="form-control" placeholder="res:(Người thực hiện)">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Kết quả) <span style="color: red">*</span></label>
+				<div class="col-sm-9">
+					<input type="text" ng-model="data.Result" class="form-control" placeholder="res:(Kết quả)">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Ghi chú)</label>
+				<div class="col-sm-9">
+					<textarea ng-model="data.Note" class="form-control" placeholder="res:(Ghi chú)" style="height:120px"></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(File đính kèm)</label>
+				<div class="col-sm-9">
+					<div c-attach-file ng-model="data.AttachmentFileContent" file-size="data.FileSize" file-name="data.AttachmentFileName" url="${getDownLoadLink(data.TaskID)}"></div>
+				</div>
+			</div>
+			<div class="form-group" ng-show="data.AttachmentFileName">
+				<label class="control-label col-sm-3">res:(Tải file đính kèm)</label>
+				<div class="col-sm-9">
+					<a href="{{Config.RootUrl}}attachments/Tasks/${data.TaskID}" target="_blank">
+						${data.AttachmentFileName||data.TaskID}
+					</a>
+				</div>
+			</div>
+			<div class="form-group" ng-show="data.id || $parent.currentTask.isNew">
+				<label class="control-label col-sm-3">res:(Là vòng tuyển dụng)</label>
+				<div class="col-sm-9">
+					<input type="checkbox" ng-model="IsParent" style="margin-top: 10px;">
+				</div>
+			</div>
+			<div class="form-group" ng-show="!IsParent && (data.id || $parent.currentTask.isNew)">
+				<label class="control-label col-sm-3">res:(Chọn vòng tuyển dụng)</label>
+				<div class="col-sm-9">
+					<select class="form-control" id="sel1" ng-model="ParentID">
+						<option ng-repeat="item in CodeTaskParentData" ng-value="item.TaskID">${item.TaskName}</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-sm-3">res:(Là lịch phỏng vấn)</label>
+				<div class="col-sm-9">
+					<input type="checkbox" ng-model="data.IsInterview" style="margin-top: 10px;">
+				</div>
+			</div>
+			<div class="form-group" ng-if="data.IsInterview">
+				<label class="control-label col-sm-3">res:(Địa điểm)</label>
+				<div class="col-sm-9">
+					<input type="text" ng-model="data.InterviewLocation" class="form-control" placeholder="res:(Địa điểm)">
+				</div>
+			</div>
+			<div class="form-group" ng-if="data.IsInterview">
+				<label class="control-label col-sm-3">res:(Giờ phỏng vấn từ)</label>
+				<div class="col-sm-9">
+					<div c-time-picker ng-model="data.InterviewTime.From"></div>
+				</div>
+			</div>
+			<div class="form-group" ng-if="data.IsInterview">
+				<label class="control-label col-sm-3">res:(Giờ phỏng vấn đến)</label>
+				<div class="col-sm-9">
+					<div c-time-picker ng-model="data.InterviewTime.To"></div>
+				</div>
+			</div>
+			<div class="form-group" ng-if="data.IsInterview">
+				<label class="control-label col-sm-3">res:(Ứng viên xác nhận)</label>
+				<div class="col-sm-9">
+					<input type="text" ng-value="convertStatus(data.Status)" class="form-control" placeholder="res:(Ứng viên xác nhận)" disabled>
+				</div>
+			</div>
+		</form>
+        <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="First group">
+                <button type="button" class="btn btn-info" ng-click="saveItemTask()">res:(Lưu)</button>
+            </div>
+            <!--<div class="btn-group" role="group" aria-label="Second group">
+                <button ng-if="data.TaskID != undefined" type="button" class="btn btn-default" ng-click="deleteTaskItem()" data-dismiss="modal">res:(Xóa)</button>
+            </div>-->
+            <div class="btn-group" role="group" aria-label="Third group">
+                <button type="button" class="btn btn-default" ng-click="$doClose()">res:(Đóng)</button>
+            </div>
+        </div>
+    </div>
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/lv.db",
+            "./../libs/lv.authenticate",
+            "./../modules/node.Email",
+            "./../modules/lv.model",
+            (utils, Data, aut, EMAIL, models, app) => {
+                app.onLoad = (event) => {
+                    var user = aut.getUser(event.req);
+                    models.ls_recruiters().
+                        where("UserEmail==Email", user)
+                        .toItem((err, result) => {
+
+                            event.setModel("data", result);
+                            event.done(err);
+                        })
+				}
+				
+				app.saveItemTask = (event) => {
+					debugger
+                    var recruiter;
+                    var user = aut.getUser(event.req);
+                    var clientData = utils.readData(event);
+                    var indexOfCandidate = -1;
+                    var indexOfTask = -1;
+                    var sys_global_language_setting_item;
+                    var ls_requisition_item;
+                    var candidateUser;
+                    var lan = utils.getCurrentLanguageCode(event);
+
+                    var check = utils.checkRequireFields([
+                        "TaskName",
+                        "ActionDate",
+                        "Result"
+                    ], clientData.task);
+                    if (check.length > 0) {
+                        utils.writeData(event, {
+                            apiError: check[0]
+                        });
+                        return
+                    }
+
+                    utils._try(() => {
+                        try {
+                            recruiter = models.ls_recruiters()
+                                .where("UserEmail==Email", user)
+                                .toItem.sync();
+                            indexOfCandidate = models.ls_requisition()
+                                .where("(Code==code)and(RecruiterId==id)", {
+                                    code: clientData.id,
+                                    id: typeof recruiter._id == 'object' ? recruiter._id : utils.objectID(recruiter._id)
+                                })
+                                .selectIndex("indexOfCandidate", "CandidateApplyList.CandidateEmail", clientData.email)
+                                .toItem.sync();
+                            if (indexOfCandidate) indexOfCandidate = indexOfCandidate.indexOfCandidate;
+                            if (indexOfCandidate > -1) {
+								if (!clientData.task.TaskID && !clientData.task.CodeStepMonitorIdTask) { // add new
+                                    clientData.task.TaskID = utils.objectID();
+                                    clientData.task.ActionDate = clientData.task.ActionDate ? (new Date(clientData.task.ActionDate)) : new Date();
+									clientData.task.RequisitionID = utils.objectID(clientData.task.RequisitionID);
+									clientData.task.IsParent = clientData.IsParent;
+									if (!clientData.IsParent) {
+										clientData.task.ParentID = clientData.ParentID;
+									} else {
+										clientData.task.ParentID = null;
+									}
+                                    models.ls_requisition()
+                                        .where("(Code==id)and(RecruiterId==recId)", {
+                                            id: clientData.id,
+                                            recId: typeof recruiter._id == 'object' ? recruiter._id : utils.objectID(recruiter._id)
+                                        })
+                                        .push("CandidateApplyList." + indexOfCandidate + ".Tasks", clientData.task)
+                                        .commit.sync();
+                                }
+                                else { // update
+									var result;
+									if (clientData.task.TaskID) {
+										result = models.ls_requisition()
+											.where("(Code==id)and(RecruiterId==recId)", {
+												id: clientData.id,
+												recId: typeof recruiter._id == 'object' ? recruiter._id : utils.objectID(recruiter._id)
+											})
+											.unwind("CandidateApplyList")
+											.where("CandidateApplyList.CandidateEmail==email", clientData)
+											.selectIndex("indexOfTask", "CandidateApplyList.Tasks.TaskID", clientData.task.TaskID.toObjectID() ? clientData.task.TaskID.toObjectID() : clientData.task.TaskID)
+											.toItem.sync();
+									} else if (clientData.task.CodeStepMonitorIdTask) {
+										result = models.ls_requisition()
+											.where("(Code==id)and(RecruiterId==recId)", {
+												id: clientData.id,
+												recId: typeof recruiter._id == 'object' ? recruiter._id : utils.objectID(recruiter._id)
+											})
+											.unwind("CandidateApplyList")
+											.where("CandidateApplyList.CandidateEmail==email", clientData)
+											.selectIndex("indexOfTask", "CandidateApplyList.Tasks.CodeStepMonitorIdTask", clientData.task.CodeStepMonitorIdTask)
+											.toItem.sync();
+									}
+                                    if (result) {
+										indexOfTask = result.indexOfTask;
+										if (clientData.task.TaskID) {
+											clientData.task.TaskID = utils.objectID(clientData.task.TaskID);
+											clientData.task.RequisitionID = utils.objectID(clientData.task.RequisitionID);
+											clientData.task.ActionDate = new Date(clientData.task.ActionDate);
+											clientData.task.IsParent = clientData.IsParent;
+											if (!clientData.IsParent) {
+												clientData.task.ParentID = clientData.ParentID;
+											} else {
+												clientData.task.ParentID = null;
+											}
+										} else if (clientData.task.CodeStepMonitorIdTask) {
+											clientData.task.ActionDate = new Date(clientData.task.ActionDate);
+										}
+                                        models.ls_requisition()
+                                            .where("(Code==id)and(RecruiterId==recId)", {
+                                                id: clientData.id,
+                                                recId: typeof recruiter._id == 'object' ? recruiter._id : utils.objectID(recruiter._id)
+                                            })
+                                            .set("CandidateApplyList." + indexOfCandidate + ".Tasks." + indexOfTask, clientData.task)
+                                            .commit.sync();
+                                    }
+                                }
+
+                            }
+                            if (clientData.task.IsInterview) {
+                                sys_global_language_setting_item = models.sys_global_language_setting().toItem.sync();
+                                ls_requisition_item = models.ls_requisition()
+                                    .where("(Code==id)and(RecruiterId==recId)", {
+                                        id: clientData.id,
+                                        recId: typeof recruiter._id == 'object' ? recruiter._id : utils.objectID(recruiter._id)
+                                    })
+                                    .toItem.sync();
+                                candidateUser = models.sys_Users()
+                                    .where("Email==email", clientData)
+                                    .toItem.sync();
+                                if (ls_requisition_item.LanguageCV && (ls_requisition_item.LanguageCV != "any")) {
+                                    lan = ls_requisition_item.LanguageCV;
+                                }
+                                else {
+
+                                    if (candidateUser && (candidateUser.Settings) && (candidateUser.Settings.DefaultLanguage)) {
+                                        lan = candidateUser.Settings.DefaultLanguage;
+                                    }
+                                }
+
+                                var dataForEmail = {
+                                    Candidate: candidateUser,
+                                    Requisition: ls_requisition_item,
+                                    Interview: {
+										Date: clientData.task.ActionDate ? (new Date(clientData.task.ActionDate)) : new Date(),
+										From: clientData.task.InterviewTime ? clientData.task.InterviewTime.From : null,
+										To: clientData.task.InterviewTime ? clientData.task.InterviewTime.To : null,
+                                        At: clientData.task.InterviewLocation,
+                                        Note: clientData.task.Note
+                                    },
+                                    Company: recruiter,
+                                    WebSiteUrl: utils.getRootUrl(event.req)
+                                };
+                                var defaultTemplateSubject = "Thư mời phỏng vấn";
+                                var defaultContentTemplate = "Hi {{Candidate.FirstName}} {{Candidate.LastName}}<br/>." +
+                                    "Trân trọng mời bạn phỏng vấn vào ngày {{Interview.Date}} thời gian từ {{Interview.From}} đến {{Interview.To}}<br/>, tại {{Interview.At}}." +
+                                    " Bạn có thể xem lịch phỏng vấn của bạn tại <a href='{{WebSiteUrl}}/candidate/myinterview'>{{WebSiteUrl}}/candidate/myinterview</a>"
+                                "Chân thành <br/>";
+                                var template = EMAIL.getInviteInterriewTemplateEmailByAdminEmail.sync(null, lan, user.Email, defaultTemplateSubject, defaultContentTemplate, dataForEmail);
+                                EMAIL.sendEmail(candidateUser.Email, template.Subject, template.Template, null, dataForEmail, (err, result) => {
+
+                                })
+                            }
+
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+
+
+                    }, event);
+                };
+				app.loadTask = (event) => {
+                    utils._try(() => {
+                        var user = aut.getUser(event.req);
+                        var recruiter = models.ls_recruiters()
+                            .where("UserEmail==Email", user)
+                            .toItem.sync();
+						var clientData = utils.readData(event);
+						if (clientData.isNew) {
+							utils.writeData(event, {});
+							event.done(null);
+						}
+						var query = models.ls_requisition()
+							.where("(Code==code)and(RecruiterId==id)", {
+								code: clientData.code,
+								id: recruiter._id
+							})
+							.unwind("CandidateApplyList")
+							.unwind("CandidateApplyList.Tasks");
+						if (clientData.id) {
+							query = query.where("CandidateApplyList.Tasks.TaskID", utils.objectID(clientData.id));
+						} else if (clientData.CodeStepMonitorIdTask) {
+							query = query.where("CandidateApplyList.Tasks.CodeStepMonitorIdTask", clientData.CodeStepMonitorIdTask);
+						}
+
+						query.select({
+                                ActionDate: "CandidateApplyList.Tasks.ActionDate",
+                                Actor: "CandidateApplyList.Tasks.Actor",
+                                TaskName: "CandidateApplyList.Tasks.TaskName",
+                                Description: "CandidateApplyList.Tasks.Description",
+                                Result: "CandidateApplyList.Tasks.Result",
+                                Note: "CandidateApplyList.Tasks.Note",
+                                IsInterview: "CandidateApplyList.Tasks.IsInterview",
+                                InterviewLocation: "CandidateApplyList.Tasks.InterviewLocation",
+                                InterviewTime: "CandidateApplyList.Tasks.InterviewTime",
+                                TaskID: "CandidateApplyList.Tasks.TaskID",
+                                Status: "CandidateApplyList.Tasks.Status",
+                                AttachmentFileName: "CandidateApplyList.Tasks.AttachmentFileName",
+                                HasAttachment: {
+                                    $cond: {
+                                        if: {
+                                            $ne: ["CandidateApplyList.Tasks.AttachmentFileContent", null]
+                                        }, then: true,
+                                        else: false
+                                    }
+								},
+								IsParent: "CandidateApplyList.Tasks.IsParent",
+								IsFromATS: "CandidateApplyList.Tasks.IsFromATS",
+								Ordinal: "CandidateApplyList.Tasks.Ordinal",
+								ParentID: "CandidateApplyList.Tasks.ParentID",
+								CodeStepMonitorIdTask: "CandidateApplyList.Tasks.CodeStepMonitorIdTask"
+                            })
+                            .toItem((err, result) => {
+                                utils.writeData(event, result);
+                                event.done(err);
+                            })
+
+
+                    }, event);
+                }
+                app.doDelete = (event) => {
+                    var recruiter;
+                    var user = aut.getUser(event.req);
+                    var clientData = utils.readData(event);
+                    var indexOfCandidate = -1;
+                    var indexOfTask = -1;
+                    var sys_global_language_setting_item;
+                    var ls_requisition_item;
+                    var candidateUser;
+                    var lan = utils.getCurrentLanguageCode(event);
+                    utils._try(() => {
+                        try {
+                            recruiter = models.ls_recruiters()
+                                .where("UserEmail==Email", user)
+                                .toItem.sync();
+                            indexOfCandidate = models.ls_requisition()
+                                .where("_id", clientData.id.toObjectID())
+                                .selectIndex("indexOfCandidate", "CandidateApplyList.CandidateEmail", clientData.email)
+                                .toItem.sync();
+                            if (indexOfCandidate) indexOfCandidate = indexOfCandidate.indexOfCandidate;
+                            if (indexOfCandidate > -1) {
+                                clientData.data.forEach(item => {
+                                    item.TaskID = utils.objectID(item.TaskID);
+                                })
+                                models.ls_requisition()
+                                    .where("Code==id", { id: clientData.code })
+                                    .pull("CandidateApplyList." + indexOfCandidate + ".Tasks", { TaskID: clientData.taskId.toObjectID() })
+                                    //.set("CandidateApplyList." + indexOfCandidate + ".Tasks", clientData.data)
+                                    .commit.sync();
+                            }
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+
+
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+            (function (scope) {
+				scope.data = {};
+				scope.IsParent = true;
+				scope.CodeTaskParentData = scope.$parent.data.CodeTaskParentData;
+				console.log(scope.$parent.data.CodeTaskParentData);
+                scope.saveItemTask = function () {
+                    var toastrError = function (error, model) {
+                        toastr.error(error);
+                        $("[ng-model='" + model + "']").focus(
+                            function () {
+                                $(this).css({ "border-color": "red" })
+                            }
+                        );
+                        $("[ng-model='" + model + "']").blur(
+                            function () {
+                                $(this).css({ "border-color": "#ccc" })
+                            }
+                        );
+                        $("[ng-model='" + model + "']").trigger("click");
+                        $("[ng-model='" + model + "']").select();
+					}
+                    if (!scope.data) {
+                        scope.data = {};
+                    }
+                    scope.data.Email = scope.$root.CandidateEmail;
+                    scope.data.RequisitionID = scope.$parent.currentTask.id;
+                    
+                    var ajax = "server.page://saveItemTask"
+					ajax.data({
+						id: scope.$parent.search.Code,
+						email: scope.$root.CandidateEmail,
+						task: scope.data,
+						IsParent: scope.IsParent,
+						ParentID: scope.ParentID
+                    })
+                    .done(function (res) {
+                        if (res.apiError) {
+                            if (res.apiError.errorType == "TaskNameIsEmpty") {
+                                toastrError("res:(Vui lòng nhập vòng tuyển dụng)", "data.TaskName");
+                            }
+                            if (res.apiError.errorType == "ActionDateIsEmpty") {
+                                toastrError("res:(Vui lòng chọn ngày thực hiện)", "data.ActionDate");
+                            }
+                            if (res.apiError.errorType == "ResultIsEmpty") {
+                                toastrError("res:(Vui lòng nhập kết quả)", "data.Result");
+                            }
+                        } else {
+                            toastr.success("res:(Công việc của bạn đã được cập nhật)");
+                            scope.$doClose();
+							scope.$parent.onSelectCandidate();
+							scope.$parent.doLoadCodeDataTask(scope.$parent.RequisitionIdData);
+                        }
+                    })
+                };
+				scope.doLoadTask = function () {
+					var ajax = "server.page://loadTask";
+					ajax.data({ id: scope.$parent.currentTask.TaskID, CodeStepMonitorIdTask: scope.$parent.currentTask.CodeStepMonitorIdTask, code: scope.$parent.search.Code, isNew: scope.$parent.currentTask.isNew })
+                        .done(function (res) {
+							scope.data = res;
+							if (!scope.$parent.currentTask.isNew) {
+								scope.IsParent = scope.$parent.currentTask.IsParent;
+							}
+                            scope.$applyAsync();
+                        });
+
+                }
+                scope.doLoadTask();
+                scope.deleteTaskItem = function () {
+                    var listTask = scope.$parent.data.ListTask;
+                    var itemTask = scope.data;
+                    var arrTask = [];
+                    if (listTask.length > 0 && itemTask.TaskID) {
+                        for (var i = 0; i < listTask.length; i++) {
+                            if (item.TaskID != itemTask.TaskID) {
+                                delete listTask[i]["$$hashKey"];
+                                arrTask.push(listTask[i]);
+                            }
+                        }
+                        //listTask.forEach(item => {
+                        //    if (item.TaskID != itemTask.TaskID) {
+                        //        delete item["$$hashKey"];
+                        //        arrTask.push(item);
+                        //    }
+                        //})
+                    }
+                    var ajax = "server.page://doDelete";
+                    ajax.data({
+                        taskId: itemTask.TaskID,
+                        id: scope.$root.currentRequisitionID,
+                        code: scope.$parent.search.Code,
+                        email: scope.$root.CandidateEmail,
+                        data: arrTask
+                    }).done(function (res) {
+                        toastr.success("res:(Xóa dữ liệu thành công)");
+                        scope.$doClose();
+                        scope.$parent.onSelectCandidate();
+                    })
+                }
+                scope.convertStatus = function (item) {
+                    if (item == 2) {
+                        return ("res:(Từ chối)")
+                    } else if (item == 1) {
+                        return ("res:(Đồng ý)")
+                    } else {
+                        return ("res:(Chờ xác nhận)")
+                    }
+                }
+            });
+    </script>
+</body>

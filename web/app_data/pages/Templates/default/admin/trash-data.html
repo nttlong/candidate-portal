@@ -1,0 +1,52 @@
+﻿<body>
+    <div class="container-fluid">
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="item in data">
+                <h1> ${item._id.Name}</h1>(${item.count})
+            </li>
+           
+        </ul>
+        
+    </div>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            (
+                utils,
+                aut,
+                models,
+                page) => {
+                page.loadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var list = models.sys_trash_data()
+                                .group({ Name: "collectionName" })
+                                .sum("count", 1)
+                                .toArray.sync();
+                            utils.writeData(event, list);
+                            event.done();
+                        }
+                        catch (ex) {
+                            
+                            event.done(ex);
+                        }
+                        
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+            (function (scope) {
+                scope.doLoadData = function () {
+                    var a = "server.page://loadData";
+                    a.done(function (res) {
+                        scope.data = res;
+                        console.log(res);
+                        scope.$applyAsync();
+                    })
+                }
+                scope.doLoadData();
+            })
+    </script>
+</body>

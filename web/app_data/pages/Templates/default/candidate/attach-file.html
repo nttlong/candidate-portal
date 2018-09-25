@@ -1,0 +1,10 @@
+﻿<div class="field-view mg-bt download-resume" style="display: block;" ng-if="$root.isHiddenHs">
+    <a id="btnDownloadResume" ng-href="{{Config.RootUrl}}/attachments/candidate/cv/${$root.user.UserId}" target="_blank" class="btn btn-sm btn-default btn-outline" ng-if="$root.dataCv.ApplyType == 1">
+        <i class="fa fa-file-pdf-o"></i> res:(Hồ sơ)
+    </a>
+    <a id="btnDownloadResume" ng-href="{{Config.RootUrl}}/attachments/requisition/cv/${$root.user.UserId}/${$root.dataCv._id}" target="_blank" class="btn btn-sm btn-default btn-outline" ng-if="$root.dataCv.ApplyType == 3">
+        <i class="fa fa-file-pdf-o"></i> res:(Hồ sơ)
+    </a>
+    <!--<a id="btnDownloadResume" href="#" target="_blank" class="btn btn-sm btn-default btn-outline"><i class="fa fa-file-pdf-o"></i>res:(Đơn xin việc)</a>-->
+</div>
+

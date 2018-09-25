@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(My Resume)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_restatus.min.css" rel="stylesheet" />
+    <style>
+ .tables {
+  $base-border-color: gainsboro !default;
+  $base-border-radius: 3px !default;
+  $base-line-height: 1.5em !default;
+  $base-spacing: 1.5em !default;
+  $action-color: #477DCA !default;
+  $dark-gray: #333 !default;
+  $light-gray: #DDD !default;
+  $medium-screen: em(640) !default;
+  $large-screen: em(860) !default;
+  $base-font-color: $dark-gray !default;
+  $table-border-color: $base-border-color;
+  $table-border: 1px solid $table-border-color;
+  $table-background: lighten($table-border-color, 12%);
+  $table-header-background: lighten($table-background, 10%);
+  $table-hover-background: darken($table-background, 5%);
+  $table-stripe-background: darken($table-background, 2%);
+  $table-stripe-background-hover: darken($table-stripe-background, 5%);
+  $table-padding: 0.75em 1em;
+
+  border-collapse: separate;
+  border-left: 0px;
+  border-radius: $base-border-radius;
+  border-spacing: 0;
+  border: $table-border;
+  width: 100%;
+
+  tbody {
+    background-color: $table-background;
+
+    tr:hover > td, tr:hover > th {
+      background-color: $table-hover-background;
+    }
+    tr:nth-child(even) {
+      background-color: $table-stripe-background;
+      &:hover > td {
+        background-color: $table-stripe-background-hover;
+      }
+    }
+  }
+
+  thead:first-of-type {
+    tr:first-child > th:first-child {
+      border-top-left-radius: $base-border-radius;
+    }
+
+    tr:first-child > th:last-child {
+      border-top-right-radius: $base-border-radius;
+    }
+  }
+
+  tbody:last-child {
+    tr:last-child > td:first-child {
+      border-bottom-left-radius: $base-border-radius;
+    }
+
+    tr:last-child > td:last-child {
+      border-bottom-right-radius: $base-border-radius;
+    }
+  }
+
+  thead {
+    th {
+      background-color: $table-header-background;
+      border-bottom: 0px;
+      border-left: 1px solid $table-border-color;
+      padding: $table-padding;
+      text-align: left;
+
+      &:first-child {
+        border-left: none;
+      }
+    }
+  }
+
+  tbody {
+    background-color: $table-background;
+
+    td {
+      border-bottom: 0px;
+      border-left: 1px solid $table-border-color;
+      border-top: 1px solid $table-border-color;
+      padding: $table-padding;
+
+      &:first-child {
+        border-left: none;
+      }
+
+      button {
+        display: inline-block;
+        font-size: 0.7em;
+        line-height: $base-line-height;
+        margin-bottom: 0.3em;
+        margin-right: 0.5em;
+        outline: none;
+        padding: 0.3em 1em;
+        width: 100%;
+
+        @include media($medium-screen) {
+          margin-bottom: 0;
+          width: auto;
+        }
+      }
+    }
+  }
+}
+
+
+form.search-bar {  
+  ///////////////////////////////////////////////////////////////////////////////////
+  $base-border-color: gainsboro !default;
+  $base-border-radius: 3px !default;
+  $base-line-height: 1.5em !default;
+  $action-color: #477DCA !default;
+  $dark-gray: #333 !default;
+  $base-spacing: 1em;
+  //////////////////////////////////////////////////////////////////////////////////
+
+  $search-bar-border-color: $base-border-color;
+  $search-bar-border: 1px solid $search-bar-border-color;
+  $search-bar-background: lighten($search-bar-border-color, 10%);
+
+  position: relative;
+   margin: 1em;
+   max-width: 20em;
+
+  input[type=search] {
+    background-color: white;
+    border-radius: $base-border-radius;
+    border-radius: $base-border-radius;
+    border: 1px solid $base-border-color;
+    display: block;
+    font-size: 1em;
+    font-style: italic;
+    margin: 0;
+    padding: ($base-spacing / 3) ($base-spacing / 3);
+    position: relative;
+    width: 100%;
+  }
+
+  button[type=submit] {
+    @include button(flat, $action-color);
+    @include position(absolute, 0em 0em 0em null);
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    outline: none;
+    padding: 5px 10px;
+
+    img {
+      height: 12px;
+      opacity: 0.7;
+    }
+  }
+}
+    </style>
+</head>
+<body id="tableApp">
+    <render>../commons/navbar.html</render>
+
+    <table class="tables">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Sizes</th>
+                <th>Price</th>
+                <th>Discounted Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th v-for="item in data.products">
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${size}</td>
+                    <td>${price}</td>
+                    <td>${discount}</td>
+                </tr>
+            </th>
+        </tbody>
+    </table>
+    <script>
+        var discount = .25;
+
+        function Discount(price) {
+            var DR = 1 - discount;
+            FPrice = (price * DR).toFixed(2);
+            return FPrice;
+        }
+
+        var tableModel = {
+            products: [
+               {
+                   name: "Shirt",
+                   size: 'Small, Medium',
+                   price: 14.99,
+                   discount: Discount(14.99)
+               },
+               {
+                   name: "Pants",
+                   size: 'Medium, Large',
+                   price: 32.95,
+                   discount: Discount(32.95)
+               },
+               {
+                   name: "Meerkat Pistol",
+                   size: 'Large, Obtuse',
+                   price: 2.50,
+                   discount: Discount(2.50)
+               },
+               {
+                   name: "Hat Rescuer",
+                   size: 'Mini, Microscopic, Regular',
+                   price: 16.75,
+                   discount: Discount(16.75)
+               }
+            ]
+        }
+
+        var tableApp = new Vue({
+            delimiters: ['${', '}'],
+            el: '#tableApp',
+            data: tableModel,
+            methods: {
+                ProductFil: function (e) {
+
+                }
+            }
+        });
+    </script>
+</body>
+</html>

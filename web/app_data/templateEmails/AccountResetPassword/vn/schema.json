@@ -1,0 +1,1 @@
+[{"Name":"Email","Type":"Text"},{"Name":"FirstName","Type":"Text"},{"Name":"LastName","Type":"Text"},{"Name":"Token","Type":"Text"},{"Name":"RootUrl","Type":"Text"},{"Name":"ResetPasswordLink","Type":"Text"},{"Name":"CreatedOn","Type":"Date"}]

@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption:(Danh sách công việc)</title>
+    <render>commons/header.html</render>
+    <link href="{{Config.RootUrl}}Content/css/select2.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/select2.min.js"></script>
+    <link href="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/css/main_findjob.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/accounting.js"></script>
+    <script src="{{Config.RootUrl}}Scripts/accounting.min.js"></script>
+</head>
+<body class="lv-background-gray" ng-controller="app">
+    <render>commons/navbar.html</render>
+    <div class="lv-search-wrapper">
+        <render>commons/SearchBox_Job.html</render>
+    </div>
+    <div class="container-fluid lv-search-content">
+        <div class="row">
+            <div class="col-sm-3 sm-col-padding">
+                <div class="lv-background-white lv-left-menu-search desktop-xs">
+                    <render>widgets/Job_FilterConditions.html</render>
+                </div>
+                <div class="lv-background-white lv-left-menu-search desktop-xs modal fade lv-display-none-lg" id="lvFilterConfition" role="dialog">
+                    <render>widgets/Job_FilterConditions.html</render>
+                </div>
+                <div class="lv-background-white lv-left-nav-search tablet-xs">
+                    <div class="col-xs-3 filter-icon" data-toggle="modal" data-target="#lvFilterConfition">
+                        <i class="glyphicon glyphicon-filter"></i>
+                    </div>
+                    
+                    <div class="col-xs-3 filter-icon" data-toggle="modal" data-target="#lvFilterBy">
+                        <i class="glyphicon glyphicon-sort"></i>
+                    </div>
+                    <div class="modal fade" id="lvFilterBy" role="dialog">
+                        <div class="lv-menu-top-tablet modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <span>res:(Xếp theo)</span>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul>
+                                        <li>
+                                            <a href="#" id="mb-sort-by-date" ng-click="$root.onSelectSortBy('by-post-date')">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                                <span class="chosen-language">res:(Ngày)</span>
+                                            </a>
+                                        </li>
+                                       
+                                        <li>
+                                            <a href="#" id="mb-sort-by-salary" ng-click="$root.onSelectSortBy('by-salary')">
+                                                <i class="glyphicon glyphicon-bitcoin"></i>
+                                                <span>res:(Lương)</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9 sm-col-padding">
+                <render>widgets/SearchResult.html</render>
+            </div>
+        </div>
+    </div>
+    <render>commons/footer.html</render>
+    <script>
+        $(".panel-body>.group>.header").bind("click", function () {
+            $(this).parent().toggleClass("hide-body");
+        });
+        $(document).ready(function () {
+            $("#mb-sort-by-date").attr("href", $("#sort-by-date").attr("href"));
+            $("#mb-sort-by-salary").attr("href", $("#sort-by-salary").attr("href"));
+        });
+        //beforeSubmit("frm_search", function () {
+        //    var frm = $(this)
+        //});
+        //afterSubmit("frm_search", function (res) {
+        //    console.log(res);
+        //});
+       
+    </script>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.db",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            "../modules/node.sys.categories",
+            (utils, Data, auth, models, cate, app) => {
+                app.onLoad = cate.loadSearchDataForSearchBox;
+                app.doSaveJob = function (event) {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            var user = auth.getUser(event.req);
+
+                            var count = models.ls_candidate()
+                                .where("(UserEmail==email)", {
+                                    email: user.Email
+                                })
+                                .unwind("RequistionSaveList")
+                                .where("(RequistionSaveList.RequisitionId==id)", {
+                                    id: utils.objectID(clientData.id)
+                                }).count.sync();
+                            var data = {};
+                            if (count > 0) { // pull
+                                models.ls_candidate().where("(UserEmail==email)", {
+                                    email: user.Email
+                                })
+                                    .pull("RequistionSaveList", { RequisitionId: clientData.id.toObjectID() })
+                                    .commit.sync();
+                                data.action = "pullItem";
+                            } else { // push
+                                models.ls_candidate().where("(UserEmail==email)", {
+                                    email: user.Email
+                                })
+                                    .push("RequistionSaveList", {
+                                        RequisitionId: clientData.id.toObjectID(),
+                                        SaveOn: new Date(),
+                                        SaveOnUTC: utils.getUTCDate(new Date())
+                                    })
+                                    .commit.sync();
+                                data.action = "pushItem";
+                            }
+                            utils.writeData(event, data);
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            window.ngRootScope = scope.$root;
+            scope.$root.selectedJobs = {};
+            scope.selectedJobs = {};
+            scope.$root.selectedLocations = {};
+            scope.selectedLocations = {};
+            scope.$root.selectedExperienceLevels = {}
+            scope.$root.onSelectRecruiters = {};
+            scope.$root.selectedRecruiters = {};
+            scope.$root.totalPager = 0;
+            scope.$root.totalItems = 0;
+            scope.$root.salary = 0;
+            scope.$root.lang = "{{{Language.Current.Code}}}";
+            scope.$root.txtSearch = "{{{categories.values.content}}}";
+            scope.$root.sortByType = "";
+            scope.$root.pagerConfig = {
+                numOfPageSelector: 5, totalItems: 0, pageSize: 30, pageIndex: 0
+            }
+            scope.arrDataSearch = [];
+            scope.$root.onSelectJob = function (id) {
+                if (scope.selectedJobs[id]) {
+                    scope.selectedJobs[id] = undefined;
+                }
+                else {
+                    scope.selectedJobs[id] = id;
+                }
+                scope.$root.doSearch();
+            }
+            scope.$root.onSelectLocation = function (id) {
+                if (scope.selectedLocations[id]) {
+                    scope.selectedLocations[id] = undefined;
+                }
+                else {
+                    scope.selectedLocations[id] = id;
+                }
+                scope.$root.doSearch();
+            }
+            scope.$root.onSelectLevel = function (id) {
+                if (scope.$root.selectedExperienceLevels[id]) {
+                    scope.$root.selectedExperienceLevels[id] = undefined;
+                }
+                else {
+                    scope.$root.selectedExperienceLevels[id] = id;
+                }
+                scope.$root.doSearch();
+            }
+
+            scope.$root.onSelectSalary = function (salary) {
+                if (salary) {
+                    scope.$root.salary = salary;
+                }
+                scope.$root.doSearch();
+            }
+
+            scope.$root.onSelectSortBy = function (byType) {
+                scope.$root.sortByType = byType;
+                scope.$root.doSearch();
+            }
+
+            scope.$root.onSelectRecruiter = function (id) {
+                if (scope.$root.selectedRecruiters[id]) {
+                    scope.$root.selectedRecruiters[id] = undefined;
+                }
+                else {
+                    scope.$root.selectedRecruiters[id] = id;
+                }
+                scope.$root.doSearch();
+            };
+            scope.$root.doSearch = function (index, isearch) {
+                if (!$.isEmptyObject(scope.$root.selectedJobs)) {
+                    if (isearch && isearch == 1 && scope.$root.selectedJobs == 'all::all') {
+                        var jobsChecked = [];
+                        var keys = Object.keys(scope.selectedJobs);
+                        for (var i = 0; i < keys.length; i++) {
+                            if (scope.selectedJobs[keys[i]])
+                                jobsChecked.push(keys[i]);
+                        }
+
+                        for (var i = 0; i < jobsChecked.length; i++) {
+                            $(":checkbox").filter(function () {
+                                return this.value == scope.selectedJobs[jobsChecked[i]];
+                            }).prop('checked', false);
+                        }
+                        
+                        scope.selectedJobs = {};
+                    } else {
+                        if (!scope.selectedJobs[scope.$root.selectedJobs]) {
+                            if (isearch == 1) {
+                                scope.selectedJobs[scope.$root.selectedJobs] = scope.$root.selectedJobs;
+                            }
+                            $(":checkbox").filter(function () {
+                                return this.value == scope.selectedJobs[scope.$root.selectedJobs];
+                            }).prop("checked", "true");
+                        }
+                    }
+                }
+                if (!$.isEmptyObject(scope.$root.selectedLocations)) {
+                    if (isearch && isearch == 1 && scope.$root.selectedLocations == 'all::all') {
+                        var jobsChecked = [];
+                        var keys = Object.keys(scope.selectedLocations);
+                        for (var i = 0; i < keys.length; i++) {
+                            if (scope.selectedLocations[keys[i]])
+                                jobsChecked.push(keys[i]);
+                        }
+
+                        for (var i = 0; i < jobsChecked.length; i++) {
+                            $(":checkbox").filter(function () {
+                                return this.value == scope.selectedLocations[jobsChecked[i]];
+                            }).prop('checked', false);
+                        }
+                        scope.selectedLocations = {};
+                    } else {
+                        if (!scope.selectedLocations[scope.$root.selectedLocations]) {
+                            if (isearch == 1) {
+                                scope.selectedLocations[scope.$root.selectedLocations] = scope.$root.selectedLocations;
+                            }
+                            $(":checkbox").filter(function () {
+                                return this.value == scope.selectedLocations[scope.$root.selectedLocations];
+                            }).prop("checked", "true");
+                        }
+                    }
+                }
+                if (window.onSearch) {
+                    window.onSearch({
+                        selectedJobs: $.isEmptyObject(scope.selectedJobs) == true ? scope.$root.selectedJobs : scope.selectedJobs,
+                        selectedLocations: $.isEmptyObject(scope.selectedLocations) == true ? scope.$root.selectedLocations: scope.selectedLocations,
+                        selectedExperienceLevels: scope.$root.selectedExperienceLevels,
+                        selectedRecruiters: scope.$root.selectedRecruiters,
+                        txtSearch: $("#txtSearch").val(),
+                        salary: scope.$root.salary,
+                        sortByType: scope.$root.sortByType,
+                        index: index,
+                        isearch: isearch,
+                    }, scope.$root)
+                }
+            }
+            scope.$root.doSearch();
+            scope.$root.onPageChane = function (index) {
+                scope.$root.pagerConfig.pageIndex = index;
+                scope.$root.doSearch(index);
+            }
+            scope.$root.doSaveJob = function (item) {
+                var a = "server.page://doSaveJob";
+                a.data({
+                    id: item
+                }).done(function (res) {
+                    if (res.action == "pushItem") {
+                        toastr.success("res:(Bạn đã lưu công việc này vào danh sách công việc yêu thích của bạn)");
+                    } else {
+                        toastr.success("res:(Bạn đã bỏ lưu công việc này ra khỏi danh sách công việc yêu thích của bạn)");
+                    }
+                    scope.$root.doSearch();
+                })
+            }
+            scope.$root.formatMoney = function (salary) {
+                return accounting.formatMoney(salary, "", 0);
+            }
+        })
+    </script>
+</body>
+</html>

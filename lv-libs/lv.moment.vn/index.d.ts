@@ -1,0 +1,1 @@
+﻿export declare var install: (moment: any) => void;

@@ -1,0 +1,320 @@
+﻿<div class="myresume-desire" id="myresume-desire">
+    <form class="form-horizontal form-view" id="frmDesire" name="frmDesire" action="" method="post"ng-click="doEdit($event)">
+        <input type="hidden" name="resumeId">
+        <div class="box border-primary">
+            <fieldset>
+                <legend class="box-md">
+                    <i class="glyphicon glyphicon-list-alt"></i> res:(Nguyện vọng)
+                </legend>
+                <div id="desire-edit" class="box-md infor-wrapper form-working-preference relative">
+                    <span class="edit-btn" ng-if="$root.AllowEdit()">
+                        <button type="button" class="btn btn-sm btn-default">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                        </button>
+                    </span>
+                    <div class="row" id="error-message-update-summary" hidden="hidden">
+                        <div>
+                            <div class="cls-error"><strong>Oops! </strong> res:(Có lỗi đã xảy ra, vui lòng thử lại.)</div>
+                            <br>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="expected-location">
+                                    <strong class="text-red edit-field" style="display: none;">*</strong>
+                                    res:(Nơi làm việc)
+                                </label>
+
+                                <div class="clearfix">
+                                    <div class="pull-left expected-location-wrapper" style="width:50%">
+                                        <div class="field-edit" style="display: none;">
+                                            
+                                            <input c-select2 multiple="multiple" data-source="data.Locations" ng-model="data.Desire.FullLocCode" placeholder="res:(Mong muốn làm việc tại nơi...)"/>
+
+                                        </div>
+                                        <div class="field-view" style="display: block;">
+                                            <p class="form-control-static view-control" data-type="multiple-select">${convertArrayToString(data.Desire.Location)}</p>
+                                        </div>
+                                    </div>
+                                    <div class="pull-left mg-lt">
+                                        <div class="field-view" ng-if="data.Desire.IsDynamicResidency" style="display: block;">
+                                            <p class="form-control-static">
+                                                <em class="view-control" data-type="radio">(res:(Có thể thay đổi nơi làm việc))</em>
+                                            </p>
+                                        </div>
+                                        <div class="field-edit mg-tp" style="display: none;">
+                                            <label>
+                                                <input type="checkbox" ng-model="data.Desire.IsDynamicResidency" class="edit-control" name="IsDynamicResidency" data-text-value="(res:(Có thể thay đổi nơi làm việc))">
+                                                <em>res:(Có thể thay đổi nơi làm việc)</em>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="expected-location">
+                                    <strong class="text-red edit-field" style="display: none;">*</strong>
+                                    res:(Ngành nghề)
+                                </label>
+
+                                <div class="clearfix">
+                                    <div class="pull-left expected-location-wrapper" style="width:50%">
+                                        <div class="field-edit" style="display: none;">
+                                            <input multiple="multiple" c-select2 data-source="data.Jobs" ng-model="data.Desire.FullJobCode" placeholder="res:(Mong muốn được làm việc trong lĩnh vực...)" />
+
+                                        </div>
+                                        <div class="field-view" style="display: block;" ng-cloak>
+                                            <p class="form-control-static view-control" data-type="multiple-select">${convertArrayToString(data.Desire.Job)}</p>
+                                        </div>
+                                    </div>
+                                    <div class="pull-left mg-lt">
+                                        <div class="field-view" ng-if="data.Desire.IsDynamicTrip" style="display: block;">
+                                            <p class="form-control-static">
+                                                <em class="view-control" data-type="radio">(res:(Có thể đi công tác))</em>
+                                            </p>
+                                        </div>
+                                        <div class="field-edit mg-tp" style="display: none;">
+                                            <label>
+                                                <input type="checkbox" ng-model="data.Desire.IsDynamicTrip" class="edit-control" name="IsDynamicTrip" data-text-value="(res:(Có thể đi công tác))">
+                                                <em>res:(Có thể đi công tác)</em>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="expected-location">
+                            <!--<strong class="red-text field-edit" style="display:none">*</strong>-->
+                            res:(Mức lương mong muốn)
+                            <small>(res:(tháng))</small>
+                        </label>
+                        <div class="field-view">
+                            <p class="form-control-static view-control" id="static-specific-salary">${data.Desire.Income} ${data.Desire.Currency}</p>
+                        </div>
+                        <div class="field-edit" style="display:none">
+                            <div class="row">
+								<div class="col-sm-6">
+									<div c-is-number placeholder="res:(Ví dụ: 5000)" ng-model="data.Desire.Income"></div>
+									<input class="form-control edit-control" type="number" placeholder="Ví dụ: 5000" name="expectedSalaryRange" id="specific-salary-input" ng-model="data.Desire.Income">
+									<span class="cls-error" id="errExpectedSalaryRange" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+									<span class="cls-error" id="errNotValidExpectedSalaryRange" hidden="hidden">res:(Mức lương mong muốn không hợp lệ)</span>
+								</div>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control edit-control" placeholder="Ví dụ: VND" ng-model="data.Desire.Currency">
+                                    <span class="cls-error" id="errExpectedSalaryRange" hidden="hidden">res:(Thông tin này bắt buộc)</span>
+                                    <span class="cls-error" id="errNotValidExpectedSalaryRange" hidden="hidden">res:(Mức lương mong muốn không hợp lệ)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" data-type="edit-only" class="btn hidden btn-default btn-block no-border add-one-more-section hide" style="display: inline-block;">
+                        <strong>res:(Add Working Preferences)</strong>
+                    </button>
+                    <div class="form-group mg-tp field-edit" style="display: none;">
+                        <div class="row">
+                            <!--<div class="col-sm-6">(<strong class="red-text">*</strong>) res:(Thông tin bắt buộc)</div>-->
+                            <div class="col-sm-12 text-right">
+                                <button type="button" class="btn btn-default btn-cancel" id="btnCancelDesire"ng-click="doCancel($event)">res:(Hủy)</button>
+                                <button type="button" class="btn btn-primary btn-save" id="btnSaveDesire"ng-click="doSaveDesire($event)">res:(Lưu)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </form>
+</div>
+<script server>
+    [
+        "./../modules/node.sys.categories",
+        "./../libs/lv.utils",
+        "./../modules/node.candidate.profiles",
+        "./../libs/lv.authenticate",
+        (categories, utils, profiles, aut, app) => {
+            utils.debug();
+            app.doLoadLocations = (event) => {
+                categories.getListOfLocations(utils.getCurrentLanguageCode(event), (err, lst) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, lst);
+                        event.done();
+                    }
+                })
+            }
+            app.doLoadJobs = (event) => {
+                categories.getListOfJobs(utils.getCurrentLanguageCode(event), (err, lst) => {
+                    if (err) event.done(err);
+                    else {
+                        utils.writeData(event, lst);
+                        event.done();
+                    }
+                })
+            }
+            app.doLoadData = (event) => {
+                var loadData = (email) => {
+                    profiles.getDesire(email,
+                        utils.getCurrentLanguageCode(event),
+                        (err, data) => {
+                            if (err) event.done(err);
+                            else {
+                                utils.writeData(event, data);
+                                event.done();
+                            }
+                        })
+                };
+                var clientData = utils.readData(event);
+                if ((clientData.candidateId)&& (clientData.candidateId != "")) {
+                    profiles.getUserInfoByUserId(clientData.candidateId, (err, user) => {
+                        if (err) handler(err);
+                        else {
+                            if (user == null) {
+                                utils.writeData(event, {});
+                                event.done();
+                            }
+                            else {
+                                loadData(user.Email);
+                            }
+                        }
+                    })
+                }
+                else {
+                    loadData(aut.getUser(event.req).Email);
+                }
+            }
+            app.doUpdate = (event) => {
+                var clientData = utils.readData(event);
+                profiles.saveDesire(aut.getUser(event.req).Email,
+                    utils.getCurrentLanguageCode(event),
+                    clientData,
+                    (err, data) => {
+
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                    })
+            }
+        }]
+</script>
+<script>
+     (function (app) {
+
+        app.Lang = "{{{Language.Current.Code}}}";
+        app.User = {
+            Settings: {
+                DefaultDateFormat: "{{{Settings.defaultDateFormat}}}"
+            }
+        };
+        app.Locations = [];
+        app.data = {
+            Cer: [],
+            Users: {
+                Settings: {
+                    DefaultDateFormat: "{{{Settings.defaultDateFormat}}}"
+                }
+            },
+            Locations: [],
+            Jobs: [],
+            Desire: {
+                Location: {
+                    Name: {}
+                },
+                Job: {
+                    Name: {}
+                }
+            }
+        };
+        app.isThisUser = {};
+        app.calculatorExpMonthItem = window.calculatorExpMonthItem;
+
+        app.doEdit = function (event) {
+            if (!app.$root.AllowEdit()) return;
+            if (!app.hasInitComboboxData) {
+                app.hasInitComboboxData = true;
+            }
+            window.doEditWebPart(event)
+        }
+        app.doLoadData = function (handler) {
+            var ajax = "server.page://doLoadData";
+            ajax.data({ candidateId: window.candidateId })
+                .noMask()
+                .done(function (res) {
+                    app.data.Desire = res;
+                    app.data.Desire.FullJobCode = res.dataFullJobCode;
+                    app.data.Desire.FullLocCode = res.dataFullLocCode;
+                    app.$applyAsync();
+                    if (handler) {
+                        setTimeout(function () {
+                            handler;
+                        }, 200);
+                    }
+                })
+        }
+        app.doLoadJobs = function () {
+            var ajax = "server.page://doLoadJobs";
+            ajax.noMask().done(function (res) {
+                app.data.Jobs = res;
+            })
+        };
+        app.doLoadLocation = function () {
+            var ajax = "server.page://doLoadLocations";
+            ajax.noMask().done(function (res) {
+                app.data.Locations = res;
+            })
+        };
+        app.doLoadLocation();
+        app.doLoadJobs();
+        setTimeout(function () {
+            app.doLoadData();
+        }, 200)
+        app.formatDate = function (value, format) {
+            return moment(String(value)).format(format)
+        }
+        app.doCancel = function (e) {
+            window.changeToViewMode(e);
+        }
+        app.doSaveDesire = function (e) {
+            var ajax = "server.page://doUpdate";
+            var locCode = app.data.Desire.FullLocCode;
+            var jobCode = app.data.Desire.FullJobCode;
+            ajax.data({
+                dataFullJobCode: jobCode,
+                dataFullLocCode: locCode,
+                Income: app.data.Desire.Income,
+                Currency: app.data.Desire.Currency,
+                IsDynamicResidency: app.data.Desire.IsDynamicResidency,
+                IsDynamicTrip: app.data.Desire.IsDynamicTrip
+            })
+                .done(function (res) {
+                    toastr.success("res:(Thông tin đã được cập nhật)");
+                    app.doLoadData(window.changeToViewMode(e));
+                    
+                })
+        }
+        
+        app.convertArrayToString = function (data) {
+            if (data.length > 0) {
+                var str = "";
+
+                for (var i = 0; i < data.length; i++) {
+                    str += data[i].Name[app.Lang] + ", ";
+                }
+
+                //data.forEach(item => {
+                //    str += item.Name[app.Lang] + ", ";
+                //})
+                return str.slice(0, -2);
+            }
+            return "res:(Chưa cập nhật)";
+        }
+
+    })
+</script>

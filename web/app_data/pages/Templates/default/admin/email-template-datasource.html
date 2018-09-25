@@ -1,0 +1,85 @@
+<body>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">res:(List of parameters)</div>
+            <div class="panel-heading">
+                <input type="text" class="form-control" ng-model="txtSearch" />
+            </div>
+            <div class="panel-body">
+                <ul class="list-group" style="max-height:400px;overflow-y:scroll">
+                    <!--<li class="list-group-item" ng-repeat="item in $parent.EmailTemplateDatasource|filter:{Name:txtSearch}">
+                        <span>${item.Name}</span>(${item.Type})
+                        <button class="btn btn-sm btn-primary pull-right" ng-click="doAddTotemplate(item)">res:(Add to template)</button>
+                    </li>-->
+                     <li class="list-group-item" ng-repeat="item in data|filter:{Name:txtSearch}">
+                        <span>${item.Name}</span>(${item.Type})
+                        <button class="btn btn-sm btn-primary pull-right" ng-click="doAddTotemplate(item)">res:(Add to template)</button>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+    <script server>
+       ["./../libs/lv.utils",
+           "fs",
+           "path",
+           (utils,
+               FS,
+               PATH,
+               page) => {
+               page.doLoadData = (event) => {
+                   utils._try(() => {
+                       var clientData = utils.readData(event);
+                       var lang = utils.getCurrentLanguageCode(event);
+                       var dir = "app_data\\templateEmails\\" + clientData.id + "\\" + lang;
+                       try {
+                           var schemaPath = PATH.join(dir, "schema.json");
+                           var schema = FS.readFileSync(schemaPath, "utf-8");
+                           var data = Function("return " + schema)();
+
+                           utils.writeData(event, data);
+                           event.done();
+                       } catch (ex) {
+                           event.done(ex)
+                       }
+                   }, event);
+               }
+
+
+           }];
+
+    </script>
+    <script>
+        (function (app) {
+            app.$applyAsync();
+            app.doAddTotemplate = function (item) {
+                if (item.Type == "List") {
+                    app.$parent.insertText("\{\{#each" + item.Name + "\}\}\r\n\{\{/each\}\}");
+                    return;
+                }
+                if (item.Type == "Boolean") {
+                    app.$parent.insertText("\{\{#if" + item.Name + "\}\}\r\n\{\{/else\}\}\r\n\{\{/if");
+                    return;
+                }
+                if (item.Type == "Date") {
+                    app.$parent.insertText("\{\{data_format" + item.Name + " 'dd/MM/yyyy'\}\}");
+                    return;
+                }
+                app.$parent.insertText("\{\{" + item.Name + "\}\}");
+            }
+            app.doLoadData = function () {
+                var ajax = "server.page://doLoadData";
+                var id = app.$parent.Source;
+                ajax.data({
+                    id: id
+                })
+                .done(res => {
+                    app.data = res;
+                    app.$applyAsync();
+                });
+            }
+            app.doLoadData();
+        })
+    </script>
+</body>

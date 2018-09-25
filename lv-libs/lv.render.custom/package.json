@@ -1,0 +1,19 @@
+{
+  "name": "lv.render.custom",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nttlong",
+  "license": "ISC",
+  "dependencies": {
+    "handlebars": "^4.0.11",
+    "node-moment": "^2.5.1",
+    "lv.moment.vn": "./../lv.moment.vn",
+    "sync": "^0.2.5"
+  },
+  "devDependencies": {},
+  
+  "description": ""
+}

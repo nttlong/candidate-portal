@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(My Resume)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_uv_apply.min.css" rel="stylesheet" />
+</head>
+<body>
+    <render>../commons/navbar.html</render>
+    <div class="wrapper">
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
+        <div class="modal fade" id="myModal" role="dialog">
+            <form class="form-horizontal" id="applyJobForm" enctype="multipart/form-data" method="post" action="">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true" tabindex="8">×</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+
+                            <h4 class="modal-title" id="myModalLabel">
+                                Bạn đang ứng tuyển cho vị trí
+                                <strong>Kỹ Sư Cơ Điện – Điện Tử Làm Việc Tại Nhật Bản</strong><br>
+                                <em class="small" id="appPreferLanguage" style="display: none;">Nhà tuyển dụng ưu tiên hồ sơ ứng tuyển viết bằng tiếng <strong id="appPreferLanguageName"></strong>.</em>
+                            </h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="modal-body-header">
+                                <div class="row">
+                                    <!-- Resume Avatar -->
+                                    <div class="col-sm-3 col-xs-4 user-pic">
+                                        <div class="modal-body-avatar img-circle">
+                                            <div class="avatar-sample">
+                                                <img src="https://images.vietnamworks.com/pictureofresume/b5/10398727.png" class="img-responsive img-circle">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-9 col-xs-8 user-info">
+                                        <!-- Full Name -->
+                                        <h4 class="modal-body-name">
+                                            <span>Quang Nguyen Duy</span>
+                                        </h4>
+
+                                        <!-- Job Title -->
+                                        <div class="modal-body-job-title">
+                                            <a href="#" class="editable editable-click" data-placeholder="Nhập chức danh của bạn" tabindex="1" id="app-title" data-optional="1">Devloper</a>
+                                        </div>
+
+                                        <input type="hidden" name="appJobTitle" id="appJobTitle" value="Devloper">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="resume" class="modal-body-content">
+                                <!-- Email Address -->
+                                <div class="form-group">
+                                    <label for="app-resume" class="col-sm-3 col-xs-12 control-label">Email</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <div class="form-control-static" id="app-email">lqsang19951@gmail.com</div>
+                                    </div>
+                                </div>
+
+                                <!-- Phone Number -->
+                                <div class="form-group">
+                                    <label for="app-resume" class="col-sm-3 col-xs-12 control-label">res:(Số điện thoại)</label>
+                                    <div class="col-sm-9 col-xs-12">
+                                        <div class="form-control-static" id="app-email">01668050552</div>
+                                    </div>
+                                </div>
+
+                                <!-- Select Resume Block -->
+                                <div class="form-group select-resume">
+                                    <label for="app-resume" class="col-sm-3 col-xs-12 control-label">
+                                        Resume
+                                    </label>
+
+                                    <div class="col-sm-9 col-xs-12">
+                                        <div id="applyResume">
+                                            <div class="row select-resume__item">
+                                                <div class="col-sm-12">
+                                                    <div class="radio radio-success">
+                                                        <input tabindex="5" type="radio" name="resumeApply" id="optionsRadios6949300" value="6949300" data-type="last_attachment" "=" ">
+                                                        <label for="optionsRadios6949300">
+                                                            <span>Nguyen_Duy_Quang_CV.pdf</span>
+                                                            <span class="small gray-light select-resume__hint"> (Ngày cập nhật: 16/08/2017 17:23)</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="applyResume">
+                                            <div class="row select-resume__item">
+                                                <div class="col-sm-12">
+                                                    <div class="radio radio-success">
+                                                        <input tabindex="5" type="radio" name="resumeApply" id="optionsRadios6949300" value="6949300" data-type="new_attachment">
+                                                        <label for="optionsRadios6949300">
+                                                            <span>Tên file resume</span>
+                                                            <span class="small gray-light select-resume__hint"> (Ngày cập nhật: 16/08/2017 17:23)</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Upload New CV -->
+                                        <div class="row ">
+                                            <div class="col-sm-12">
+                                                <div class="radio radio-success">
+                                                    <input tabindex="7" type="radio" name="resumeApply" id="optionsRadios3" value="newAttachment" data-type="new_attachment">
+
+                                                    <label for="fileAttach">
+                                                        <a class="relative">
+                                                            Chọn hồ sơ mới
+                                                            <i class="glyphicon glyphicon-upload" data-toggle="tooltip" title="Replace" data-placement="top"></i>
+                                                        </a>
+                                                    </label>
+
+                                                    <input type="file" name="resumeFile" id="fileAttach" value="Attach new" tabindex="8" class="transparent absolute">
+
+                                                    <span id="resume-filename" class="small m-l-md gray text-clip-50"></span>
+                                                </div>
+
+                                                <span class="small text-req pull-left">Hỗ trợ định dạng .doc, .docx, .pdf, nhỏ hơn 2048KB.</span>
+                                            </div>
+                                        </div>
+                                        <div id="applyResume">
+                                            <div class="row select-resume__item">
+                                                <div class="col-sm-12">
+                                                    <div class="radio radio-success">
+                                                        <input tabindex="5" type="radio" name="resumeApply" id="optionsRadios6949300" value="6949300" data-type="last_attachment" "=" ">
+                                                        <label>
+                                                            <button type="button" class="btn btn-sm btn-li control-label"><i class="fa fa-linkedin left"></i> res:(Linkedin)</button>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                    </div>
+                                </div>
+
+                                <!-- Cover Letter -->
+
+                                <span id="errorAppSystem" style="display: none;" class="error-message"></span>
+                            </div>
+
+                            <span id="errorAppSystem" style="display: none;" class="error-message"></span>
+                        </div>
+
+                        <div class="modal-footer">
+                            <input type="hidden" name="appliedType" id="appliedType">
+
+                            <div class="pull-right">
+
+                                <button type="button" class="btn btn-defautl btn-outline track-event" data-evt-type="cancel-apply" tabindex="11" data-dismiss="modal">Trở Về</button>
+
+                                <button type="button" id="applySendProcessBtn" class="btn btn-primary " tabindex="11">Nộp Đơn</button>
+
+                                <button type="submit" id="applySendingProcessBtn" style="display: none;" class="btn btn-default" tabindex="10" disabled="">
+                                    <img src="https://images.vietnamworks.com/loading.gif" alt=""> Đang Nộp Đơn
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('fileAttach').onchange = function () {
+            var filename = this.files.item(0).name;
+            document.getElementById('resume-filename').textContent = filename;
+        };
+    </script>
+</body>
+</html>
+

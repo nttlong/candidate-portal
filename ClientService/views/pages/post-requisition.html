@@ -1,0 +1,52 @@
+﻿<body>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../libs/CandidatePortalClient.js",
+            (utils, client, page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        try {
+                            var data = client.loadInfo.sync();
+                            var retData = client.postRequest.sync(null, "post_requisition", {
+                                Code: "TestDongBo001",
+                                JobTitle: "Test dong bo 001",
+                                Description: {
+                                    en: "test dong bo",
+                                    vn:"Chi la test dong bo"
+                                },
+                                NumOfStaff: 2,
+                                SalaryType:0
+                            });
+
+                            utils.writeData(event, retData);
+                            event.done();
+                        }
+                        catch (ex) {
+                            utils.writeData(event, { error: ex.message || ex });
+                            event.done();
+                        }
+                    }, event);
+                }
+            }]
+    </script>
+    <div>
+        ${data}
+        <button ng-click="doLoadData()"></button>
+    </div>
+
+    <script>
+            (function (scope) {
+                scope.doLoadData = function () {
+                    var a = "server.page://doLoadData";
+                    a.data({
+                        pageIndex: 0,
+                        pageSize: 50
+                    })
+                        .done(function (res) {
+                            scope.data = res;
+                            scope.$applyAsync();
+                        });
+                }
+            })
+    </script>
+</body>

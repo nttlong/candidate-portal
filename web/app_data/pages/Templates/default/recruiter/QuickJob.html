@@ -1,0 +1,238 @@
+﻿<script server>
+    ["./../libs/lv.utils",
+        "./../modules/lv.db",
+        "./../modules/node.portal.candidate",
+        (utils, Data, portal, app) => {
+            utils.debug();
+            app.onLoad = (event) => {
+                var lan = utils.getCurrentLanguageCode(event);
+                utils._try(() => {
+                    Data.cnn((err, db) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.paralellCaller()
+                                .call(emit => {
+                                    db.collection("ls_requisition")
+                                        .aggregate([{
+                                            $match: {
+                                                $and: [
+                                                    { RecruiterId: event.req.currentCustomerInfo._id },
+                                                    { IsPublished: true },
+                                                    { IsLocked: false || null },
+                                                    { ReceiveTo: { $gte: new Date() } }
+                                                ]
+                                            }
+                                        }, {
+                                            $sort: { PublishDate: -1 }
+                                        }, {
+                                            $project: {
+                                                JobName: "$Job.JobName." + lan,
+                                                RequisitionID: "$_id",
+                                                GroupCode: "$Job.GroupCode",
+                                                JobCode: "$Job.JobCode",
+                                                GroupName: "$Job.GroupName." + lan,
+                                                SalaryType: 1,
+                                                Salary: 1,
+                                                NumOfStaff: 1,
+                                                ToDate: "$ReceiveTo",
+                                                JobTitle: 1,
+                                                Photo: 1
+                                            }
+                                        }])
+                                        .toArray()
+                                        .then(list => {
+                                            event.setModel("data", list);
+                                            event.setModel("recruiter", event.req.currentCustomerInfo.RecruiterCode);
+                                            emit();
+                                        })
+                                        .catch(ex => {
+                                            emit(ex);
+                                        })
+                                })
+                                .call(emit => {
+                                    db.collection("ls_requisition")
+                                        .aggregate([{
+                                            $match: {
+                                                $and: [
+                                                    { RecruiterId: event.req.currentCustomerInfo._id },
+                                                    { IsPublished: true },
+                                                    { IsLocked: false || null },
+                                                    { ReceiveTo: { $lt: new Date() } }
+                                                ]
+                                            }
+                                        }, {
+                                            $sort: { PublishDate: -1 }
+                                        }, {
+                                            $project: {
+                                                JobName: "$Job.JobName." + lan,
+                                                RequisitionID: "$_id",
+                                                GroupCode: "$Job.GroupCode",
+                                                JobCode: "$Job.JobCode",
+                                                GroupName: "$Job.GroupName." + lan,
+                                                SalaryType: 1,
+                                                Salary: 1,
+                                                NumOfStaff: 1,
+                                                ToDate: "$ReceiveTo",
+                                                JobTitle: 1
+                                            }
+                                        }])
+                                        .toArray()
+                                        .then(list => {
+                                            event.setModel("dataExpired", list);
+                                            emit();
+                                        })
+                                        .catch(ex => {
+                                            emit(ex);
+                                        })
+                                })
+                                .done((err, result) => {
+                                    event.done();
+                                });
+
+
+                                //portal.getRequisitionOfCustomerByReruiterCode(event.req.currentCustomerInfo.RecruiterCode, {}, utils.getCurrentLanguageCode(event))
+                                //    .then(list => {
+                                //        event.setModel("data", list);
+                                //        event.setModel("recruiter", event.req.currentCustomerInfo.RecruiterCode);
+
+                                //        event.done();
+                                //    })
+                                //    .catch(ex => {
+                                //        event.done(ex);
+                                //    })
+
+                            
+                        }
+                    });
+                }, event);
+
+
+            }
+        }]
+</script>
+
+<script>
+</script>
+
+<section class="lv-main-content container">
+    <div class="row">
+        <div class="col-md-9 col-sm-12 lv-group">
+
+            <div class="lv-list-job">
+
+                <div class="lv-header">res:(Việc làm đang tuyển)</div>
+                <div class="lv-content lv-custom-scrollbar">
+                    <ul>
+                        {{#each data}}
+                        <li class="job-item" title="{{this.JobName}}-{{this.GroupName}}" style="min-height:90px; padding-left: 0px">
+                            <a href="{{../Config.Rooturl}}/job/{{../recruiter}}/{{RequisitionID}}" style="text-decoration:none;color:inherit">
+                                <span class="pull-left col-xs-3" style="padding: 0">
+                                    <img src="{{../Config.RootUrl}}/photo/requisition/{{RequisitionID}}.png" style="background-position: center;
+                                    background-repeat: no-repeat;
+                                    background-size: contain;
+                                    width: 100%;
+                                    height: 100px;
+                                    border-radius: 3px;
+                                    border: 1px solid #ccc;">
+                                </span>
+                                <span class="job-title col-xs-9">
+                                    <strong>{{JobTitle}}
+                                    </strong><br />
+                                    <em class="text-clip">
+                                        {{this.JobName}}-{{this.GroupName}}
+                                    </em>
+                                    <!--<em class="text-clip">res:(Tình trạng): res:(Đang tuyển)</em>-->
+                                    <em class="text-clip">
+                                        res:(Mức lương):
+                                        {{#ifCond this.SalaryType 1}}
+                                        <span>
+                                            {{this.Salary}}
+                                        </span>
+                                        {{else}}
+                                        <span>
+                                            res:(Thỏa thuận)
+                                        </span>
+                                        {{/ifCond}}
+                                    </em>
+                                    <em class="text-clip">
+                                        <span>res:(Số lượng):&nbsp;</span><span>{{NumOfStaff}}</span><span>&nbsp;res:(người)</span>
+                                    </em>
+                                    {{#if ToDate}}
+                                    <em class="text-clip">
+                                        <span>res:(Thời hạn):&nbsp;</span><span>{{dateFormatValue ToDate 'dd/MM/yyyy'}}</span>
+                                    </em>
+                                    {{/if}}
+                                </span>
+                            </a>
+                        </li>
+                        
+                        {{/each}}
+
+                    </ul>
+                </div>
+
+                <!--<div class="lv-paginator">
+                    <nav>
+                        <ul class="pagination">
+
+                            <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                            {{#each data.pager.pagers}}
+                            <li class="page-indicator" data-page-id="{{index}}"><a href="{{../Config.RootUrl}}home/{{index}}">{{caption}} <span class="sr-only"></span></a></li>
+                            {{/each}}
+
+                            <li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                        </ul>
+                    </nav>
+                </div>-->
+                <script>
+                    var pageIndex = "{{{data.pager.pageIndex}}}";
+                    $(document).ready(function () {
+                        $("[data-page-id='" + pageIndex + "']").addClass("active");
+                    })
+                </script>
+
+            </div>
+
+        </div>
+        <div class="col-md-3 col-sm-12 lv-group">
+            <div class="lv-list-company">
+                <div class="lv-header">res:(Việc làm hết hạn)</div>
+                <div class="lv-content lv-custom-scrollbar">
+                    <ul>
+                        {{#each dataExpired}}
+                        <li class="job-item" title="{{this.JobName}}-{{this.GroupName}}" style="min-height:90px">
+                            <a href="{{../Config.Rooturl}}/job/{{../recruiter}}/{{RequisitionID}}" style="text-decoration:none;color:inherit">
+                                <span class="job-title">
+                                    <strong>{{JobTitle}}</strong><br />
+                                    <!--<em class="text-clip">res:(Tình trạng): res:(Đang tuyển)</em> <br />-->
+                                    <em class="text-clip">
+                                        res:(Mức lương):
+                                        {{#ifCond this.SalaryType 1}}
+                                        <span>
+                                            {{this.Salary}}
+                                        </span>
+                                        {{else}}
+                                        <span>
+                                            res:(Thỏa thuận)
+                                        </span>
+                                        {{/ifCond}}
+                                    </em> <br />
+                                    <em class="text-clip">
+                                        <span>res:(Số lượng):&nbsp;</span><span>{{NumOfStaff}}</span><span>&nbsp;res:(người)</span>
+                                    </em> <br />
+                                    <!--{{#if ToDate}}
+                                    <em class="text-clip">
+                                        <span>res:(Thời hạn):&nbsp;</span><span>{{dateFormatValue ToDate 'dd/MM/yyyy'}}</span>
+                                    </em> <br />
+                                    {{/if}}-->
+                                </span>
+                            </a>
+                        </li>
+                        {{/each}}
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

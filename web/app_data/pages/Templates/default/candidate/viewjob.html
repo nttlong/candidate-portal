@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(My Resume)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_viewjob.min.css" rel="stylesheet" />
+</head>
+<body>
+    <render>../commons/navbar.html</render>
+    <div class="wrapper">
+        <section class="container myresume-content">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 box-header">
+                    <div class="col-xs-12 col-sm-9 col-md-9 box-header-left">
+                        <div class="row">
+                            <div class="image col-xs-12 col-sm-3 col-md-3">
+                                <img width="100%" height="100%" src="data:image/png;base64,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" w />
+                            </div>
+                            <div class="col-xs-12 col-sm-9 col-md-9 infor-box-left">
+                                <h1>Cộng tác viên làm nhiệm vụ điện thoại viên hỗ trợ khách hàng ( inbound )</h1>
+                                <p class="p-f">Ngân hàng tmcp đầu tư và phát triễn việt nam</p>
+                                <p class="p-s">Tháp bidv, 35 Hàng Vôi, Hoàn Kiếm, Hà Nội</p>
+                                <p class="p-s">Nơi làm việc: <span>Hà nội</span></p>
+                                <p class="p-sa">Mức lương: <span>Thương lượng</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-3 col-md-3 box-header-right">
+                        <div class="">
+                            <button type="button" class="btn btn-primary btn-apply">
+                                Nộp Đơn
+                            </button>
+                        </div>
+                        <div class="social-btn">
+                            <button type="button" class="btn btn-sm btn-li control-label push-top-xs">
+                                <i class="fa fa-linkedin left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-li control-label push-top-xs">
+                                <i class="fa fa-linkedin left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-li control-label push-top-xs">
+                                <i class="fa fa-linkedin left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-li control-label push-top-xs">
+                                <i class="fa fa-linkedin left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-li control-label push-top-xs">
+                                <i class="fa fa-linkedin left"></i>
+                            </button>
+                        </div>
+                        <div>
+                            <span>775 lượt xem</span><span>Đăng tuyển 5 ngày trước</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

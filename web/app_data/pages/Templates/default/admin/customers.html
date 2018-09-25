@@ -1,0 +1,386 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption(List of customers)</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <script server>
+        [  "./../libs/lv.utils",
+            "./../modules/node.sys.customer",
+            "./../modules/lv.model",
+            "./../modules/lv.db",
+            "./../libs/lv.authenticate",
+            (utils, cust, models, Data, aut, page) => {
+                utils.debug();
+                page.doLoadData = (event) => {
+                    utils._try(()=>{
+                        try {
+                            var clientData = utils.readData(event);
+                            var idx = clientData.idx;
+                            var size = clientData.size;
+                            var totalItems = models.ls_recruiters().count.sync();
+                            var items = models.ls_recruiters()
+                            .select({
+                                RecruiterCode:1,
+                                RecruiterName: 1,
+                                Address: 1,
+                                UserEmail: 1,
+                                ContactEmail: "ContactInfo.Email",
+                                CreatedOn: 1,
+                                CreateBy: 1,
+                                Logo: 1
+                            })
+                            .skip(idx * size)
+                            .limit(size)
+                            .toArray.sync();
+                            //
+                            var itemsRoleAd = models.sys_roles()
+                                .unwind("UserEmails")
+                                .select({
+                                    UserEmails: 1
+                                })
+                                .toArray.sync();
+                            //
+                            items.map((item, idx) => {
+                                let v1 = itemsRoleAd.filter(v => v['UserEmails'] === item.UserEmail);
+                                let v2 = itemsRoleAd.filter(v => v['UserEmails'] === item.ContactEmail);
+                                if (v1.length > 0 || v2.length > 0) {
+                                    item.IsAdmin = true;
+                                } else {
+                                    item.IsAdmin = false;
+                                }
+                            });
+                            //
+                            utils.writeData(event,{
+                                items:items,
+                                totalItems:totalItems
+                            });
+                            event.done();
+                        }
+                        catch(ex){
+                            event.done(ex);
+                        }},event);
+                    //cust.getListOfCustomers(clientData.filter, (err, data) => {
+                    //    if (err) event.done(err);
+                    //    else {
+                    //        utils.writeData(event, data);
+                    //        event.done();
+                    //    }
+                    //});
+                };
+                page.doSiginRecruiter = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        try {
+                            var r_user = models.ls_recruiters()
+                                .where("_id==id", { id: utils.objectID(clientData.id) })
+                                .select({ UserEmail: 1 })
+                                .toItem.sync();
+                            var user = models.sys_Users()
+                                .where("Email==UserEmail", r_user)
+                                .toItem.sync();
+                            if (user != null) {
+                                var login = models.sys_logins().insert({
+                                    LoginTime: new Date(),
+                                    SessionId: event.req.sessionID,
+                                    User: user
+
+                                }).commit.sync();
+                                aut.setAuthenticate(event.req, login);
+                                utils.writeData(event, { url: utils.getRootUrl(event.req) + "/company" });
+                                event.done();
+                            }
+                            else {
+                                utils.writeData(event, { apiError: {errorType:"LoginFail"}});
+                                event.done();
+                            }
+
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                page.doSetRolesAdmin = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        try {
+                            var email = clientData.email;
+                            if (email != null) {
+                                Data.cnn((err, db) => {
+                                    if (err) event.done(err);
+                                    else {
+                                        db.collection("sys_roles")
+                                            .aggregate([
+                                            ]).toArray((err, list) => {
+                                                if (list.length > 0) {
+                                                    db.collection("sys_roles")
+                                                        .updateOne({
+                                                            _id: list[0]._id
+                                                        },{
+                                                            $addToSet: {
+                                                                UserEmails: email
+                                                            }
+                                                        }, (err, result) => {
+                                                            if (err) event.don(err);
+                                                            else {
+                                                                utils.writeData(event, {});
+                                                                event.done();
+                                                            }
+                                                        });
+                                                }
+                                            })
+                                        utils.writeData(event, {});
+                                        event.done();
+                                    }
+                                });
+                            }
+                            else {
+                                utils.writeData(event, { apiError: { errorType: "LoginFail" } });
+                                event.done();
+                            }
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+                page.doRemoveRolesAdmin = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        try {
+                            var email = clientData.email;
+                            if (email != null) {
+                                Data.cnn((err, db) => {
+                                    if (err) event.done(err);
+                                    else {
+                                        db.collection("sys_roles")
+                                            .aggregate([
+                                            ]).toArray((err, list) => {
+                                                if (list.length > 0) {
+                                                    db.collection("sys_roles")
+                                                        .updateOne({
+                                                            _id: list[0]._id
+                                                        }, {
+                                                            $pull: {
+                                                                UserEmails: email
+                                                            }
+                                                        }, (err, result) => {
+                                                            if (err) event.don(err);
+                                                            else {
+                                                                utils.writeData(event, {});
+                                                                event.done();
+                                                            }
+                                                        });
+                                                }
+                                            })
+                                        utils.writeData(event, {});
+                                        event.done();
+                                    }
+                                });
+                            }
+                            else {
+                                utils.writeData(event, { apiError: { errorType: "LoginFail" } });
+                                event.done();
+                            }
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+            }
+        ]
+    </script>
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-2">
+                        res:(List of customers)
+                    </div>
+                    <div class="col-xs-5">
+                        <!--<div c-pager data-num-of-page-selector="5" data-total-items="data.totalItems" data-ng-config="filter.pager" ng-model="filter.pager.pageIndex" ng-change="doLoadData()"></div>-->
+                        <div c-pager data-config="${pagerConfig}" data-on-change="onPageChane">
+
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <!--<div c-search-box placeholder="res:(Search by:Code,Name,Address,Tel,Fax,..)" ng-model="filter.contentSearch" ng-change="doLoadData()"></div>-->
+                        <div class="input-group ng-empty ng-valid">
+                            <input class="form-control" ng-model="filter.contentSearch" placeholder="Search by:Code,Name,Address,Tel,Fax,..">
+                            <div class="input-group-btn" id="clear" style="display:none">
+                            <button class="btn btn-default">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button></div><div class="input-group-btn" id="btn">
+                            <button class="btn btn-default" style="margin-right: 0px !important;border: none !important;">
+                            <span class="glyphicon glyphicon-search"></span></button></div></div>
+                    </div>
+                    <div class="col-xs-2">
+                        <a href="#view=customer" class="btn btn-default">
+                            res:(New)
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="item in data.items | filter:filter.contentSearch ">
+                        <div class="row">
+                            <div class="col-xs-2" style="min-width:80px">
+                                <a href="#view=customer&id=${item._id}">
+                                    <img ng-src="${item.Logo}" style="width:80px;max-width:80px" />
+                                </a>
+                            </div>
+                            <div class="col-xs-10">
+                                <section>
+                                    <h4> [${item.RecruiterCode}]&nbsp;${item.RecruiterName}</h4>
+                                    <i class="pull-right"><small>${item.Address}</small></i>
+                                </section>
+
+                                <section>
+                                    <p>
+                                        ${item.Description}
+                                    </p>
+                                </section>
+                                <section>
+                                    <b> res:(Admin by):</b><span>${item.UserEmail}</span>
+                                </section>
+                                <section>
+                                    <b>res:(Latest modified by)</b>
+                                    <i class="pull-right"><small>${(item.ModifiedBy||item.CreatedBy)}</small></i>
+                                </section>
+                                <section>
+                                    <b>res:(Latest modified on)</b>
+                                    <i class="pull-right"><small>${(item.ModifiedOn||item.CreatedOn)|date:'dd-MM-yyyy'}</small></i>
+                                </section>
+                                <section class="row">
+                                    <div class="col-xs-12">
+                                        <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                                            <div class="btn-group" role="group" aria-label="First group">
+                                                <a href="#view=customer&id=${item._id}" class="btn btn-default pull-right">
+                                                    <i class="glyphicon glyphicon-pencil"></i>&nbsp;res:(Edit)
+                                                </a>
+                                            </div>
+                                            <div class="btn-group" role="group" aria-label="Second group">
+                                                <button class="btn btn-default" ng-click="doSignIn(item._id)">res:(Sigin)</button>
+                                            </div>
+                                            <div class="btn-group" role="group" aria-label="Second group" ng-if="!item.IsAdmin">
+                                                <button class="btn btn-default" ng-click="doSetAdmin(item)">res:(Set roles Admin)</button>
+                                            </div>
+                                            <div class="btn-group" role="group" aria-label="Second group" ng-if="item.IsAdmin">
+                                                <button class="btn btn-default" ng-click="doRemoveAdmin(item)">res:(Remove roles Admin)</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </section>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item" ng-show="(data.items | filter:filter.contentSearch).length == 0">
+                        <h3>res:(Không tìm thấy dữ liệu)</h3>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+    <script>
+            (function(app){
+
+            app.pagerConfig = {
+                numOfPageSelector: 5, totalItems: 0, pageSize: 20, pageIndex: 0
+            }
+            app.filter = {};
+            window.getText = function (obj){
+                if (obj["$oid"]) return obj["$oid"];
+                else return obj;
+            }
+            app.items = [];
+            var ajax = "server.page://doLoadData";
+            app.doLoadData = function (idx, size) {
+                //debugger;
+                ajax.data({
+                    filter: app.filter,
+                    idx: app.pagerConfig.pageIndex,
+                    size: app.pagerConfig.pageSize
+                })
+                .done(function(res){
+                    app.data = res;
+                    app.pagerConfig.totalItems = res.totalItems;
+                    app.$applyAsync();
+                });
+            }
+            app.doSignIn = function (id) {
+                var ajax = "server.page://doSiginRecruiter";
+                ajax.data({ id: id })
+                    .done(function (res) {
+                        if (res.apiError) {
+                            if (res.apiError.errorType === "LoginFail") {
+                                toastr.error("res:(Login fail)");
+                                return;
+                            }
+                        }
+                        window.location.href = res.url;
+                    });
+            }
+            function validateEmail(email) {
+                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(email);
+            }
+            app.doSetAdmin = function (item) {
+                if (confirm("res:(Bạn muốn xét tài khoản này thành admin?)")) {
+                    var email1, email2;
+                    email1 = item.UserEmail;
+                    email2 = item.ContactEmail;
+                    var email = "";
+                    if (validateEmail(email1)) {
+                        email = email1;
+                    } else {
+                        email = email2;
+                    }
+                    //
+                    var ajax = "server.page://doSetRolesAdmin";
+                    ajax.data({ email: email })
+                        .done(function (res) {
+                            toastr.success("res:(Cập nhật dữ liệu thành công)");
+                            item.IsAdmin = true;
+                            app.$applyAsync();
+                        });
+                }
+            }
+            app.doRemoveAdmin = function (item) {
+                if (confirm("res:(Bạn muốn xóa quyền admin của tài khoản này?)")) {
+                    var email1, email2;
+                    email1 = item.UserEmail;
+                    email2 = item.ContactEmail;
+                    var email = "";
+                    if (validateEmail(email1)) {
+                        email = email1;
+                    } else {
+                        email = email2;
+                    }
+                    //
+                    var ajax = "server.page://doRemoveRolesAdmin";
+                    ajax.data({ email: email })
+                        .done(function (res) {
+                            toastr.success("res:(Cập nhật dữ liệu thành công)");
+                            item.IsAdmin = false;
+                            app.$applyAsync();
+                        });
+                }
+            }
+            app.doLoadData(app.pagerConfig.pageIndex, app.pagerConfig.pageSize);
+            app.onPageChane = function (idx) {
+                app.pagerConfig.pageIndex = idx;
+                app.doLoadData(idx, app.pagerConfig.pageSize);
+            }
+        });
+
+    </script>
+</body>
+</html>

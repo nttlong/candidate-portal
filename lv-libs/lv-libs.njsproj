@@ -1,0 +1,177 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>lv-libs</Name>
+    <RootNamespace>lv-libs</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <EnableTypeScript>true</EnableTypeScript>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>39630ed8-13e8-4d2c-8020-f84a84adabb8</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>app.js</StartupFile>
+    <StartWebBrowser>False</StartWebBrowser>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <StartWebBrowser>false</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="app.js" />
+    <Compile Include="GoogleAnalytics\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.cache\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.language\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.register.api\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.render.api\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.render.html\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.render.server.code\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.api.process\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.authenticate\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.compile\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.entity\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.logs\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="hcs.routes\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.moment.vn\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.render.custom\index.js" />
+    <Compile Include="lv.server\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lv.utils\index.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="GoogleAnalytics\package.json" />
+    <Content Include="hcs.cache\package.json" />
+    <Content Include="hcs.language\package.json" />
+    <Content Include="hcs.register.api\package.json" />
+    <Content Include="hcs.render.api\package.json" />
+    <Content Include="hcs.render.html\package.json" />
+    <Content Include="hcs.render.server.code\package.json" />
+    <Content Include="hcs.routes\package.json" />
+    <Content Include="lv.api.process\package.json" />
+    <Content Include="lv.authenticate\package.json" />
+    <Content Include="lv.compile\package.json" />
+    <Content Include="lv.entity\package.json" />
+    <Content Include="lv.logs\package.json" />
+    <Content Include="lv.moment.vn\package.json" />
+    <Content Include="lv.render.custom\package.json" />
+    <Content Include="lv.server\package.json" />
+    <Content Include="lv.utils\package.json" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lv.render.custom\" />
+    <Folder Include="lv.utils\" />
+    <Folder Include="lv.logs\" />
+    <Folder Include="hcs.routes\" />
+    <Folder Include="lv.compile\" />
+    <Folder Include="lv.api.process\" />
+    <Folder Include="lv.authenticate\" />
+    <Folder Include="NewFolder1\" />
+    <Folder Include="NewFolder2\" />
+    <Folder Include="lv.entity\" />
+    <Folder Include="lv.moment.vn\" />
+    <Folder Include="hcs.cache\" />
+    <Folder Include="hcs.language\" />
+    <Folder Include="hcs.render.api\" />
+    <Folder Include="hcs.render.html\" />
+    <Folder Include="lv.server\" />
+    <Folder Include="hcs.register.api\" />
+    <Folder Include="hcs.render.server.code\" />
+    <Folder Include="GoogleAnalytics\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="hcs.cache\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="hcs.language\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="hcs.register.api\index.d.ts" />
+    <TypeScriptCompile Include="hcs.render.api\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="hcs.render.server.code\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="hcs.routes\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.api.process\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.authenticate\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.compile\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.entity\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.logs\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.moment.vn\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.render.custom\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.server\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="lv.utils\index.d.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+  </ItemGroup>
+  <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+</Project>

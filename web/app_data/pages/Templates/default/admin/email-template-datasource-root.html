@@ -1,0 +1,73 @@
+<body>
+    <div style="max-height:600px;overflow-y:auto">
+        <input type="text" ng-model="txtSearch" />
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>
+                        res:(Name)
+                    </th>
+                    <th>
+                        res:(Type)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in data|filter:{Name:txtSearch}">
+                    <td>
+                        ${item.Name}
+                    </td>
+                    <td>
+                        ${item.Type}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+       
+    </div>
+    <script server>
+
+        ["./../libs/lv.utils",
+            "fs",
+            "path",
+            (utils,
+                FS,
+                PATH,
+                page) => {
+                page.doLoadData = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var dir = clientData.id;
+                        try {
+                            var schemaPath = PATH.join(dir, "schema.json");
+                            var schema = FS.readFileSync(schemaPath, "utf-8");
+                            var data = Function("return " + schema)();
+
+                            utils.writeData(event, data);
+                            event.done();
+                        } catch (ex) {
+                            event.done(ex)
+                        }
+                    }, event);
+                }
+
+
+            }];
+
+    </script>
+    <script>
+        (function (scope) {
+            scope.doLoadData = function () {
+                var ajax = "server.page://doLoadData";
+                ajax.data({
+                    id: scope.$root.$history.data().id
+                })
+                    .done(res => {
+                        scope.data = res;
+                        scope.$applyAsync();
+                    });
+            }
+            scope.doLoadData();
+        });
+    </script>
+</body>

@@ -1,0 +1,25 @@
+﻿{
+  "data": [
+    {
+      "caption": {
+        "vi": "Địa chỉ Web site",
+        "en": "Web site url"
+      },
+      "view": "settings"
+    },
+    {
+      "caption": {
+        "vi": "Test camera",
+        "en": "Web site url"
+      },
+      "view": "camera"
+    },
+    {
+      "caption": {
+        "vi": "Test location",
+        "en": "Web site url"
+      },
+      "view": "location"
+    }
+  ]
+}

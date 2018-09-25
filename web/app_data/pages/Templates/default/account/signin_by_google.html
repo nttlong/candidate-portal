@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+
+
+<head>
+    
+    <title>page-caption:(Đăng nhập bằng tài khoản google)</title>
+    <render>../commons/header.html</render>
+    <script src="{{Config.RootUrl}}Scripts/toastr.min.js"></script>
+    <link href="{{Config.RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+	<meta charset="utf-8" />
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="{{data.clientID}}">
+</head>
+<body ng-controller="app" ng-cloak>
+    <div class="g-signin2" data-onsuccess="onGoogleSignIn" style="display:none"></div>
+    <script server>
+        ["./../modules/node.sys.content_manage",
+            "./../libs/lv.utils", 
+            "./../modules/node.sys.account",
+            (content, utils, account,app) => {
+				app.onLoad = (event) => {
+                    content.getSocialNetworkLinkInfo((err, info) => {
+                        if (err) {
+                            utils.writeError(event.res);
+                            event.done();
+                        }
+                        else {
+                            event.setModel("data.clientID", info.google_client_id);
+                            event.done();
+                        }
+                    });
+                };
+				app.doSignIn = (event) => {
+					debugger
+                    var clientData = utils.readData(event);
+                    account.loginByGoogle(event.req, clientData.data, (err, ret) => {
+                        if (err) event.done(err);
+                        else {
+                            if (ret != null) {
+                                if (!ret.apiError) {
+                                    if ((!clientData.retUrl) || (clientData.retUrl == null)) {
+                                        utils.writeData(event, {
+                                            action: {
+                                                redirect: utils.getRootUrl(event.req),
+                                                refresh: false
+                                            }
+                                        });
+
+                                    }
+                                    else {
+                                        utils.writeData(event, {
+                                            action: {
+                                                redirect: clientData.retUrl,
+                                                refresh: false
+                                            }
+                                        });
+                                    }
+                                    event.done();
+                                }
+                                else {
+                                    utils.writeData(event, ret);
+                                    event.done();
+                                }
+                            }
+                            else {
+                                utils.writeData(event, {
+                                    errorForm: {
+                                        errorType: "loginFail"
+                                    }
+                                });
+                                event.done();
+                            }
+
+                        }
+                    });
+                }
+            }]
+    </script>
+    <div class="container-fluid" style="max-width:800px;font-size:24pt">
+        <div ng-if="status==0">
+            <h1>
+                res:(Đang kiểm tra tài khoản của bạn)
+            </h1>
+        </div>
+        <div ng-if="status==-1">
+            <h3>
+                res:(Thật đáng tiếc chúng tôi không tìm thấy tài khoản của bạn trong hệ thống)
+            </h3>
+            <section>
+                <p>
+                    res:(Hãy thử lại 1 trong các cách sau):
+                </p>
+                <p>
+                    <ol>
+                        <li>res:(Thoát khỏi Google và đăng nhập lại)</li>
+                        <li><a href="{{Config.RootUrl}}account/reg_by_google"> res:(Đăng ký sử dụng bằng Google)</a></li>
+                        <li><a href="{{Config.RootUrl}}account/login"> res:(Đăng nhập bằng Email và Password)</a></li>
+                    </ol>
+                </p>
+            </section>
+        </div>
+        <div ng-if="status==1">
+            <h3>
+                res:(Đăng nhập thành công)
+            </h3>
+        </div>
+    </div>
+    <script>
+		function run() {
+			debugger
+            if (($(".g-signin2").children().length == 0) ||
+                (!window.app) ||
+                (!window.app.doLogin)) {
+                setTimeout(run, 100);
+            }
+            else {
+                $(".g-signin2").children().trigger("click");
+            }
+        }
+        run() 
+        ajax_call_set_url("{{Config.RootUrl}}/api_process")
+     
+        function onGoogleSignIn(googleUser) {
+
+            var profile = googleUser.getBasicProfile();
+            var data = {
+                ID: profile.getId(),
+                Name: profile.getName(),
+                email: profile.getEmail()
+            };
+            console.log(data);
+            window.app.doLogin(data);
+           
+      
+        }
+
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            
+            scope.status = 0;
+            scope.data = {
+                apiError: undefined
+            };
+            scope.doLogin = function (_data) {
+				debugger
+                var retUrl
+                if (window.location.href.indexOf("retUrl=") > -1) {
+                    retUrl = window.location.href.split("retUrl=")[1];
+                }
+                var ajax = "server.page://doSignIn";
+                ajax.data({ data: _data, retUrl: retUrl })
+                    .done(function (res) {
+                        console.log(res);
+                        if (res.apiError) {
+                            if (res.apiError.errorType === "UserWasNotFound") {
+                                scope.status = -1;
+                                scope.$applyAsync();
+                            }
+                            
+                            return
+                        }
+                        else {
+                            scope.data = res;
+                            scope.status = 1;
+                            setTimeout(function () {
+                                if (res.action && res.action.redirect) {
+                                    window.location.href = res.action.redirect;
+                                }}, 500);
+                           
+                        }
+                    });
+            };
+            window.app = scope;
+        });
+       
+
+    </script>
+
+
+</body>
+</html>

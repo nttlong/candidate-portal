@@ -1,0 +1,117 @@
+﻿<div class="container lv-search-container" >
+    <div class="lv-search-widget">
+        <div class="lv-search-controls clearfix">
+            <div>
+                <div class="col-sm-9 lv-control">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="lv-search-box">
+                                <span class="icon-search glyphicon glyphicon-search"></span>
+                                <input id="txtSearch" ng-keyup="$event.keyCode == 13 && $root.doSearch(null, 1)" class="input" type="text" placeholder="res:(Nhập chức danh, vị trí ...)" name="ByText" value="{{categories.values.content}}" ng-model="$root.txtSearch">
+                                <span class="icon-remove glyphicon glyphicon-remove"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="lv-dropdown-list">
+                                <span class="lv-icon icon-left fa fa-list-ul"></span>
+                                <select class="lv-search-list" placeholder="res:(Tất cả các ngành nghề)" name="ByJob" style="width:100%" value="{{{values.location}}}::{{{values.province}}}" ng-model="$root.selectedJobs">
+                                    <option value="all::all">res:(Tất cả các ngành nghề)</option>
+                                    {{#each categories.listOfJobs}}
+                                    <optgroup label="{{text}}">
+                                        {{#each this.children}}
+                                        <option value="{{id}}">{{text}}</option>
+                                        {{/each}}
+                                    </optgroup>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="lv-dropdown-list">
+                                <span class="lv-icon icon-left glyphicon glyphicon-map-marker"></span>
+                                <select class="lv-search-list" placeholder="res:(Tất cả các địa điểm)" name="ByLocation" style="width:100%" value="{{selectedJob}}" ng-model="$root.selectedLocations">
+                                    <option value="all::all">res:(Tất cả các địa điểm)</option>
+                                    {{#each categories.listOfLocations }}
+                                    <optgroup label="{{text}}">
+                                        {{#each this.children}}
+                                        <option value="{{id}}">{{text}}</option>
+                                        {{/each}}
+                                    </optgroup>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="row lv-search">
+                        <div class="col-sm-10">
+                            <div class="lv-button-search">
+                                <button id="btnSearchJobs" class="btn-search" name="CmdSearch" ng-click="$root.doSearch(null, 1)">res:(Tìm việc)</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <a class="button-list-cat" href="{{Config.RootUrl}}page/category" title="res:(Xem việc làm theo danh mục)">
+                                <span class="fa fa-list-ul"></span>
+                            </a>
+                            <div class="lv-button-list-cat">
+                                <a href="{{Config.RootUrl}}page/category">
+                                    <span class="fa fa-list-alt"></span>
+                                    <span>res:(Xem việc làm theo danh mục)</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</div>
+
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/lv.db",
+        "./../libs/lv.authenticate",
+        "../modules/node.sys.categories",
+        (utils, Data, auth, cate, app) => {
+            app.onLoad = (event) => {
+                event.setModel("categories", event.req.categories);
+                event.done();
+            }
+    }]
+</script>
+<script>
+    $(document).ready(function () {
+        //$("#btnSearchJobs").click(function () {
+        //    window.doSearch();
+        //})
+        $("#txtSearch").bind("keyup", function (e) {
+            if (e.which == 27) {
+                $(this).val("");
+                $(this).parent().removeClass("has-text");
+            } else {
+                var $val = $(this).val();
+                if ($val && $val.trim()) {
+                    $(this).parent().addClass("has-text");
+                } else {
+                    $(this).parent().removeClass("has-text");
+                }
+            }
+        });
+        $("#txtSearch").siblings(".icon-remove").bind("click", function (e) {
+            $("#txtSearch").val("");
+            $("#txtSearch").parent().removeClass("has-text");
+        });
+        $("#txtSearch").val("{{{categories.values.content}}}")
+
+        $('[name="ByLocation"]').select2({ placeholder: 'res:(Search by location)' });
+        $('[name="ByLocation"]').val("{{{categories.values.location}}}::{{{categories.values.province}}}").trigger("change")
+        $('[name="ByJob"]').select2({ placeholder: 'res:(Search by category)' });
+        $('[name="ByJob"]').val("{{{categories.values.jobGroup}}}::{{{categories.values.job}}}").trigger("change");
+     
+    });
+   
+</script>
+
+

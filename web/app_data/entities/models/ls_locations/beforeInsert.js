@@ -1,0 +1,1 @@
+var beforeInsert=(db,data,callback)=>{callback(undefined,data);};module.exports={beforeInsert:beforeInsert}

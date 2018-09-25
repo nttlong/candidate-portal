@@ -1,0 +1,140 @@
+<html>
+
+<body>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/node.sys.content_manage",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.model",
+            (
+                utils,
+                content,
+                aut,
+                models,
+                page) => {
+                page.loadData = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var item = models.sys_email_template()
+                            .where("_id==id", { id: utils.objectID(clientData.id) })
+                            .toItem.sync();
+                        utils.writeData(event, item);
+                        event.done();
+                    }, event);
+                    
+                }
+                page.doSaveData = (event) => {
+                    var clientData = utils.readData(event);
+                    var user = aut.getUser(event.req);
+                    content.saveTemplateEmailByTemplateName(clientData.data.TemplateName, {
+                        Username: user.Email,
+                        TemplateContent: clientData.data.Body,
+                        TemplateSubject: clientData.data.Subject
+                    }, (err, res) => {
+                        if (err) {
+                            event.done(err);
+                        }
+                        else {
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                    })
+                }
+                page.doDelete = (event) => {
+                    var clientData = utils.readData(event);
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            models.sys_email_template()
+                                .where("_id==id", { id: utils.objectID(clientData.id) })
+                                .delete().commit.sync();
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                        
+                    }, event);
+                    //content.deleteTemplateEmailById(clientData.id, aut.getUser(event.req).UserName, (err, ret) => {
+                    //    if (err) {
+                    //        event.done(err);
+                    //    }
+                    //    else {
+                    //        utils.writeData(event, {});
+                    //        event.done();
+                    //    }
+                    //});
+                }
+            }]
+    </script>
+    <div class="panel panel-default">
+        <div class="panel-heading">res:(Email template of):${data.TemplateName}</div>
+        <div class="panel-body">
+            <p>
+                <section>
+                    ${data.Description}
+                </section>
+            </p>
+            <p>
+                <section>
+                   
+                    <div c-html-box ng-model="data.Body" style="min-height:400px">
+
+                    </div>
+                </section>
+            </p>
+            
+        </div>
+        <div class="panel-footer">
+            <section class="row">
+                <div class="col-xs-12">
+                    <input type="button" ng-click="doSaveData()" class="btn btn-primary pull-right" value="res:(Update)" />
+                    <span>&nbsp;</span>
+                    <a  href="#view=template-email" class="btn btn-default pull-right">res:(Cancel)</a>
+                    <span> &nbsp;</span>
+                    <input type="button" ng-click="doDelete()" class="btn btn-primary pull-right" value="res:(Delete)" />
+                </div>
+            </section>
+            
+        </div>
+    </div>
+    <script>
+            (app => {
+                app.data = {};
+                app.doLoadData = () => {
+                    var ajax = "server.page://loadData";
+                    ajax.data({
+                        id:app.$root.$history.data().id
+                    })
+                        .done(res => {
+                            app.data = res;
+                            app.$applyAsync();
+                        });
+                };
+                app.doLoadData();
+                app.doDelete = () => {
+                    if (confirm("res:(Do you want to delete this item?)")) {
+                        var ajax = "server.page://doDelete";
+                        ajax.data({
+                            id: app.$root.$history.data().id
+                        })
+                            .done(res => {
+                                window.location.href = '#view=template-email';
+                            });
+                    }
+                };
+                app.doSaveData = function () {
+                    var ajax = "server.page://doSaveData";
+                    ajax.data({
+                        data: app.data
+                    }).done(res => {
+                        toastr.success("res:(Update is successfull)", "res:(Message)");
+                    })
+
+                };
+            })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title>page-caption(Đăng ký sử dụng bằng tài khoản Tiwtter)</title>
+    <render>../commons/header.html</render>
+    <script src="{{Config.RootUrl}}Scripts/toastr.min.js"></script>
+    <link href="{{Config.RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/codebird.js"></script>
+    <meta charset="utf-8" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+</head>
+<body ng-controller="app" ng-cloak>
+    <script server>
+        ["./../modules/node.sys.content_manage",
+            "./../libs/lv.utils",
+            "./../modules/lv.model",
+            "./../modules/node.Email",
+            "fs",
+            (content, utils, models, EMAIL, FS, app) => {
+                app.onLoad = (event) => {
+                    utils._try(() => {
+                        try {
+
+                            var txtContent = FS.readFile.sync(null, "./app_data/config/social.json", "utf-8");
+                            var data = Function("return " + txtContent)();
+                            var twitter_client_id = data.twitter_client_id;
+                            var consumer_key = twitter_client_id.split(',')[0];
+                            var consumer_secret = twitter_client_id.split(',')[1];
+                            event.setModel("twitter.consumer_key", consumer_key);
+                            event.setModel("twitter.consumer_secret", consumer_secret);
+                            event.done();
+
+
+                        } catch (e) {
+                            event.done(e);
+                        }
+                    }, event);
+                };
+
+                app.doRegist = (event) => {
+                    var res = {
+                        apiError: {
+                            errorType: undefined
+                        }
+                    };
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+                            if (utils.isNull(clientData.Email)) {
+                                res.apiError.errorType = "EmailIsEmpty";
+                                utils.writeData(event, res);
+                                event.done();
+                                return;
+                            }
+                            var count = models.sys_Users()
+                                .where("(Email==Email)or" +
+                                "(LinkToGoogle.Email == Email)or" +
+                                "(LinkToFaceBook.Email == Email)or" +
+                                "(LinkToLinkedIn.Email == Email)or" +
+                                "(LinkToTwitter.Email == Email)", clientData)
+                                .count.sync();
+                            if (count > 0) {
+                                res.apiError.errorType = "ExistingAccount";
+                                utils.writeData(event, res);
+                                event.done();
+                                return;
+                            }
+                            var hasPassword = utils.sha("uid=" + clientData.Email.toLowerCase() + ";pwd=" + utils.newGuid());
+                            var FirstName = "";
+                            var LastName = "";
+                            var Email = clientData.Email;
+                            if (!utils.isNull(clientData.Name)) {
+                                if (clientData.Name.indexOf(" ") > -1) {
+                                    FirstName = clientData.Name.split(' ')[0];
+                                    LastName = clientData.Name.substring(FirstName.length, clientData.Name.length);
+                                }
+                                else {
+                                    FirstName = clientData.Name;
+                                }
+                            }
+                            var retUser = models.sys_Users()
+                                .insert({
+                                    FirstName: FirstName,
+                                    LastName: LastName,
+                                    UserId: utils.newGuid(),
+                                    UserName: Email,
+                                    UsernameLowerCase: Email.toLowerCase(),
+                                    Email: Email.toLowerCase(),
+                                    LoginCount: 0,
+                                    ChangedPasswordCount: 0,
+                                    LastestChangePassword: null,
+                                    LoginFailCount: 0,
+                                    LatestLoginTime: null,
+                                    Password: hasPassword,
+                                    LinkToTwitter: {
+                                        Email: clientData.Email,
+                                        ID: clientData.ID
+                                    }, Settings: {
+                                        DefaultDateFormat: "dd/MM/yyyy",
+                                        DefaultLanguage: "vn",
+                                        DefaultCurrency: {
+                                            Code: "VN?"
+                                        }
+                                    }
+                                })
+                                .commit.sync();
+
+                            var activeToken = utils.newGuid();
+                            models.sys_activation()
+                                .insert({
+                                    Type: "AccountActivation",
+                                    Token: activeToken,
+                                    Email: Email.toLowerCase()
+                                })
+                                .commit.sync();
+                            var dataEmail = {
+                                FirstName: FirstName,
+                                LastName: LastName,
+                                Rooturl: utils.getRootUrl(event.reg),
+                                Token: activeToken,
+                                ActivationLink: utils.getRootUrl(event.reg) + "account/active/" + activeToken,
+                                RegisteredOn: new Date()
+                            }
+                            var schema = utils.getSchema(dataEmail);
+                            var Subject = "v/v kích hoạt tài khoản";
+                            var Body = "Thân chào bạn {{FirstName}}&nbsb;{{LastName}},<br/>" +
+                                "Bạn vừa đăng ký sử dụng dịch vụ tìm việc tại website {{RootUrl}} vào lúc {{RegisteredOn}}.<br/>" +
+                                "Để kích hoạt tài khoản sử dụng xin hãy bấm vào <a href=\"{{ActivationLink}}\">{{ActivationLink}}<a>," +
+                                "hoặc sao chép nội dung {{ActivationLink}} dán vào thanh địa chỉ của trình duyệt và làm theo hướng dẫn.<br/>" +
+                                "Chân thành cảm ơn bạn đã đăng ký sử dụng dịch vụ";
+                            var ret = EMAIL.getTemplate.sync(null, "AccountActivation", lang, Subject, Body, schema, "Template email báo active");
+                            var ret = EMAIL.sendEmail.sync(null, Email, ret.Subject, ret.Body, null, dataEmail);
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        catch (ex) {
+
+                            event.done(ex);
+                        }
+                    }, event);
+                };
+            }]
+    </script>
+    <render>../commons/navbar.html</render>
+    <section>
+        <div class="container" style="max-width:600px;font-size:24pt">
+            <div id="message" ng-if="state==0">
+                <h4 class="section-heading">res:(Xin đợi trong giây lát. Chúng tôi đang tiến hành đăng ký quyền sử dụng của bạn bằng tài khoản Twitter)</h4>
+            </div>
+            <div id="message_success" ng-if="state==1">
+                <h4 class="section-heading">res:(Bạn đã đăng ký thành công. Tuy nhiên, để bảo đảm rằng bạn là người thực sự sở hữu tài khoản Twitter này. Hãy kiểm tra lại Email và làm theo hướng dẫn để kích hoạt tài khoản sử dụng)</h4>
+            </div>
+            <div id="error" ng-if="state==2">
+                <h1 class="section-heading">res:(Đăng ký không thành công)</h1>
+                <label class="control-label">res:(Thật đáng tiếc tài khoản này đã được sử dụng bởi một người khác, hãy thử lại một trong các cách sau:)</label>
+
+                <ol>
+                    <li>res:(Thoát khỏi Twitter và đăng nhập lại, sau đó tiến hành đăng ký lại.)</li>
+                    <li><a href="{{Config.RootUrl}}account/login">res:(Đăng nhập lại)</a></li>
+                    <li><a href="{{Config.RootUrl}}account/passwordrecovery">res:(Hoặc đặt lại mật khẩu)</a></li>
+                </ol>
+            </div>
+            <div ng-if="state==3">
+                <p>
+                    <h1>
+                        res:(Thật đáng tiếc vì một lý do gì đó mà Twitter đã không cho chúng tôi biết địa chỉ Email của bạn)
+                    </h1>
+
+                    <h2>
+                        res:(Có thể xảy ra các lý do sau):
+                    </h2>
+                    <ol>
+                        <li>res:(bạn chưa xác nhận địa chỉ Email của bạn với Twitter, mặc dầu bạn đăng nhập vào Twitter thành công)</li>
+                        <li>res:(Bạn chưa publish Email của bạn)</li>
+                    </ol>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    
+    <script>
+        ng_app([], function (scope) {
+            scope.state = 0;
+            scope.doRegist = function (data) {
+                var aPost = "server.page://doRegist";
+                aPost.data(data)
+                    .done(function (res) {
+                        console.log(res);
+                        if (res.apiError) {
+                            if (res.apiError.errorType === "EmailIsEmpty") {
+                                scope.state = 3;
+                                scope.$applyAsync();
+                            }
+                            else
+                            if (res.apiError.errorType === "ExistingAccount") {
+                                scope.state = 2;
+                                scope.$applyAsync();
+                            }
+                            else {
+                                scope.state = 1;
+                                scope.$applyAsync();
+                                if (window.location.href.indexOf("?retUrl") > -1) {
+
+                                    var retUrl = window.location.href.split("?retUrl=")[1];
+                                    setTimeout(function () {
+                                        window.location.href = "{{Config.RootUrl}}" + retUrl.replace("~/", "");
+                                    }, 5000);
+                                }
+                                else {
+                                    setTimeout(function () {
+                                        window.location.href = "{{Config.RootUrl}}";
+                                    }, 5000);
+                                }
+                            }
+                        }
+                    })
+            };
+            window.app = scope;
+            scope.$applyAsync();
+        });
+    </script>
+    <script>
+       
+        var cb = new Codebird();
+        cb.setConsumerKey("{{{twitter.consumer_key}}}", "{{{twitter.consumer_secret}}}");
+        if ((window.location.href.indexOf("&s=") == -1)) {
+            cb.__call(
+                "oauth_requestToken", {
+                    oauth_callback: "{{{Config.RootUrl}}}account/signin_by_twitter?redirect=" + encodeURIComponent(escape(window.location.href))
+                }, function (res) {
+                    var data = {
+                        t: res.oauth_token,
+                        s: res.oauth_token_secret
+                    }
+                    
+                    window.location.href = window.location.href + "?t=" + data.t + "&s=" + data.s;
+
+
+                });
+        }
+        else {
+
+            if (window.location.href.indexOf("&oauth_verifier=") == -1) {
+                var t = window.location.href.split("t=")[1].split('&')[0];
+                var s = window.location.href.split("s=")[1].split('&')[0];
+
+                cb.setToken(t, s);
+                cb.__call(
+                    "oauth_authorize", {
+                        oauth_token: window.location.href.split('t=')[1].split('&')[0]
+                    }, function (res) {
+
+                        window.location.href = res + "&t=" + t + "&s=" + s;
+                    });
+            }
+            else {
+                var t = window.location.href.split("t=")[1].split('&')[0];
+                var s = window.location.href.split("s=")[1].split('&')[0];
+                var token = window.location.href.split("&oauth_token=")[1].split('&')[0];
+                var v_token = window.location.href.split("&oauth_verifier=")[1].split('&')[0].split('?')[0];
+                cb.setToken(token, s);
+                cb.__call("oauth_accessToken", {
+                    oauth_verifier: v_token
+                }, function (res) {
+
+                    cb.setToken(res.oauth_token, res.oauth_token_secret);
+                    cb.__call('account_verifyCredentials', {
+                        include_email: true,
+                        include_entities: false,
+                        skip_status: true
+                    }, function (res) {
+                        //debugger;
+                        window.app.doRegist({
+                            Email: res.email,
+                            UserId: res.id
+                        })
+                    });
+                })
+                //debugger;
+
+            }
+        }
+
+
+
+    </script>
+</body>
+</html>

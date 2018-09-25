@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>page-caption:(Danh mục Ngành nghề chuẩn hóa)</title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_category.min.css" rel="stylesheet" />
+</head>
+<body>
+    <render>../commons/navbar.html</render>
+    <div class="wrapper">
+        <div class="container box" id="category">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 box-category">
+                    <h1>res:(Danh mục Ngành nghề chuẩn hóa)</h1>
+                    <hr />
+                    {{#each categories.jobs as |id key|}}
+                    <div class="col-xs-12 col-sm-6 col-md-4 box-category-item">
+                        <p>
+                            <span>{{text}}</span>
+                            <span style="color: #faa916">({{sum}})</span>
+                        </p>
+                        {{#each this.children}}
+                        <ul>
+                            <li>
+                                <a href="{{../../../Config.RootUrl}}/jobs/by-post-date/vn/all/all/all/{{id.id}}/{{getValFullCode this.id}}/all/0">
+                                    <span>{{this.text}}</span> 
+                                    <span style="color: #faa916">({{this.count}})</span>
+                                </a>
+                            </li>
+                        </ul>
+                        {{/each}}
+                    </div>
+                    {{/each}}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <render>/../commons/footer.html</render>
+    <script server>
+        [
+            "./../libs/lv.utils",/*Tien ich*/
+            "./../modules/node.sys.categories",
+            "./../modules/lv.model",
+            "./../modules/lv.db",
+            (utils, categories, models, Data, page) => {
+                page.onLoad = (event) => {
+                    var cate = categories;
+                    utils._try(() => {
+                        var dataParent;
+                        var ret = [];
+                        var language = utils.getCurrentLanguageCode(event);
+                        var listOfJobs;
+                        try {
+                            Data.cnn((err, db) => {
+                                dataParent = models.ls_group_jobs()
+                                    .toArray.sync();
+                                if (dataParent) {
+                                    dataParent.forEach(item => {
+                                        var sum = 0;
+                                        var oItem = {
+                                            id: item.Code,
+                                            children: [],
+                                            sum: 0
+                                        };
+                                        oItem.text = item["Name"][language];
+                                        if (item.Jobs) {
+                                            item.Jobs.forEach(cItem => {
+                                                var number;
+                                                number = models.ls_requisition()
+                                                    .where("Job.FullJobCode==id",
+                                                    {
+                                                        id: item.Code + "::" + cItem.Code
+                                                    })
+                                                    .count.sync();
+                                                sum += number;
+                                                oItem.children.push({
+                                                    id: item.Code + "::" + cItem.Code,
+                                                    text: cItem.Name[language],
+                                                    count: number || 0
+                                                });
+                                            })
+                                            oItem.sum = sum;
+                                            ret.push(oItem);
+                                        }
+                                    })
+                                    listOfJobs = ret;
+                                    event.setModel("categories.jobs", listOfJobs);
+                                    if ((event.req.routeInfo) && (event.req.routeInfo.params)) {
+                                        event.req.routeInfo.params.jobGroup = event.req.routeInfo.params["job-group"]
+                                        event.req.routeInfo.params.content = (event.req.routeInfo.params.content == "all") ? "" : event.req.routeInfo.params.content;
+                                        event.setModel("values", event.req.routeInfo.params);
+                                    }
+                                    event.done();
+                                }
+                            });
+                        } catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event);
+                }
+            }];
+    </script>
+</body>
+</html>

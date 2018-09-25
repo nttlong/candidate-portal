@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>page-caption:(Trang chủ)</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <render>/../commons/header.html</render>
+    <link href="{{Config.RootUrl}}Content/css/select2.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/select2.min.js"></script>
+    <link href="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/css/candidate_main_companyjob.min.css" rel="stylesheet" />
+</head>
+
+<body class="home">
+    <render>/../commons/navbar.html</render>
+    <div class="lv-main-container">
+        <div class="lv-banner-container" onload="store__:(st_widget_search_box_load)">
+            <div id="lvBannerCarousel" class="lv-slider-banner carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <!--<ol class="carousel-indicators">
+                    <li data-target="#lvBannerCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#lvBannerCarousel" data-slide-to="1"></li>
+                    <li data-target="#lvBannerCarousel" data-slide-to="2"></li>
+                </ol>-->
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="{{Config.RootUrl}}templates/{{Config.Customer}}/resources/images/banner/banner_001.jpg" />
+                    </div>
+                    <div class="item">
+                        <img src="{{Config.RootUrl}}templates/{{Config.Customer}}/resources/images/banner/banner_002.jpg" />
+                    </div>
+                    <div class="item">
+                        <img src="{{Config.RootUrl}}templates/{{Config.Customer}}/resources/images/banner/banner_003.jpg" />
+                    </div>
+                </div>
+            </div>
+            <render>../commons/SearchBox_Company.html</render>
+        </div>
+        {{#data}}
+        <section class="lv-main-content container" onload="store:(st_get_all_requisition_of_recruiter)">
+            <div class="myresume-contact row">
+                <div class="col-md-12">
+                    <span class="lv-header-companyjob">res:(Các vị trí công ty đang tuyển dụng)</span>
+                    <div class="row">
+                        {{#eachItemInArray '$items'}}
+                        <div class="col-md-6 lv-item-job">
+                            <div class="lv-item-job-box">
+                                <div class="lv-item-job-box-img">
+                                    <img class="img-responsive" src="{{getValue '$JobPhoto'}}" onError="this.src = 'data:image/jpeg;base64,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';" />
+                                </div>
+                                <div class="lv-item-job-box-content">
+                                    <p title="{{getName '$FullJobName'}}">{{getName '$FullJobName'}}</p>
+                                    <p>res:(Tình trạng): <span class="p-f">{{getName '$Status'}}</span></p>
+                                    <p>res:(Mức lương): <span class="p-s">{{getName '$Salary'}}</span></p>
+                                    <p>res:(Số lượng): <span class="p-s">{{getValue '$NumOfStaff'}} res:(người)</span></p>
+                                    <p>res:(Thời hạn): <span class="p-s">{{getValue '$ReceiveTo'}}</span></p>
+                                </div>
+                                <p class="lv-view-detail">
+                                    <!--href="{{../../Config.RootUrl}}job/{{RecruiterCode}}/{{GroupCode}}/{{JobCode}}/{{id}}-->
+                                    <span>{{getValue '$Job'}}</span>
+                                    <a href="{{../../Config.RootUrl}}job/{{RecruiterCode}}/{{GroupCode}}/{{JobCode}}/{{RequisitionID}}">
+                                        res:(Xem chi tiết)
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        {{/eachItemInArray}}
+                    </div>
+                </div>
+
+                <div class="lv-paginator">
+                    <nav>
+                        <nav>
+                            <ul class="pagination">
+                                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                                {{#eachItemInArray '/pager/pagers'}}
+                                <li class="page-indicator" data-page-id="{{getValue 'index'}}"><a href="{{../../Config.RootUrl}}page/company_job/{{getValue 'Recode'}}/{{getValue 'index'}}">{{getValue 'caption'}} <span class="sr-only"></span></a></li>
+                                {{/eachItemInArray}}
+                                <li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                            </ul>
+                        </nav>
+                    </nav>
+                    <script>
+                        var pageIndex = "{{{getValue '/pager/pageIndex' }}}";
+                        $(document).ready(function () {
+                            $("[data-page-id='" + pageIndex + "']").addClass("active");
+                        })
+                    </script>
+                </div>
+            </div>
+        </section>
+        {{/data}}
+    </div>
+    <render>/../commons/footer.html</render>
+
+</body>
+</html>

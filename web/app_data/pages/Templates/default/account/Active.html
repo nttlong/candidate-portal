@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <render>../commons/header.html</render>
+
+</head>
+<body ng-controller="app">
+    <render>../commons/navbar.html</render>
+    <section style="font-size:14pt">
+        <div class="container" style="max-width:600px">
+            {{#if message.TokenWasNotFound}}
+            <p>res:(Thật đáng tiếc! yêu cầu này không tìm thấy, hoặc đã quá hạn hãy thử một trong các bước sau:)</p>
+            <ol style="line-height:30pt">
+                <li><a href="{{Config.RootUrl}}account/passwordrecovery">res:(Đặt lại mật khẩu)</a></li>
+                <li><a href="{{Config.RootUrl}}account/login">res:(Đăng nhập lại)</a></li>
+                <li>
+                    res:(Gởi email kích hoạt tài khoản lại một lần nữa)<br />
+                    <form role="form">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" for="form-group-input">res:(Địa chỉ email)</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="form-group-input" placeholder="res:(Địa chỉ email)" ng-model="email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group" role="group" aria-label="Third group">
+                                        <button type="button" class="btn btn-primary" ng-click="doReactive()">res:(Nhận mail)</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </form>
+                </li>
+            </ol>
+            {{/if}}
+            {{#if message.TokenWasFound}}
+            <p style="font-size:14pt;line-height:30pt">
+                res:(Bấm vào nút dưới đây để kích hoạt tài khoản sử dụng)
+            </p>
+            <p>
+                <button type="button" class="btn btn-primary" ng-click="doActive()">res:(Kích hoạt)</button>
+            </p>
+            {{/if}}
+        </div>
+    </section>
+    <script server>
+        ["./../libs/lv.utils",
+            "./../modules/lv.model",
+            "./../modules/node.Email",
+            (utils, models, EMAIL, page) => {
+                page.onLoad = (event) => {
+                    utils._try(() => {
+                        try {
+                            var token = event.req.routeInfo.params.token;
+                            var activeItem = models.sys_activation()
+                                .where("(Token==token) and (IsActived==isActive)", { token: token, isActive: null })
+                                .toItem.sync();
+                            if (activeItem == null) {
+                                event.setModel("message.TokenWasNotFound", true);
+                                event.done();
+                                return;
+                            }
+                            else {
+                                var user = models.sys_Users()
+                                    .where("Email==Email", { Email: activeItem.Email })
+                                    .toItem.sync();
+                                if (user == null) {
+                                    event.setModel("message.TokenWasNotFound", true);
+                                    
+                                    event.done();
+                                    return;
+                                }
+                                else {
+                                    event.setModel("user", user);
+                                    event.setModel("message.TokenWasFound", true);
+                                    event.setModel("data.Token", token);
+                                    event.done();
+                                    return;
+                                }
+                            }
+                            event.done();
+
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+
+
+                    }, event);
+
+
+                }
+                page.doReactive = (event) => {
+                    utils._try(() => {
+                        try {
+                            var lang = utils.getCurrentLanguageCode(event);
+                            var clientData = utils.readData(event);
+                            var user=models.sys_Users().where("(Email==email)", { email: clientData.email })
+                                .toItem.sync();
+                            if (user == null) {
+                                utils.writeData(event, {});
+                                event.done();
+                            }
+                            else {
+                                var activeToken = utils.newGuid();
+                                models.sys_activation()
+                                    .insert({
+                                        Type: "AccountActivation",
+                                        Token: activeToken,
+                                        Email: user.Email.toLowerCase()
+                                    })
+                                    .commit.sync();
+                                var dataEmail = {
+                                    FirstName: user.FirstName,
+                                    LastName: user.LastName,
+                                    RootUrl: utils.getRootUrl(event.reg),
+                                    Token: activeToken,
+                                    ActivationLink: utils.getRootUrl(event.reg) + "account/active/" + activeToken,
+                                    RegisteredOn: new Date()
+                                }
+                                var schema = utils.getSchema(dataEmail);
+                                var Subject = "v/v kích hoạt tài khoản";
+                                var Body = "Thân chào bạn {{FirstName}}&nbsb;{{LastName}},<br/>" +
+                                    "Bạn vừa đăng ký sử dụng dịch vụ tìm việc tại website {{RootUrl}} vào lúc {{RegisteredOn}}.<br/>" +
+                                    "Để kích hoạt tài khoản sử dụng xin hãy bấm vào <a href=\"{{ActivationLink}}\">{{ActivationLink}}<a>," +
+                                    "hoặc sao chép nội dung {{ActivationLink}} dán vào thanh địa chỉ của trình duyệt và làm theo hướng dẫn.<br/>" +
+                                    "Chân thành cảm ơn bạn đã đăng ký sử dụng dịch vụ";
+                                var ret = EMAIL.getTemplate.sync(null, "AccountActivation", lang, Subject, Body, schema, "Template email báo active");
+                                var ret = EMAIL.sendEmail.sync(null, user.Email, ret.Subject, ret.Body, null, dataEmail);
+                                utils.writeData(event, {});
+                                event.done();
+                            }
+                        }
+                        catch (ex) {
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+
+                    }, event);
+                };
+                page.doActive = (event) => {
+                    utils._try(() => {
+                        try {
+                            var lang = utils.getCurrentLanguageCode(event);
+                            var clientData = utils.readData(event);
+                            var activeItem = models.sys_activation()
+                                .where("(Token==token) and (IsActived==isActive)", { token: clientData.token, isActive: null })
+                                .toItem.sync();
+                            if (activeItem == null) {
+                                utils.writeData(event, {});
+                                event.done();
+                                return;
+                            }
+                            var user = models.sys_Users()
+                                .where("Email==Email", { Email: activeItem.Email })
+                                .toItem.sync();
+                            if (user == null) {
+                                utils.writeData(event, {});
+                                event.done();
+                                return;
+                            }
+                            else {
+                                models.sys_Users()
+                                    .where("Email==Email", { Email: activeItem.Email })
+                                    .set("IsActive", true)
+                                    .commit.sync();
+                                models.sys_activation()
+                                    .where("(Token==token) and (IsActived==isActive)", { token: clientData.token, isActive: null })
+                                    .set("IsActived", true)
+                                    .commit.sync();
+                                var dataAdmin = models.sys_roles().toItem.sync();
+                                var dataRecruiter = models.ls_recruiters()
+                                    .where("UserEmail==Email", { Email: activeItem.Email })
+                                    .toItem.sync();
+                                if (dataRecruiter && dataAdmin) {
+                                    for (var i = 0; i < dataAdmin.UserEmails.length; i++) {
+                                        var dataEmail = {
+                                            Email: dataRecruiter.UserEmail,
+                                            RecruiterName: dataRecruiter.RecruiterName || "No data",
+                                            RecruiterCode: dataRecruiter.RecruiterCode || "No data",
+                                            Address: dataRecruiter.Address || "No data",
+                                            Tel: dataRecruiter.ContactInfo.Tel || "No data",
+                                            Fax: dataRecruiter.ContactInfo.Fax || "No data",
+                                            RootUrl: utils.getRootUrl(event.reg)
+                                        }
+                                        var schema = utils.getSchema(dataEmail);
+                                        var Subject = "Nhà tuyển dụng kích hoạt tài khoản thành công";
+                                        var Body = "Dear Admin,<br/>" +
+                                            "Đã có khách hàng đăng ký và kích hoạt thành công tài khoản Nhà tuyển dụng tại trang {{RootUrl}}, các thông tin cơ bản mà KH đã đăng ký như sau:<br/>" +
+                                            "- Tài khoản KH: {{Email}}.<br/>" +
+                                            "- Tên Công ty: {{RecruiterName}} - Mã công ty: {{RecruiterCode}}.<br/>" +
+                                            "- Địa chỉ: {{Address}}.<br/>" +
+                                            "- Điện thoại: {{Tel}} - Fax: {{Fax}}.<br/>" +
+                                            "Trân trọng!";
+                                        var ret = EMAIL.getTemplate.sync(null, "MessageRecruiterActived", lang, Subject, Body, schema, "Template email báo cho admin nhà tuyển dụng đã kích hoạt");
+                                        var Email = dataAdmin.UserEmails[i];
+                                        var ret = EMAIL.sendEmail.sync(null, Email, ret.Subject, ret.Body, null, dataEmail);
+                                    }
+                                }
+                                utils.writeData(event, {});
+                                event.done();
+
+                                return;
+                            }
+                        }
+                        catch (ex) {
+                            utils.writeData(event, {});
+                            event.done();
+                        }
+                        
+                    }, event);
+                }
+            }]
+    </script>
+    <script>
+        ng_app([], function (scope) {
+            scope.email = "";
+            scope.doActive = function () {
+                var a = "server.page://doActive";
+                a.data({ token: "{{{data.Token}}}" })
+                    .done(function (res) {
+                        window.location.href = "{{{Config.RootUrl}}}account/login";
+                    })
+
+            };
+            scope.doReactive = function () {
+                var a = "server.page://doReactive";
+                a.data({ email: scope.email })
+                    .done(function (res) {
+                        window.location.href = "{{{Config.RootUrl}}}account/login";
+                    })
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+﻿@media (min-width: 1024px) {
+  .desktop-xs {
+    display: block;
+  }
+  .tablet-xs {
+    display: none;
+  }
+  .desktop-xs-line {
+    display: inline-block;
+  }
+  .tablet-xs-line {
+    display: none;
+  }
+}
+@media (max-width: 1023px) {
+  .desktop-xs {
+    display: none;
+  }
+  .tablet-xs {
+    display: block;
+  }
+  .desktop-xs-line {
+    display: none;
+  }
+  .tablet-xs-line {
+    display: inline-block;
+  }
+}

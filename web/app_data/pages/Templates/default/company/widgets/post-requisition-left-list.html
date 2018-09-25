@@ -1,0 +1,335 @@
+﻿
+<div class="col-xs-12 col-sm-12 col-md-3" id="listOfRequisitions" ng-cloak>
+    <div class="header_left">
+        <div class="col-md-12 item_header_left">
+            <div class="col-sm-12 col-md-12 item_header_left_l">
+                res:(Lọc theo)
+            </div>
+            <div class="col-sm-12 col-md-12">
+                <div class="col-sm-4 col-md-4 item_header_left_r">
+                    <select class="form-control" ng-model="yearFilter" ng-change="selectedMonthFilter()">
+                        <option value="" selected="selected">res:(Tất cả)</option>
+                        <option ng-repeat="it in dataYear" value="${it.id}">${it.text}</option>
+                    </select>
+                </div>
+                
+                <div class="col-sm-6 col-md-6 item_header_left_r">
+                    <select class="form-control" ng-model="statusFilter" ng-change="selectedStatus()">
+                        <option value="" selected="selected">res:(Tất cả)</option>
+                        <option value="1">res:(Đăng tuyển)</option>
+                        <option value="2">res:(Tạm dừng)</option>
+                        <option value="3">res:(Lưu nháp)</option>
+                        <option value="4">res:(Hết hạn)</option>
+                    </select>
+                </div>
+                <div class="col-sm-2 col-md-2 item_header_left_r">
+                    <a href="#" class="btn btn-default" data-toggle="dropdown">
+                        <span class="fa fa-filter"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                        <li role="presentation">
+                            <a ng-click="doLoadData(0,'TotalApplyCandidate')"><span style="white-space:nowrap">res:(Nhiều ứng viên nhất)</span></a>
+                        </li>
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation">
+                            <a ng-click="doLoadData(0,'PublishDate')"><span style="white-space:nowrap">res:(Ngày đăng mới nhất)</span></a>
+                        </li>
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation">
+                            <a ng-click="doLoadData(0,'TotalViewByCandidate')"><span style="white-space:nowrap">res:(Nhiều người xem nhất)</span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-12 col-md-12" style="padding-bottom: 10px;">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="ipSearch" c-enter="doSearchData()" ng-model="txtSearch" placeholder="res:(Tìm kiếm theo chức danh)" name="search">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" style="z-index: 0" type="submit" ng-click="doSearchData()"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!--///-->
+    <div class="body_left">
+        <div class="col-md-12 item_left item_left_box" 
+             ng-repeat="item in data.items | filter: searchFilter" 
+             ng-click="$root.doSelectRequisition(item._id, $event)" id="${item._id}"
+             style="cursor:pointer">
+            <div class="box_item_left">
+                <div class="header_box_item_left" title="${item.JobTitle }">
+                    ${item.JobTitle }
+                </div>
+                <div class="body_box_item_left">
+                    <p>${getName(item.Job.GroupName)}</p>
+                    <p class="body_box_item_left_slut">${item.CandidateApplyList == undefined ? 0 : item.CandidateApplyList.length} res:(ứng tuyển)</p>
+                    <p>
+                        <span ng-if="equalDateExpired(item.ReceiveTo) == 1">
+                            res:(Hết hạn trong) ${convertDateExpired(item.ReceiveTo)}
+                        </span>
+                        <span ng-if="equalDateExpired(item.ReceiveTo) == 0">
+                            res:(Đã hết hạn)
+                        </span>
+                    </p>
+                    <p>
+                        <span ng-if="item.TotalViewByCandidate != undefined">
+                            ${item.HitCount} res:(lượt xem)
+                        </span>
+                        <span ng-if="item.TotalViewByCandidate == undefined">
+                            0 res:(lượt xem)
+                        </span>
+                    </p>
+                    <p ng-if="!item.IsLocked">
+                        <span ng-if="item.PublishDate">res:(Đăng ngày) ${item.PublishDate|date:'dd/MM/yyyy'} </span>
+                        <span ng-if="!item.PublishDate">res:(Chưa đăng tuyển) </span>
+                    </p>
+                    <p ng-if="item.IsLocked">
+                        <span>res:(Tạm dừng đăng tuyển)</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer_left item_left">
+        <div c-pager data-config="${pagerConfig}" data-on-change="onPageChane">
+          
+        </div>
+       
+    </div>
+</div>
+<script server>
+    ["./../libs/lv.utils",
+        "./../libs/lv.authenticate",
+        "./../modules/lv.model",
+        (utils,aut, models,page) => {
+            page.doLoadData = (event) => {
+                utils._try(() => {
+                    try {
+                        var user = aut.getUser(event.req);
+                        var clientData = utils.readData(event);
+                        clientData.pageIndex = clientData.pageIndex || 0;
+                        var year = clientData.year;
+                        var starDate = new Date(year, 0, 1);
+                        var endDate = new Date(year, 12, 0);
+                        var status = clientData.status;
+                        var recruitrer = models.ls_recruiters()
+                            .where("UserEmail", user.Email)
+                            .toItem.sync();
+                        var query = models.ls_requisition().where("RecruiterId==_id", { _id: recruitrer._id }).query();
+                        if (!utils.isNull(year)) {
+                            query = query.where("(CreatedOn >= _stardate) and (CreatedOn <= _enddate)", {
+                                _stardate: starDate,
+                                _enddate: endDate
+                            }).query();
+                        }
+                        if (!utils.isNull(status)) {
+                            if (status == 1) {
+                                query = query.where("(IsLocked==_islocked) and (IsPublished==_ispublished) and (ReceiveTo >= _receiveto)", {
+                                    _islocked: false || null,
+                                    _ispublished: true,
+                                    _receiveto: new Date()
+                                }).query();
+                            } else if (status == 2) {
+                                query = query.where("IsLocked==_islocked", {
+                                    _islocked: true
+                                }).query()
+                            } else if (status == 3) {
+                                query = query.where("IsPublished==_ispublished", {
+                                    _ispublished: false
+                                }).query()
+                            } else if (status == 4) {
+                                query = query.where("ReceiveTo <= _receiveto", {
+                                    _receiveto: new Date()
+                                }).query()
+                            }
+                        }
+                        if (clientData.sortBy == "TotalApplyCandidate") {
+                            query = query.sort("TotalApplyCandidate", -1).query();
+                        } else if (clientData.sortBy == "PublishDate") {
+                            query = query.sort("PublishDate", -1).query();
+                        } else if (clientData.sortBy == "TotalViewByCandidate") {
+                            query = query.sort("HitCount", -1).query();
+                        } else {
+                            query = query.sort("CreatedOn", -1).query();
+                        }
+                        if (!utils.isNull(clientData.search)) {
+                            query.where("contains(JobTitle, jobtitle)", {
+                                jobtitle: clientData.search
+                            }).query();
+                        }
+
+                        var qrCount = query.clone();
+                        
+                        var count = qrCount.count.sync();
+                        var list = query
+                            
+                            
+                            .skip(clientData.pageIndex * clientData.pageSize)
+                            .limit(clientData.pageSize)
+                            .select({
+                                JobTitle: 1,
+                                Job: 1,
+                                CandidateApplyList: 1,
+                                TypeOfCanLis: { "$type": "$CandidateApplyList" },
+                                ReceiveTo: 1,
+                                TotalViewByCandidate: 1,
+                                HitCount: 1,
+                                IsLocked: 1,
+                                PublishDate: 1
+                            })
+                            .select({
+                                JobTitle: 1,
+                                Job: 1,
+                                TotalCandidateApply: {
+                                    $cond: {
+                                        if: { $eq: ["$TypeOfCanLis", "array"] }, then: {
+                                            "$size":"$CandidateApplyList"
+                                        }, else: 0
+                                    }
+                                },
+                                ReceiveTo: 1,
+                                TotalViewByCandidate: 1,
+                                HitCount: 1,
+                                IsLocked: 1,
+                                PublishDate: 1
+                            })
+                            .toArray.sync();
+                       
+                        utils.writeData(event, {
+                            items: list,
+                            totalItems: count
+                        });
+                        event.done()
+                    } catch (e) {
+                        event.done(e);
+                    }
+                }, event);
+            }
+        }]
+</script>
+<script>
+    (function (scope) {
+      
+        scope.pagerConfig = {
+            numOfPageSelector: 1, totalItems: 1, pageSize: 2, pageIndex: 0
+        }
+        scope.dataYear = [];
+        function createDataYear() {
+            var data = [];
+            var yyyy = new Date().getFullYear();
+            for (var i = 0; i < 4; i++) {
+                var obj = {};
+                obj.id = yyyy - i;
+                obj.text = yyyy - i;
+                data.push(obj);
+            }
+            scope.dataYear = data;
+        }
+        createDataYear();
+        scope.data = {};
+        scope.lang = "{{Language.Current.Code}}";
+        scope.yearFilter = "";
+        scope.statusFilter = "";
+        
+        scope.$root.loadList = scope.doLoadData = function (index, sortBy, year, status) {
+            scope.sortBy = sortBy;
+            var $ajax = "server.page://doLoadData";
+            $ajax.data({
+                pageIndex: index,
+                pageSize: scope.pagerConfig.pageSize,
+                search: scope.txtSearch,
+                sortBy: sortBy,
+                year: year,
+                status: status
+            })
+                .done(function (res) {
+                    if (res.items.length > 0) {
+                        scope.data = res;
+                        scope.$root.listOfRequisition = scope.data;
+                        if (res.items.length > 0) {
+                            scope.$root.currentRequisitionID = res.items[0]._id;
+                        }
+                        else {
+                            scope.$root.currentRequisitionID = null;
+                        }
+                        scope.pagerConfig.totalItems = res.totalItems;
+                        scope.pagerConfig.pageIndex = index;
+                        scope.$root.dataLoad = {
+                            "index": index,
+                            "sortBy": sortBy,
+                            "year": year,
+                            "status": status
+                        }
+                        setTimeout(function () {
+                            _this = $(".item_left_box")[0];
+                            scope.$root.doSelectRequisition(scope.$root.currentRequisitionID, _this)
+                        }, 100);
+                        scope.$applyAsync();
+                    } else {
+                        scope.data = res;
+                        scope.$root.listOfRequisition = scope.data;
+                        if (res.items.length > 0) {
+                            scope.$root.currentRequisitionID = res.items[0]._id;
+                        }
+                        else {
+                            scope.$root.currentRequisitionID = null;
+                        }
+                        scope.$root.doSelectRequisition(scope.$root.currentRequisitionID, _this)
+                        scope.$applyAsync();
+                        if (index > 0) {
+                            scope.$root.loadList(index - 1, sortBy, year, status);
+                        }
+                    }
+                });
+        };
+        scope.onPageChane = function (index) {
+      
+            scope.doLoadData(index, scope.sortBy, scope.yearFilter, scope.statusFilter);
+        }
+        scope.$root.addRequisition = function (item) {
+            if (!scope.data) scope.data = [item];
+            else scope.data.push(item);
+            scope.$applyAsync();
+        }
+
+        // filter 
+        scope.selectedMonthFilter = function () {
+            scope.doLoadData(scope.pagerConfig.pageIndex, scope.sortBy, scope.yearFilter, scope.statusFilter)
+        }
+        // filter 
+        scope.selectedStatus = function () {
+            scope.doLoadData(scope.pagerConfig.pageIndex, scope.sortBy, scope.yearFilter, scope.statusFilter)
+        }
+
+        //filter
+        scope.doSearchData = function () {
+            scope.doLoadData(scope.pagerConfig.pageIndex, scope.sortBy, scope.yearFilter, scope.statusFilter);
+        }
+
+        //
+        scope.equalDateExpired = function (date) {
+            if (new Date(date) > new Date()) {
+                return 1;
+            }
+            return 0;
+        }
+        //
+        scope.convertDateExpired = function (date) {
+            var lang = scope.lang;
+            if (scope.lang == 'vn') {
+                lang = 'vi';
+            }
+            if (new Date(date) > new Date()) {
+                return moment(new Date(date)).locale(lang).fromNow("LLLL");
+            }
+        }
+
+        scope.doLoadData(scope.pagerConfig.pageIndex, scope.sortBy, scope.yearFilter, scope.statusFilter);
+        scope.$applyAsync();
+    })
+</script>
+

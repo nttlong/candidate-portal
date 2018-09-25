@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="exampleInputEmail">res:(Name)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" placeholder="res:(Enter Name)" ng-model="data.Name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Caption)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" placeholder="res:(Enter Caption)" ng-model="data.Caption">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Caption of Code)</label>
+                <div class="col-sm-10">
+                    <input class="form-control" placeholder="res:(Enter Caption of Code)" ng-model="data.CaptionCode" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Caption of Name)</label>
+                <div class="col-sm-10">
+                    <input class="form-control" placeholder="res:(Enter Caption of Name)" ng-model="data.CaptionName" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">res:(Description)</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" placeholder="res:(Enter Description)" ng-model="data.Description"></textarea>
+                </div>
+            </div>
+           
+        </form>
+        <div class="row">
+            <div class="col-sm-12">
+                <fieldset>
+                    <legend>
+                        res:(Child list)
+
+                      
+                    </legend>
+                </fieldset>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:220px">
+                                res:(Name)
+                            </th>
+                            <th style="width:220px">
+                                res:(Caption)
+                            </th>
+                            <th>
+                                res:(Decription)
+                            </th>
+                            <td></td>
+                         
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in getChildren()">
+                            <td>
+                                <span v-if="item!=newChildItem">
+                                    ${item.Name}
+                                </span>
+                                <input type="text" class="form-control" ng-model="item.Name" v-if="item==newChildItem"/>
+                            </td>
+                            <td>
+                                <span v-if="item!=newChildItem">
+                                    ${item.Caption}
+                                </span>
+                                <input type="text" class="form-control" ng-model="item.Caption" v-if="item==newChildItem" />
+                            </td>
+                            <td>
+                                <span ng-if="item!=newChildItem">
+                                    ${item.Description}
+                                </span>
+                                <input type="text" class="form-control" ng-model="item.Description"  v-if="item==newChildItem"/>
+                            </td>
+                           
+                            <td style="width:220px">
+                                <input type="button" value="res:(Accept)" v-on:click="doAccept(item)"  v-if="item==newChildItem"/>
+                                <input type="button" value="res:(Edit)" v-on:click="doEdit(item)" v-if="item!=newChildItem" />
+                                <input type="button" value="res:(Remove)" v-on:click="doRemove(item)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <input type="button" class="btn btn-default pull-right" style="width:80px" value="Add"ng-click="doAddNewChildItem()" />
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <input type="button" class="btn btn-primary pull-right" value="res:(Save)" ng-click="doSaveData" />
+                <input type="button" value="res:(Delete)" ng-click="doDeleteData" class="btn btn-default pull-right" />
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+        (app=> {
+            app.data = {};
+            window.getText = (obj) => {
+                if (obj["$oid"]) return obj["$oid"];
+                else return obj;
+            }
+            app.items = [];
+            app.newChildItem = undefined;
+            app.getChildren = () => {
+                if (!app.data.children) {
+                    app.data.children = [];
+                }
+                return app.data.children;
+            }
+            app.doLoadData = () => {
+                var ajax = "ajax.store.st_admin_load_sys_category";
+                if (app.$root.$history.data().id) {
+                    ajax.data({
+                        id: app.$root.$history.data().id,
+                        language: window.currentLanguage
+                    }).done(res=> {
+                        
+                        app.data = res;
+                        if (!app.data.children) {
+                            app.data.children = [];
+                        }
+                        app.$applyAsync();
+                    });
+                }
+                else {
+                    app.data = {};
+                }
+            };
+            app.doSaveData = () => {
+                var ajax = "ajax.store.st_admin_save_sys_category";
+                ajax.data({
+                    id: $history.data().id,
+                    language: window.currentLanguage,
+                    category: "ls_group_jobs",
+                    data: app.data
+                }).done(res=> {
+                    console.log(app.data)
+                    //window.location.href = "#view=sys-categories";
+                });
+            }
+            app.doDeleteData = () => {
+                if (confirm("res:(Do you want to delete this record?)")) {
+                    var ajax = "ajax.store.st_admin_delete_sys_category";
+                    ajax.data({
+                        id: $history.data().id,
+                        language: window.currentLanguage,
+                        category: "ls_group_jobs",
+                        data: app.data
+                    }).done(res=> {
+                        window.location.href = "#view=sys-categories";
+                    });
+                }
+            }
+            app.doAddNewChildItem = () => {
+             
+                var list = app.data.children;
+                if (!list) {
+                    list = [];
+                }
+                if (app.newChildItem) {
+                    return;
+                }
+                app.newChildItem = { Name: "", Description: "" };
+                list.push(app.newChildItem);
+                app.data.children = list;
+                app.getChildren = () => {
+                    if (!app.data.children) {
+                        app.data.children = [];
+                    }
+                    app.getChildren = () => {
+                        if (!app.data.children) {
+                            app.data.children = [];
+                        }
+                        return app.data.children;
+                    }
+                    return app.data.children;
+                }
+            }
+            app.doLoadData();
+            app.doAccept = (item) => {
+                if (item.Name == "") {
+                    toastr.error("res:(Please enter Name)");
+                    return;
+                }
+                app.newChildItem = undefined;
+            }
+            app.doEdit = (item) => {
+                app.newChildItem = item;
+            }
+            app.doRemove = (item) => {
+                app.newChildItem = undefined;
+                var ret = [];
+                for (var i = 0; i < app.getChildren().length; i++) {
+                    if (app.getChildren()[i] != item) {
+                        ret.push(app.getChildren()[i])
+                    }
+                }
+                app.data.children = ret;
+                app.getChildren = () => {
+                    if (!app.data.children) {
+                        app.data.children = [];
+                    }
+                    return app.data.children;
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <title>page-caption:(Trang chủ)</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <render>/../commons/header.html</render>
+
+
+    <link href="{{Config.RootUrl}}Content/css/select2.css" rel="stylesheet" />
+    <script src="{{Config.RootUrl}}Scripts/select2.min.js"></script>
+
+    <link href="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/css/candidate_uv_apply_thanks.min.css" rel="stylesheet" />
+</head>
+
+<body class="home">
+    <render>/../commons/navbar.html</render>
+    <div class="lv-main-container">
+        <div class="lv-banner-container" onload="api___:(lv.candidate.api/lv.candidate.api.widgets/search_box)">
+            <div id="lvBannerCarousel" class="lv-slider-banner carousel slide" data-ride="carousel">
+                <!-- Indicators -->
+                <ol class="carousel-indicators">
+                    <li data-target="#lvBannerCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#lvBannerCarousel" data-slide-to="1"></li>
+                    <li data-target="#lvBannerCarousel" data-slide-to="2"></li>
+                </ol>
+
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/banner/banner_001.jpg" />
+                    </div>
+                    <div class="item">
+                        <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/banner/banner_002.jpg" />
+                    </div>
+                    <div class="item">
+                        <img src="{{Config.RootUrl}}/templates/{{Config.Customer}}/resources/images/banner/banner_003.jpg" />
+                    </div>
+                </div>
+            </div>
+            <!--<___render>/../commons/SearchBox.html</render>-->
+            <!--<div class="col-md-5 lv-box-search">
+                <form class="form-horizontal" action="">
+                    <div class="form-group">
+                        <div class="col-sm-6">
+                            <select class="form-control">
+                                <option>Vị trí ứng tuyển</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control">
+                                <option>Chọn nơi làm việc</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12 has-feedback">
+                            <i class="glyphicon glyphicon-search form-control-feedback"></i>
+                            <input type="text" class="form-control" placeholder="res:(Tìm theo tên công việc)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-default">res:(Tìm việc ngay)</button>
+                        </div>
+                    </div>
+                </form>
+            </div>-->
+
+            <render>../recruiter/commons/SearchBox.html</render>
+        </div>
+        <!--<section class="lv-main-content container">
+            <div class="myresume-contact row">
+                <p>Hi Name,</p>
+                <p>We have Hi, I am new to this forum, but this thread was just what I was looking for. I do have one question though, how can you have the lightbox close after you hit submiton a signup page? Thanks!</p>
+                <p>Hi, I am new to this forum, but this thread was just what I was looking for. I do have one question though, how can you have the lightbox close after you hit submiton a signup page? Thanks!</p>
+                <p>Hi, I am new to this forum, but this thread was just what I was looking for. I do have one question though, how can you have the lightbox close after you hit submiton a signup page? Thanks!</p>
+            </div>
+        </section>-->
+        <div class="jumbotron text-xs-center" style="text-align: center; padding-top: 15px; padding-bottom: 15px;">
+            <h3 class="display-3">Thank You!</h3>
+            <div style="margin: 0 30px; text-align: justify;">
+                <p class="lead" style="font-size: 13px;">
+                    Chào Bạn,
+                    Chân thành cảm ơn Bạn đã sử dụng dịch vụ của chúng tôi. Hồ sơ của Bạn đã được gửi tới Nhà tuyển dụng.
+                    Chúc Bạn nhanh chóng nhận được công việc mong muốn.
+                    Trân trọng!
+                </p>
+            </div>
+            <hr>
+            <!--<p>
+                Having trouble? <a href="">Contact us</a>
+            </p>-->
+            <p class="lead">
+                <a class="btn btn-primary btn-sm" href="{{Config.RootUrl}}" role="button">Continue to homepage</a>
+            </p>
+        </div>
+    </div>
+    <render>/../commons/footer.html</render>
+</body>
+</html>

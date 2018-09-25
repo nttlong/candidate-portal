@@ -1,0 +1,12 @@
+﻿
+div.mask {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60000;
+    background-image: url('img/Loading.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+}

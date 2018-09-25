@@ -1,0 +1,105 @@
+﻿<body>
+    <div class="container" style="width: 100%">
+        <div>
+            <div c-photo-upload ng-model="data.banner">
+
+            </div>
+        </div>
+        <div class="btn-toolbar pull-right" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group" role="group" aria-label="Second group">
+                <button type="button" class="btn btn-default" ng-click="doSave()">res:(Update)</button>
+            </div>
+            <div class="btn-group" role="group" aria-label="Third group">
+                <button type="button" class="btn btn-default" ng-click="$doClose()">res:(Close)</button>
+            </div>
+        </div>
+    </div>
+    <script server>
+        ["./../modules/lv.db",
+            "./../libs/lv.utils",
+            (Data, utils, app) => {
+                app.doSave = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        var where = {
+                            RecruiterCode: {
+                                $regex: new RegExp("^" + clientData.recruiter + "$", "i")
+                            }
+                        };
+                        var recruiter;
+                        var attacment_id;
+                        Data.cnn((err, db) => {
+                            var ls_recruiters = db.collection("ls_recruiters");
+                            utils.sequences()
+                                .then(next => {
+                                    db.collection("sys_attachments")
+                                        .insertOne({
+                                            MimeType: "image/png",
+                                            Content: clientData.photo
+                                        }, (err, result) => {
+                                            attacment_id = result.insertedId;
+                                            next(err);
+                                        })
+                                })
+                                .then(next => {
+                                    ls_recruiters.findOne(where, (err, item) => {
+                                        recruiter = item;
+                                        next(err);
+                                    })
+                                })
+                                .then(next => {
+                                    if ((recruiter != null) && (attacment_id)) {
+                                        if (!recruiter.Banners) {
+                                            ls_recruiters.updateOne(where, {
+                                                $set: {
+                                                    Banners: [attacment_id]
+                                                }
+                                            }, (err, result) => {
+                                                next(err);
+                                            })
+                                        }
+                                        else {
+                                            ls_recruiters.updateOne(where, {
+                                                $push: {
+                                                    Banners: attacment_id
+                                                }
+                                            }, (err, result) => {
+                                                next(err);
+                                            })
+                                        }
+                                    }
+                                    else {
+                                        next();
+                                    }
+                                    
+                                })
+                                .done((err, result) => {
+                                    if (err) event.done(err);
+                                    else {
+                                        utils.writeData(event, {});
+                                        event.done();
+                                    }
+                                });
+                        })
+                    }, event)
+                }
+            }]
+    </script>
+    <script>
+        (function (app) {
+            app.data = {};
+            app.doSave = function () {
+                var ajax = "server.page://doSave";
+                ajax.data({
+                    photo: app.data.banner,
+                    recruiter: app.$parent.data.RecruiterCode
+                })
+                .done(function (res) {
+                    toastr.success("res:(Thêm mới banner thành công)");
+                    app.$doClose();
+                    app.$parent.doLoadData();
+                })
+            }
+        });
+    </script>
+</body>

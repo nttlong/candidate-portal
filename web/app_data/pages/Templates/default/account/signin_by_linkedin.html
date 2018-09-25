@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <title></title>
+    <render>../commons/header.html</render>
+    <script src="{{Config.RootUrl}}Scripts/toastr.min.js"></script>
+    <link href="{{Config.RootUrl}}Content/toastr.min.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="//platform.linkedin.com/in.js">
+        api_key: {{data.clientID}}
+        onLoad:    linkedin_load
+        authorize: false
+        lang:      en_US
+    </script>
+</head>
+<body ng-controller="app" ng-cloak>
+    <script server>
+        ["./../modules/node.sys.content_manage",
+        "./../libs/lv.utils", 
+        "./../modules/node.sys.account",
+            (content, utils,account, app) => {
+				app.onLoad = (event) => {
+					debugger
+                    content.getSocialNetworkLinkInfo((err, info) => {
+                        if (err) {
+                            utils.writeError(event.res);
+                            event.done();
+                        }
+                        else {
+                            event.setModel("data.clientID", info.linkedIn_client_id);
+                            event.done();
+                        }
+                    });
+                };
+                app.doSignIn = (event) => {
+                    var clientData = utils.readData(event);
+                    account.loginByLinkedIn(event.req, clientData.data, (err, ret) => {
+                        if (err) event.done(err);
+                        else {
+                            if (ret != null) {
+                                if (!ret.apiError) {
+                                    if ((!clientData.retUrl) || (clientData.retUrl == null)) {
+                                        utils.writeData(event, {
+                                            action: {
+                                                redirect: utils.getRootUrl(event.req),
+                                                refresh: false
+                                            }
+                                        });
+
+                                    }
+                                    else {
+                                        utils.writeData(event, {
+                                            action: {
+                                                redirect: clientData.retUrl,
+                                                refresh: false
+                                            }
+                                        });
+                                    }
+                                    event.done();
+                                }
+                                else {
+                                    utils.writeData(event, ret);
+                                    event.done();
+                                }
+                            }
+                            else {
+                                utils.writeData(event, {
+                                    errorForm: {
+                                        errorType: "loginFail"
+                                    }
+                                });
+                                event.done();
+                            }
+
+                        }
+                    });
+                };
+            }]
+    </script>
+   <div class="container-fluid" style="max-width:800px;font-size:24pt">
+       <div>
+           <script type="in/Login">
+           </script>
+       </div>
+       <div ng-if="status==0">
+           <h3>
+               res:(Đang kiểm tra tài khoản của bạn)
+           </h3>
+       </div>
+       <div ng-if="status==-1">
+           <h3>
+               res:(Thật đáng tiếc chúng tôi không tìm thấy tài khoản của bạn trong hệ thống)
+           </h3>
+           <section>
+               <p>
+                   res:(Hãy thử lại 1 trong các cách sau):
+               </p>
+               <p>
+                   <ol>
+                       <li>res:(Thoát khỏi LinkedIn và đăng nhập lại)</li>
+                       <li><a href="{{Config.RootUrl}}account/reg_by_linkedin"> res:(Đăng ký sử dụng bằng LinkedIn)</a></li>
+                       <li><a href="{{Config.RootUrl}}account/login">res:(Đăng nhập bằng Email và Password)</a></li>
+                   </ol>
+               </p>
+           </section>
+       </div>
+       <div ng-if="status==1">
+           <h3>
+               res:(Đăng nhập thành công)
+           </h3>
+       </div>
+   </div>
+    <script>
+        $(document).ready(function () {
+
+			function run() {
+				debugger
+                if (($(".IN-widget").length == 0) ||
+                    (!window.app) ||
+                    (!window.app.doLogin)) {
+                    setTimeout(run,100);
+                }
+                else {
+                    $($(".IN-widget").find("span[id]")[0]).trigger("click")
+                }
+            }
+            run();
+
+           
+            
+            if (window.location.href.indexOf("?retUrl") > -1) {
+                var retUrl = window.location.href.split("?retUrl=")[1];
+              
+            }
+            else {
+              
+			}
+
+			function linkedin_load(sender) {
+				IN.Event.on(IN, "auth", getProfileData);
+			}
+			// Handle the successful return from the API call
+			function onSuccess(data) {
+				window.app.doLogin(data);
+
+			}
+
+			// Handle an error response from the API call
+			function onError(error) {
+				console.log(error);
+			}
+
+			// Use the API call wrapper to request the member's basic profile data
+			function getProfileData() {
+				IN.API.Profile("me").fields("first-name", "last-name", "email-address", "id").result(function (data) {
+					window.app.doLogin({ email: data.values[0].emailAddress, UserId: data.values[0].id });
+				}).error(function (data) {
+					console.log(data);
+				});
+			}
+        })
+          
+        
+    </script>
+   <script>
+        ajax_call_set_url("{{Config.RootUrl}}/api_process")
+       
+
+   </script>
+    <script>
+        ng_app([], function (scope) {
+            scope.status = 0;
+            scope.data = {
+                apiError: undefined
+            };
+            scope.doLogin = function (_data) {
+
+                var retUrl
+                if (window.location.href.indexOf("retUrl=") > -1) {
+                    retUrl = window.location.href.split("retUrl=")[1];
+                }
+                var ajax = "server.page://doSignIn";
+                ajax.data({ data: _data, retUrl: retUrl })
+                    .done(function (res) {
+                        if (res.apiError) {
+                            scope.status = -1;
+                            scope.$applyAsync();
+                            return
+                        }
+                        else {
+                            scope.data = res;
+                            scope.status = 1;
+                            scope.$applyAsync();
+                            setTimeout(function () {
+                                if (res.action && res.action.redirect) {
+                                    window.location.href = res.action.redirect;
+                                }
+                            }, 500);
+
+                        }
+                    });
+            };
+            window.app = scope;
+        });
+       
+    </script>
+
+</body>
+</html>

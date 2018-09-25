@@ -1,0 +1,165 @@
+﻿<nav class="navbar navbar-default" style="margin-bottom: 0">
+    <!--onload="store:(st_company_load)"-->
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="{{Config.RootUrl}}company">
+                
+                <img src="{{Config.RootUrl}}photo/logo/{{recuiter.RecruiterCode}}.png" style="height: 40px; padding: 0 20px 0 20px; margin: 10px;" />
+                
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <span class="pull-left">&nbsp;</span>
+            <span class="pull-left">&nbsp;</span>
+            <span class="pull-left">&nbsp;</span>
+            <span class="pull-left">&nbsp;</span>
+            <ul class="nav navbar-nav navbar-left">
+                <li>
+                    <a id="dangtuyen" href="{{Config.RootUrl}}company/post-requisition">res:(Đăng tuyển)</a>
+                </li>
+                <li>
+                    <a id="ungvien" href="{{Config.RootUrl}}company/candidate">res:(Ứng viên)</a>
+                </li>
+                <li>
+                    <a id="tuyendung" href="{{Config.RootUrl}}company/requisition">res:(Tuyển dụng)</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    {{#each Language.Support}}
+                    {{^ifCond ../Language.Current.Code Code}}
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <form ng-click="$root.doChangeLanguage()">
+                            <input hidden type="text" name="lang" value="{{this.Code}}" ng-init="$root.lang = '{{this.Code}}'" />
+                            <input style="height: 15px;width: 25px;margin-top: 4px;" class="lv-nation-flag" type="image" src="{{../Config.RootUrl}}/templates/default/resources/fags/{{Code}}.png"/>
+                        </form>
+                        <!--<img src="{{Config.RootUrl}}/templates/default/resources/fags/{{this.Code}}.png" name="language" value="{{Code}}" style="height: 15px;width: 25px;margin-top: -1px;"/>-->
+
+                    </a>
+                    {{/ifCond}}
+                    {{/each}}
+                    <!--<ul class="dropdown-menu">
+                        {{#each Language.Support}}
+                        <li>
+                            <form action="api:(lv.candidate.api/lv.candidate.api.widgets/navbar_change_language)&lang={{this.Code}}">
+                                <input type="image" src="{{../Config.RootUrl}}templates/default/resources/fags/{{this.Code}}.png" name="language" value="{{Code}}" />
+                                <span>{{NativeName}}</span>
+                            </form>
+                        </li>
+                        {{/each}}
+
+                    </ul>-->
+                </li>
+                
+               
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.Email}} <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="{{Config.RootUrl}}company/settings">res:(Settings)</a>
+						</li>
+						<li>
+							<a href="{{{Config.RootUrl}}}developer/apps">res:(Developers)</a>
+						</li>
+						<li>
+							<a href="{{{Config.RootUrl}}}company/thietlap">res:(Thiết lập)</a>
+						</li>
+						<li>
+							<a class="link-setting" href="javascript:doSignOut()">
+								<i class="fa fa-sign-out"></i>
+								<span>res:(Thoát)</span>
+							</a>
+						</li>
+					</ul>
+                </li>
+               
+            </ul>
+
+        </div>
+    </div>
+
+</nav>
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/lv.model",
+        "./../libs/lv.authenticate",
+        (utils, models,aut, page) => {
+            page.onLoad = (event) => {
+                utils._try(() => {
+                    var rootUrl = utils.getRootUrl(event.req);
+                    try {
+                        var user = aut.getUser(event.req);
+                        if (user == null) {
+                            event.res.redirect(rootUrl + "/company/login?retUrl=" + rootUrl + event.req.url);
+                            event.done();
+                            return;
+                        }
+                        var recuiter = models.ls_recruiters().
+                            where("UserEmail==Email", user)
+                            .toItem.sync();
+                        if (recuiter == null) {
+                            event.res.redirect(rootUrl + "/company/login?retUrl=" + rootUrl + event.req.url);
+                            event.done();
+                            return;
+                        }
+                        event.setModel("recuiter", recuiter);
+                        event.setModel("user", user);
+                        event.done();
+                    }
+                    catch (ex) {
+                        event.done(ex);
+                    }
+                    
+                }, event);
+            }
+            
+        }]
+</script>
+<script>
+    function doSignOut() {
+        var a_singout = "server.api://(nodejs)modules/node.sys.account@sign_out";
+        a_singout.data({
+            retUrl: window.location.href
+        }).done(function (res) {
+            if (res.action && res.action.redirect) {
+                window.location.href = res.action && res.action.redirect
+            }
+            else {
+                window.location.reload(true);
+            }
+        })
+    }
+</script>
+
+<script>
+    {{#data}}
+    window.dateFormat = function (value) {
+        if ((!value)||(value == null)) return " ";
+        return moment(value).format("{{getValue '/UserSettings/DefaultDateFormat'}}");
+    }
+    {{/data}}
+    window.getName = function (data) {
+        if (data == null) return "";
+        var lang={{{toJSON Language.Support}}};
+            
+    var ret = data["{{Language.Current.Code}}"];
+    if(ret==null){
+        for(var i=0;i<lang.length;i++){
+            if(data[lang[i].Code]!=null){
+                ret=data[lang[i].Code];
+                break;
+            }
+        }
+    }
+        return ret;
+    }
+    
+</script>

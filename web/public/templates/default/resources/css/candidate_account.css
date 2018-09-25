@@ -1,0 +1,677 @@
+﻿section {
+  padding: 30px 0 !important;
+}
+.myapply_item_box2_right {
+  text-align: right;
+}
+.wrapper {
+  background-color: #EEEEEE;
+  min-height: 550px;
+}
+.wrapper .myresume-content .header_box {
+  font-size: 30px;
+  border-bottom: 1px dotted #a1a1a1;
+  margin-bottom: 15px;
+}
+.wrapper .myresume-content .myresume-detail {
+  margin-bottom: 15px;
+}
+.wrapper .myresume-content .myresume-detail .box_title {
+  font-size: 1.2em;
+  background: #a1a1a1;
+  color: #fff;
+  margin: 0;
+  padding: 5px 10px 5px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor {
+  border-left: 1px solid #f7941d;
+  border-right: 1px solid #f7941d;
+  border-bottom: 1px solid #f7941d;
+  background: #fff;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .item_box {
+  margin: 10px 15px 20px;
+  border-bottom: 1px dotted #a1a1a1;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .header_item_box {
+  padding: 5px 0px 15px 0px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box label {
+  color: #a9a9a9;
+  font-size: 13px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box button {
+  margin: 0px;
+  float: right;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box span {
+  color: red;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box select {
+  width: auto;
+  float: left;
+  margin-right: 3px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box {
+  margin-bottom: 30px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box .btn-fb {
+  background: #3B5998 !important;
+  color: white;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box .btn-li {
+  background-color: #0082CA;
+  color: white;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box .btn-gplus {
+  background-color: #DD4B39;
+  color: white;
+}
+.wrapper .myresume-content .myresume-detail .myresume-user-infor .body_item_box .btn-tw {
+  background-color: #55ACEE;
+  color: white;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .box {
+  background: #fff;
+  margin-bottom: 0;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  border-top: 1px #ddd solid;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  box-shadow: 0 1px 1px #ccc;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper {
+  background: #fff;
+  border: 1px solid transparent;
+  border-left: 0;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .edit-btn {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .form-control-static {
+  padding-top: 0;
+  padding-bottom: 9px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .view-control {
+  word-wrap: break-word;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .red-text {
+  color: red;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper #visible-employer {
+  margin-left: 5px;
+  padding-top: 0;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .text-gray-light {
+  color: #999;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .border-text-box {
+  background: #fff;
+  border: 1px solid #ddd;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .infor-wrapper .mg-tp {
+  margin-top: 30px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .edit-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .edit-btn .btn {
+  border: 0;
+  background: 0 0;
+  font-size: 1.1em;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .edit-btn .btn-sm {
+  padding: 8px 10px;
+  font-size: 13.2px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .edit-btn .btn-default {
+  color: #555;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+}
+.wrapper .myresume-content .myresume-detail .myresume-contact .box-md {
+  padding: 25px 40px;
+  position: relative;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile {
+  margin-top: 15px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .box {
+  background: #fff;
+  margin-bottom: 15px;
+  border: 0;
+  box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.1);
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .box-md {
+  background: #fff !important;
+  color: #666 !important;
+  margin: 0;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  padding: 12px 25px;
+  border-bottom: 1px solid #eee;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .relative {
+  position: relative;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper {
+  background: #fff;
+  border: 1px solid transparent;
+  border-left: 0;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .edit-btn {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .edit-btn .btn {
+  border: 0;
+  background: 0 0;
+  font-size: 1.1em;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .edit-btn .btn-sm {
+  padding: 8px 10px;
+  font-size: 13.2px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .edit-btn .btn-default {
+  color: #555;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .edit-btn .mg-bt {
+  margin-bottom: 0;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .font-text {
+  font-size: 14px;
+  padding: 12px 25px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .countdown {
+  font-size: 14px;
+  padding-top: 15px;
+  display: inline-block;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .text-gray-light {
+  color: #999;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .infor-wrapper .mg-tp {
+  margin-top: 30px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-profile .view-control {
+  word-wrap: break-word;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .box {
+  background: #fff;
+  margin-bottom: 15px;
+  border: 0;
+  box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.1);
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .box-md {
+  background: #fff !important;
+  color: #666 !important;
+  margin: 0;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  padding: 12px 25px;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #ddd;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .form-view {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper {
+  background: #fff;
+  border: 1px solid transparent;
+  border-left: 0;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .edit-btn {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .edit-btn .btn {
+  border: 0;
+  background: 0 0;
+  font-size: 1.1em;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .edit-btn .btn-sm {
+  padding: 8px 10px;
+  font-size: 13.2px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .edit-btn .btn-default {
+  color: #555;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .view-mode {
+  margin-left: -5px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .view-mode .tag-xs {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background: #f8f8f8;
+  border: 1px #ddd solid;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .tag-xs {
+  display: inline-block;
+  padding: 2px 10px 5px 10px;
+  cursor: pointer;
+  overflow: hidden;
+  line-height: 20px;
+  height: 30px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  background: #f8f8f8;
+  border: 1px #ddd solid;
+  -webkit-transition: color .3s;
+  transition: color .3s;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .tag-xs a {
+  color: #999;
+  font-weight: 400;
+  font-size: 14px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .tag-name {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 135px;
+  vertical-align: middle;
+  font-size: 14px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper #txtInputSkill {
+  margin-top: 10px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper #key-skills {
+  font-style: italic;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper #btnAddSkill {
+  margin-top: -3px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .mg-tp {
+  margin-top: 15px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-skills .infor-wrapper .cancel-skill {
+  margin-right: 10px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .box {
+  background: #fff;
+  margin-bottom: 15px;
+  border: 0;
+  box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.1);
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .box legend.box-md {
+  background: #fff !important;
+  color: #666 !important;
+  margin: 0;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  padding: 12px 25px;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #ddd;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .box-md {
+  padding: 12px 25px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper {
+  background: #fff;
+  border: 1px solid transparent;
+  border-left: 0;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .edit-btn {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .edit-btn .btn {
+  border: 0;
+  background: 0 0;
+  font-size: 1.1em;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .edit-btn .btn-sm {
+  padding: 8px 10px;
+  font-size: 13.2px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .edit-btn .btn-default {
+  color: #555;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .red-text {
+  color: red;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .view-control {
+  word-wrap: break-word;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .mg-tp {
+  margin-top: 30px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-exp .infor-wrapper .no-border {
+  border-top: 1px #ddd solid !important;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .box {
+  background: #fff;
+  margin-bottom: 15px;
+  border: 0;
+  box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.1);
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .box legend.box-md {
+  background: #fff !important;
+  color: #666 !important;
+  margin: 0;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  padding: 12px 25px;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #ddd;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .box-md {
+  padding: 25px 40px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .infor-wrapper {
+  background: #fff;
+  border: 1px solid transparent;
+  border-left: 0;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .infor-wrapper .edit-btn {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .infor-wrapper .edit-btn .btn {
+  border: 0;
+  background: 0 0;
+  font-size: 1.1em;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .infor-wrapper .edit-btn .btn-sm {
+  padding: 8px 10px;
+  font-size: 13.2px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .infor-wrapper .edit-btn .btn-default {
+  color: #555;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .red-text {
+  color: red;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .form-control-static {
+  padding: 0;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .view-control {
+  word-wrap: break-word;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .mg-lt {
+  margin-left: 5px;
+}
+.wrapper .myresume-content .myresume-detail .myresume-desire .mg-tp {
+  margin-top: 10px;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .box {
+  background: #fff;
+  margin-bottom: 15px;
+  border: 0;
+  box-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.1);
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .box legend.box-md {
+  background: #fff !important;
+  color: #666 !important;
+  margin: 0;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 30px;
+  padding: 12px 25px;
+  border-bottom: 1px solid #eee;
+  border-top: 1px solid #ddd;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .box-md {
+  padding: 25px 30px;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper {
+  background: #fff;
+  border: 1px solid transparent;
+  border-left: 0;
+  -webkit-transition: border-color 0.2s;
+  transition: border-color 0.2s;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .edit-btn {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -webkit-transition: opacity .2s;
+  transition: opacity .2s;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .edit-btn .btn {
+  border: 0;
+  background: 0 0;
+  font-size: 1.1em;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .edit-btn .btn-sm {
+  padding: 8px 10px;
+  font-size: 13.2px;
+  line-height: 1.42857143;
+  border-radius: 2px;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .edit-btn .btn-default {
+  color: #555;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .countdown {
+  font-size: 14px;
+  padding-top: 15px;
+  display: inline-block;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .text-gray-light {
+  color: #999;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .mg-tp {
+  margin-top: 30px;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .infor-wrapper .btn {
+  margin-bottom: 20px;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .red-text {
+  color: red;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .form-control-static {
+  padding: 0;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .view-control {
+  word-wrap: break-word;
+}
+.wrapper .myresume-content .myresume-detail .muresume-education .text-info {
+  color: #00b9f2;
+}
+.wrapper .myresume-content .myresume-detail .cls-error {
+  color: red;
+}
+.wrapper .myresume-content .myresume-detail .relative {
+  position: relative;
+}
+.wrapper .myresume-content .right-box .panel {
+  margin-bottom: 15px;
+  background: #fff;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  border-top: 1px #ddd solid;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  box-shadow: 0 1px 1px #ccc;
+}
+.wrapper .myresume-content .right-box .panel .panel-heading {
+  color: #555;
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border-color: #ddd;
+}
+.wrapper .myresume-content .right-box .box-sm {
+  padding: 15px;
+}
+.wrapper .myresume-content .right-box .total-view-profile {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f7941d;
+  line-height: 24px;
+}
+.wrapper .myresume-content .right-box .panel-company {
+  margin: 0 !important;
+  border: 0;
+  border-top: 1px solid #ddd;
+  border-top-style: dotted;
+}
+.wrapper .myresume-content .right-box .date-and-num-view {
+  padding: 5px;
+}
+.wrapper .myresume-content .right-box .date-and-num-view > span {
+  font-style: italic;
+}
+.wrapper .myresume-content .right-box .togger-switch {
+  /* Rounded sliders */
+}
+.wrapper .myresume-content .right-box .togger-switch .switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  vertical-align: middle;
+}
+.wrapper .myresume-content .right-box .togger-switch .switch input {
+  display: none;
+}
+.wrapper .myresume-content .right-box .togger-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.wrapper .myresume-content .right-box .togger-switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 0;
+  bottom: 0;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+.wrapper .myresume-content .right-box .togger-switch input:checked + .slider {
+  background-color: #64bd63;
+}
+.wrapper .myresume-content .right-box .togger-switch input:focus + .slider {
+  box-shadow: #64bd63 0px 0px 0px;
+}
+.wrapper .myresume-content .right-box .togger-switch input:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+.wrapper .myresume-content .right-box .togger-switch .slider.round {
+  border-radius: 34px;
+}
+.wrapper .myresume-content .right-box .togger-switch .slider.round:before {
+  border-radius: 50%;
+}
+.wrapper .myresume-content .right-box .mg-tp {
+  margin-top: 10px;
+}
+.wrapper .myresume-content .right-box .no-margin {
+  margin: 0 !important;
+}
+@media (max-width: 767px) {
+  .info-togger {
+    text-align: right;
+    margin-top: -10px !important;
+    margin-right: 10px;
+    background: 0 0 !important;
+  }
+  .myresume-user-infor {
+    background: #00b9f2;
+  }
+}
+@media only screen and (max-width: 980px) {
+  section {
+    padding: 15px !important;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .body_item_box button {
+    margin: 0px;
+  }
+}
+@media only screen and (max-width: 780px) {
+  .body_item_box button {
+    margin: 0px;
+  }
+}

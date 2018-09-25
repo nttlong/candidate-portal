@@ -1,0 +1,40 @@
+﻿import { Db } from "mongodb";
+export interface _IQueryable {
+    insert(data: any): _IQueryable;
+    commit: (cb?: (err?: any, result?: any) => void)=>_IQueryable;
+    where: (fieldOrExpression: string, operator?: string, value?: any) =>_IQueryable;
+    whereOr: (fieldOrExpression: string, operator?: string, value?: any) =>_IQueryable;
+    whereAnd: (fieldOrExpression: string, operator?: string, value?: any) => _IQueryable;
+    select: (fieldList: Array<string> | string, expr?: string) => _IQueryable;
+    selectIndex: (alias, field, conditional) => _IQueryable;
+    toArray: (cb?: (error?: any, result?: Array<any>) => void) => Promise<any>;
+    toItem: (cb?: (error?: any, result?: any) => void) => Promise<any>;
+    unwind: (field: string) => _IQueryable;
+    lookup: (_from: string | _IQueryable, _localField: string, _foreignField: string, _as: string) => _IQueryable;
+    sort: (fieldsOrField: string | Array<string>, desc: Number) => _IQueryable;
+    skip: (num: number) => _IQueryable;
+    limit: (num: number) => _IQueryable;
+    set: (objExpression_Field_or_Fields: any | string | Array<string>, value: any) => _IQueryable;
+    push: (objExpression_Field_or_Fields: any | string | Array<string>, value: any) => _IQueryable;
+    pull: (objExpression_Field_or_Fields: any | string | Array<string>, value: any) => _IQueryable;
+    inc: (objExpression_Field_or_Fields: any | string | Array<string>, value: any) => _IQueryable;
+    count: (aliasResultField: string, cb?: (error: any, result: any) => void) => Promise<any>;
+    group: (expr: any) => _IQueryable;
+    delete: (conditional: string) => _IQueryable;
+    restoreById: (_id: any, cb?: (error?: any, result?: any) => void) => Promise<any>;
+    createIndex: (config: any, options: any, cb?: (error?: any, result?: any) => void) => Promise<any>;
+    getIndexes: (cb?: (error?: any, result?: any) => void) => Promise<any>;
+    dropIndexes: (name: string, cb?: (error?: any, result?: any) => void) => Promise<any>;
+    createMetaSearch: (key, configs) => _IQueryable;
+    clone: () => _IQueryable;
+}
+export declare var setConnectionString: (url: string) => void;
+export declare var getConnect: (cb?: (error: any, db?: Db) => void) => Promise<Db>;
+export declare var entity: (name: string) => _IQueryable;
+export declare var getTrashCollectionName: () => string;
+export declare var setTrashCollectionName: (name: string) => void;
+export declare var trash: () => _IQueryable;
+export declare var setSchemaDirPath: (path: string) => void;
+export declare var getSchemaDirPath: () => string;
+export declare var getSchemOf: (data: any) => any;
+

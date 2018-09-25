@@ -1,0 +1,354 @@
+﻿<script src="{{Config.RootUrl}}Scripts/moment.min.js"></script>
+<div class="lv-result-search" id="SearchResult" ng-cloak>
+    <div class="search-header">
+        <span class="title-count pull-left" ng-if="$root.totalItems">${$root.totalItems} res:(Việc làm cần tuyển)</span>
+        <span class="title-count pull-left" ng-if="!$root.totalItems">0 res:(Việc làm cần tuyển)</span>
+        <div class="title-sort pull-right desktop-xs">
+            <span>res:(Xếp theo):</span>
+            <span class="lv-tab selected">
+                <a id="sort-by-date" ng-click="$root.onSelectSortBy('by-post-date')">
+                    res:(Ngày)
+                </a>
+            </span>
+
+            <span>|</span>
+            <!--<span class="lv-tab">res:(Độ chính xác)</span>-->
+            <!--<span>|</span>-->
+            <span class="lv-tab">
+                <a id="sort-by-salary" ng-click="$root.onSelectSortBy('by-salary')">
+                    res:(Lương)
+                </a>
+            </span>
+        </div>
+    </div>
+    <div class="search-content">
+       
+        <div class="list-item" ng-repeat="item in $root.items">
+           
+            <div class="item-icon" onmouseover="hideLogin()">
+                <a ng-href="{{Config.RootUrl}}job/${item.RecruiterCode}/${item.id}">
+                    <img class="logo-photo" ng-src="{{Config.RootUrl}}/photo/logo/${item.RecruiterCode}.png" />
+                </a>
+            </div>
+            <div class="item-info">
+                <div class="col-xs-11" onmouseover="hideLogin()">
+                    <div class="lv-title-job-item">
+                        <a class="job-name" ng-href="{{Config.RootUrl}}job/${item.RecruiterCode}/${item.id}"
+                           title="${item.JobTitle}" target="_blank">
+                            ${item.JobTitle}
+                        </a>
+                        <span class="lv-span-hot" ng-if="item.IsHot"> res:(HOT)</span>
+                    </div>
+                    <div class="job-company">
+                        <a ng-href="{{Config.RootUrl}}jobs/by-post-date/${$root.lang}/all/all/all/${item.GroupCode}/${item.JobCode}/all/0"
+                           title="${item.JobName} (${item.GroupName})" target="_blank">
+                            ${item.JobName} (${item.GroupName})
+                        </a>
+                        <br />
+                        <a ng-href="{{Config.RootUrl}}jobs/by-post-date/${$root.lang}/${item.RecruiterCode}/all/all/all/all/all/0" 
+                           title="${item.RecruiterName}" target="_blank">
+                            <span>${item.RecruiterName}</span>
+                        </a>
+
+                        <span class="desktop-xs-line sm-text">|</span>
+                        <br class="tablet-xs-line" />
+
+                        <span ng-repeat="location in item.Locations">
+
+                            ${location.Provinces.Name[$root.lang]} (${location.Name[$root.lang]})
+                            <span ng-if="$index<item.Locations.length-1">,</span>
+                        </span>
+
+                    </div>
+                    <div class="job-salary">
+
+                        <span ng-if="item.SalaryType =='2'">res:(Mức lương cạnh tranh)</span>
+                        <span ng-if="item.SalaryType =='0'">res:(Mức lương thỏa thuận)</span>
+                        <span ng-if="item.Salary && item.SalaryType != '0' && item.SalaryType != '2'" class="salary">${item.Salary}</span>
+
+                        <span class="desktop-xs-line sm-text">|</span>
+                        <br class="tablet-xs-line" />
+                        <span>${item.PublishDate|date:'dd/MM/yyyy'}</span>
+
+                    </div>
+                </div>
+                {{#user}}
+                <div class="item-icon-save pull-right">
+                    <i ng-if="!item.isSaved" class="fa fa-heart-o icon-heart" ng-click="doSaveJob(item.id)"></i>
+                    <i ng-if="item.isSaved" class="fa fa-heart icon-heart" ng-click="doSaveJob(item.id)"></i>
+                </div>
+                
+                {{else}}
+                <div class="item-icon-save pull-right" id="item_heart">
+                    <i class="fa fa-heart-o icon-heart" onmouseover="onLogin(this)"></i>
+                </div>
+                {{/user}}
+            </div>
+        </div>
+        
+        <!--<div ng-if="!$root.totalItems">
+            <img width="100%"
+                 src="{{Config.RootUrl}}templates/{{Config.Customer}}/resources/images/no_image.jpg"
+                 />
+        </div>-->
+    </div>
+    <script>
+        function logoError(image) {
+            image.onerror = "";
+            image.src = "{{Config.RootUrl}}templates/{{Config.Customer}}/resources/images/no_image.jpg";
+            image.width = "100";
+            return true;
+        }
+    </script>
+    <div class="lv-paginator" style="background: #fff" ng-if="$root.totalItems">
+        <!--<ul class="pagination">
+            {{#ifCondi route.pageIndex 0}}
+            <li class="disabled">
+                <a>
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {{else}}
+            <li>
+                <a href="{{Config.RootUrl}}/jobs/{{{route.byType}}}/${$root.lang}/{{{route.RecruiterCode}}}/{{{route.location}}}/{{{route.province}}}/{{{route.jobGroup}}}/{{{route.job}}}/${$root.txtSearch || 'all'}/0" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {{/ifCondi}}
+            <li class="page-indicator" ng-repeat="n in [].constructor($root.totalPager) track by $index">
+                <a href="{{Config.RootUrl}}/jobs/{{{route.byType}}}/${$root.lang}/{{{route.RecruiterCode}}}/{{{route.location}}}/{{{route.province}}}/{{{route.jobGroup}}}/{{{route.job}}}/${$root.txtSearch || 'all'}/${$index}">
+                    ${$index}
+                    <span class="sr-only"></span>
+                </a>
+            </li>
+            <li class="disabled" ng-if="{{{route.pageIndex}}} == $root.totalPager - 1">
+                <a aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <li ng-if="{{{route.pageIndex}}} != $root.totalPager - 1">
+                <a href="{{Config.RootUrl}}/jobs/{{{route.byType}}}/${$root.lang}/{{{route.RecruiterCode}}}/{{{route.location}}}/{{{route.province}}}/{{{route.jobGroup}}}/{{{route.job}}}/${$root.txtSearch || 'all'}/${$root.totalPager - 1}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>-->
+        <div c-pager data-config="${$root.pagerConfig}" data-on-change="$root.onPageChane">
+
+        </div>
+    </div>
+</div>
+
+<div id="popLogin" class="popover fade left in" role="tooltip">
+    <div class="arrow" style="top: 50%;">
+
+    </div>
+    <h3 class="popover-title" style="display: none;"></h3>
+    <div class="popover-content">
+        res:(Bạn cần) <a href="{{Config.RootUrl}}account/login">res:(đăng nhập)</a> res:(để thực hiện thao tác này)
+    </div>
+</div>
+<script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/node.portal.candidate",
+            "./../libs/lv.authenticate",
+            (utils, portal, aut, app) => {
+                app.onLoad = (event) => {
+                    utils._try(() => {
+                        var user = aut.getUser(event.req);
+                        event.req.routeInfo.params["jobGroup"] = event.req.routeInfo.params["job-group"];
+                        event.req.routeInfo.params["pageIndex"] = event.req.routeInfo.params["page-index"];
+                        if (!event.req.routeInfo.params.content) {
+                            event.req.routeInfo.params.content = "all";
+                        }
+                        event.setModel("route", event.req.routeInfo.params);
+                        event.setModel("user", user);
+                        event.done();
+                    }, event);
+                    
+                }
+                //"{"job-group":"all","job":"all","location":"all","province":"all","language":"vn","recruitercode":"all","bytype":"by-post-date","jobsChecked":[],"locationChecked":[],"levelsChecked":[],"companyChecked":[]}"
+                app.doLoadData = function (event) {
+                    utils._try(() => {
+
+                        var clientData = utils.readData(event);
+                        var pageIndex = clientData["page-index"] || 0;
+                        var jobGroup = clientData["job-group"] || "all";
+                        var job = clientData["job"] || "all";
+                        var location = clientData.location || "all";
+                        var recruitercode = clientData.recruitercode || "all";
+                        var bytype = clientData.bytype || "byDate";
+                        var jobsChecked = clientData.jobsChecked || [job];
+                        var locationChecked = clientData.locationChecked || [location];
+                        var levelsChecked = clientData.levelsChecked;
+                        var companyChecked = clientData.companyChecked || [recruitercode];
+                        var filter = {
+
+                            content: unescape(clientData.content),
+                            recruiterCode: clientData.recruitercode,
+                            sortType: clientData.bytype,
+                            jobs: clientData.jobsChecked,
+                            locations: clientData.locationChecked,
+                            levels: levelsChecked,
+                            recruiters: companyChecked,
+                            pageIndex: pageIndex
+                        }
+                        portal.findRequisition(filter, utils.getCurrentLanguageCode(event), (err, lst) => {
+                            if (err) event.done(err);
+                            else {
+                                utils.writeData(event, lst)
+                                event.done();
+                            }
+                        });
+                    }, event);
+                   
+
+                }
+                app.getTotal = function (event) {
+                    var clientData = utils.readData(event);
+                    var pageIndex = clientData["page-index"] || 0;
+                    var jobGroup = clientData["job-group"] || "all";
+                    var job = clientData["job"] || "all";
+                    var location = clientData.location || "all";
+                    var recruitercode = clientData.recruitercode || "all";
+                    var bytype = clientData.bytype || "byDate";
+                    var jobsChecked = clientData.jobsChecked || [job];
+                    var locationChecked = clientData.locationChecked || [location];
+                    var levelsChecked = clientData.levelsChecked;
+                    var companyChecked = clientData.companyChecked || [recruitercode];
+                    var filter = {
+
+                        content: unescape(clientData.content),
+                        recruiterCode: clientData.recruitercode,
+                        sortType: clientData.bytype,
+                        jobs: clientData.jobsChecked,
+                        locations: clientData.locationChecked,
+                        levels: levelsChecked,
+                        recruiters: companyChecked,
+                        pageIndex: pageIndex
+                    }
+                    portal.getTotalItemsRequisition(filter, utils.getCurrentLanguageCode(event), (err, lst) => {
+                        if (err) event.done(err);
+                        else {
+                            utils.writeData(event, lst)
+                            event.done();
+                        }
+                    });
+                }
+            }]
+</script>
+
+<script>
+        function hideLogin() {
+            $("#popLogin").fadeOut();
+        }
+        function onLogin(oItem) {
+            $("#popLogin").css({
+                "top": ($(oItem).position().top - 25) + "px",
+                "left": ($(oItem).position().left - 282) + "px",
+                "display": "block"
+            });
+        }
+        window.onSearch = function (filter, $root) {
+            
+            var tmp = [];
+            var jobsChecked = ["{{{route.jobGroup}}}::{{{route.job}}}"];
+            var locationChecked = ["{{{route.location}}}::{{{route.province}}}"];
+            var recruiterChecked = ["{{{route.RecruiterCode}}}"];
+            var experienceLevelChecked = [];
+            var salary = filter.salary;
+            var keys = typeof filter.selectedJobs == 'object' ? Object.keys(filter.selectedJobs) : [];
+            var sortByType = filter.sortByType;
+            for (var i = 0; i < keys.length; i++) {
+                if (filter.selectedJobs[keys[i]])
+                jobsChecked.push(keys[i]);
+            }
+            tmp = [];
+
+            if (typeof filter.selectedJobs == 'string') {
+                tmp.push(filter.selectedJobs);
+            } else if (typeof filter.selectedJobs == 'object') {
+                for (var i = 0; i < jobsChecked.length; i++) {
+                    if (jobsChecked[i] != "all::all") {
+                        tmp.push(jobsChecked[i]);
+                    }
+                }
+            }
+
+            jobsChecked = tmp;
+            var keys = typeof filter.selectedLocations == 'object' ? Object.keys(filter.selectedLocations) : [];
+            for (var i = 0; i < keys.length; i++) {
+                if (filter.selectedLocations[keys[i]])
+                locationChecked.push(keys[i]);
+            }
+            tmp = [];
+
+            if (typeof filter.selectedLocations == 'string') {
+                tmp.push(filter.selectedLocations);
+            } else if (typeof filter.selectedLocations == 'object') {
+                for (var i = 0; i < locationChecked.length; i++) {
+                    if (locationChecked[i] != "all::all") {
+                        tmp.push(locationChecked[i]);
+                    }
+                }
+            }
+
+            locationChecked = tmp;
+            var keys = typeof filter.selectedRecruiters == 'object' ? Object.keys(filter.selectedRecruiters) : [];
+            for (var i = 0; i < keys.length; i++) {
+                if (filter.selectedRecruiters[keys[i]])
+                    recruiterChecked.push(keys[i]);
+            }
+            tmp = [];
+            for (var i = 0; i < recruiterChecked.length; i++) {
+                if (recruiterChecked[i] != "all") {
+                    tmp.push(recruiterChecked[i]);
+                }
+            }
+            recruiterChecked = tmp;
+            var keys = typeof filter.selectedExperienceLevels == 'object' ? Object.keys(filter.selectedExperienceLevels) : [];
+            for (var i = 0; i < keys.length; i++) 
+            {
+                if (filter.selectedExperienceLevels[keys[i]])
+                    experienceLevelChecked.push(keys[i]);
+            }
+            if (filter.isearch) {
+                var n = locationChecked.length - 1;
+                var m = jobsChecked.length - 1;
+                var url = '{{Config.RootUrl}}jobs/' + "{{{route.byType}}}" + '/' + '{{{route.language}}}'
+                    + '/' + '{{{route.RecruiterCode}}}'
+                    + '/' + (locationChecked[n] ? locationChecked[n].split('::')[0] : '{{{route.location}}}')
+                    + '/' + (locationChecked[n] ? locationChecked[n].split('::')[1] : '{{{route.province}}}')
+                    + '/' + (jobsChecked[m] ? jobsChecked[m].split('::')[0] : '{{{route.job-group}}}')
+                    + '/' + (jobsChecked[m] ? jobsChecked[m].split('::')[1] : '{{{route.job}}}')
+                    + '/' + (filter.txtSearch ? filter.txtSearch : 'all')
+                    + '/' + '{{{route.page-index}}}';
+                jobsChecked = [];
+                locationChecked = [];
+                window.location.href = url;
+                return;
+            }
+
+            var ajax = "server.api://(nodejs)modules/node.portal.candidate@findJobs";
+            var postData = {
+                "bytype": sortByType || "{{{route.byType}}}",
+                "pageIndex": filter.index || "{{{route.pageIndex}}}",
+                "numberItem": 30,
+                "user": "{{{user.Email}}}",
+                "jobsChecked": jobsChecked ,
+                "locationChecked": locationChecked,
+                "levelsChecked": experienceLevelChecked,
+                "companyChecked": recruiterChecked,
+                "salary": salary,
+                content: filter.txtSearch
+            };
+            ajax.data(postData).done(function (res) {
+                $root.items = res.lstData;
+                $root.pagerConfig.totalItems = res.totalItems;
+                $root.totalItems = res.totalItems;
+                $root.totalPager = Math.round(res.totalItems / 30) == 0 ? 1 : Math.round(res.totalItems / 30);
+                $root.$applyAsync();
+            })
+        }
+</script>
+

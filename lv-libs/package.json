@@ -1,0 +1,9 @@
+{
+  "name": "lv-libs",
+  "version": "0.0.0",
+  "description": "lv-libs",
+  "main": "app.js",
+  "author": {
+    "name": "nttlong"
+  }
+}

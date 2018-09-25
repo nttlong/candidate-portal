@@ -1,0 +1,173 @@
+﻿<div class="col-xs-12 col-sm-12 col-md-3">
+    <div class="right-box">
+        <div id="profileLevel" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Mức độ hoàn chỉnh)
+                <span id="spPercentComplete" class="pull-right">60%</span>
+            </div>
+        </div>
+        <div id="allowSearchProfile" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading" ng-if="$root.isHiddenCv">
+                res:(Cho phép tìm kiếm)
+                <span class="pull-right togger-switch">
+                    <label class="switch">
+                        {{#if candidate.AllowSearch}}
+                        <input type="checkbox" ng-click="$root.onChangeAllowSearch($event)" checked="checked">
+                        {{else}}
+                        <input type="checkbox" ng-click="$root.onChangeAllowSearch($event)">
+                        {{/if}}
+                        <span class="slider round"></span>
+                    </label>
+                </span>
+            </div>
+        </div>
+        <div id="whoViewProfile" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Tổng số công việc đã ứng tuyển)
+                <span style="float: right; color: #f7941d;">{{countAllJob}}</span>
+            </div>
+            <!--<hr class="divider no-margin">-->
+            {{#each recruiters}}
+            <div class="panel-content box-sm panel-company">
+                <fieldset class="mg-tp">
+                    <div class="view-company">
+                        <div class="view-company-header" title="{{JobTitle}}">
+                            <a href="{{Config.RootUrl}}/job/{{RecruiterCode}}/{{GroupCode}}/{{JobCode}}/{{RequisitionID}}">
+                                {{JobTitle}}
+                            </a>
+                        </div>
+                        <div class="date-and-num-view">
+                            <span class="pull-left date-and-num-view-left" title="{{RecruiterName}}">{{RecruiterName}}</span>
+                            <span class="pull-right date-and-num-view-right">{{dateFormatValueFull AppliedDate 'DD/MM/YYYY'}}</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<script server>
+    ["./../libs/lv.utils",
+        "./../modules/lv.db",
+        "./../libs/lv.authenticate",
+        "./../modules/lv.model",
+        (utils, Data, auth, models, app) => {
+            app.onLoad = (event) => {
+                utils._try(() => {
+                    Data.cnn((err, db) => {
+                        var loadByEmail = (email) => {
+                            utils.paralellCaller()
+                                .call(emit => {
+                                    var qr = models.ls_requisition()
+                                        .unwind("CandidateApplyList")
+                                        .where("CandidateApplyList.CandidateEmail", email)
+                                        .lookup(models.ls_recruiters(), 'RecruiterId', '_id', 'recruiters')
+                                        .unwind("recruiters")
+                                        .sort("CandidateApplyList.AppliedDate", -1)
+                                        .select({
+                                            JobTitle: 1,
+                                            RecruiterName: "recruiters.RecruiterName",
+                                            RecruiterCode: "recruiters.RecruiterCode",
+                                            AppliedDate: "CandidateApplyList.AppliedDate",
+                                            GroupCode: "Job.GroupCode",
+                                            JobCode: "Job.JobCode",
+                                            RequisitionID: "_id"
+                                        }).query();
+                                    var query = qr.clone();
+                                        qr.toArray((err, result) => {
+                                            if (!err) {
+                                                if (result) {
+                                                    event.setModel("recruiters", result);
+                                                    query.toArray((err, result) => {
+                                                        event.setModel("countAllJob", result.length);
+                                                        emit();
+                                                    })
+                                                }
+                                            }
+                                        })
+                                        .catch(ex => {
+                                            emit(ex);
+                                        })
+                                })
+                                .call(emit => {
+                                    models.ls_candidate()
+                                        .where("UserEmail", email)
+                                        .select({
+                                            CV_Attachment: 1,
+                                            LatestModifiedOn: 1,
+                                            AllowSearch: 1,
+                                            TotalRecruiterReviews: 1,
+                                            ModifiedOn: 1,
+                                            CreatedOn: 1
+                                        })
+                                        .toItem((err, result) => {
+                                            if (!err) {
+                                                if (result) {
+                                                    result.LatestModifiedOn = result.ModifiedOn || result.CreatedOn;
+                                                    event.setModel("candidate", result);
+                                                }
+                                            }
+                                            emit();
+                                        })
+                                        .catch(ex => {
+                                            emit(ex);
+                                        })
+                                })
+                                .done(ex => {
+                                    event.done(ex);
+                                })
+                        }
+                        if (event.req.routeInfo && event.req.routeInfo.params && event.req.routeInfo.params.userId) {
+                            var userId = event.req.routeInfo.params.userId;
+                            models.sys_Users()
+                                .where("UserId", userId)
+                                .toItem((err, result) => {
+                                    if (err) event.done(err);
+                                    else
+                                        event.setModel("User", result);
+                                    loadByEmail(result.Email);
+                                })
+                        }
+                        else {
+                            loadByEmail(auth.getUser(event.req).Email);
+                        }
+                    });
+
+                }, event);
+
+
+            }
+        }]
+</script>
+<script>
+        (function (app) {
+            app.$root.CvFileName = null;
+            app.$root.DateUpdateCv = null;
+            app.isThisUser = function () {
+                return window.candidateId == "";
+            }
+            alert(app.isThisUser());
+            app.data = {
+                CVFile: {},
+                Users: {
+                    Settings: { DefaultDateFormat: "DD/MM/YYYY" }
+                },
+                totalView: 0,
+                lstRecruiterReview: []
+            };
+
+            app.uploadCVFile = function () {
+
+            };
+            app.formatDate = function (value, format) {
+                return moment(String(value)).format(format)
+            }
+            app.onChangeAllowSearch = function () {
+
+            }
+            app.$applyAsync();
+        })
+</script>
+

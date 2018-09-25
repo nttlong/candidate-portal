@@ -1,0 +1,191 @@
+﻿@import "main_site/variables.less";
+@import "main_site/main_search_widget.less";
+@import "main_site/main_content.less";
+
+body {
+    font-family: @hcs-font;
+}
+
+.debug {
+    border: 1px solid red !important;
+}
+
+.lv-main-container {
+    background: #eee;
+}
+
+.lv-banner-container {
+    .lv-box-search {
+        padding: 30px;
+        border: 1px solid #ddd;
+        top: 25%;
+        margin-left: 50%;
+        background: #f2f2f2;
+
+        .btn-default {
+            width: 100%;
+            color: #fff;
+            background: #00b9f2;
+            padding: 12px;
+            text-transform: uppercase;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .btn-default:hover {
+            background: #ed9900;
+        }
+
+        .has-feedback {
+            .form-control-feedback {
+                left: 15px;
+            }
+            .form-control {
+                padding: 6px 35px;
+            }
+        }
+    }
+}
+
+.lv-main-content {
+    .myresume-contact {
+        background: #fff;
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .lv-view-detail {
+        position: unset !important;
+    }
+    .lv-item-job-box-img {
+
+        img {
+            height: 60% !important;
+        }
+    }
+}
+@media only screen and (max-width: 1400px) {
+    .lv-search-container {
+        display: none;
+    }
+    .lv-box-search {
+        display: block;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .lv-search-container {
+        display: block;
+    }
+    .lv-box-search {
+        display: none;
+    }
+
+    .select2-drop {
+        border: 0;
+        border-radius: 0 !important;
+    }
+
+    .lv-banner-container {
+        height: 600px;
+        width: 100%;
+        position: relative;
+
+        .lv-search-container {
+            height: 420px;
+            background: transparent;
+            position: relative;
+            top: 0;
+            left: 0;
+
+            .lv-search-widget {
+                border-radius: 2px;
+                box-shadow: none;
+                background: rgba(0, 0, 0, 0.65);
+                color: #fff;
+                padding: 20px;
+                position: absolute;
+                top: 55%;
+                margin-top: 5%;
+                transform: translateY(-50%) translateX(-50%);
+                left: 50%;
+                width: 94%;
+
+                h1 {
+                    font-size: 18px;
+                    font-weight: 400;
+                    margin-top: 0;
+                    margin-bottom: 10px;
+                    text-align: left;
+                }
+
+                .break-title {
+                    display: none;
+                }
+
+                .lv-search-controls {
+                    height: 44px;
+                }
+            }
+        }
+
+        .lv-slider-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            img {
+                height: 600px;
+                width: 100%;
+            }
+
+            .carousel-indicators {
+                li {
+                    width: 13px;
+                    height: 13px;
+                }
+
+                li.active {
+                    background: #ccc;
+                }
+            }
+        }
+    }
+
+    .lv-dropdown-list {
+        span.lv-icon {
+            height: 44px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            padding: 0 10px;
+            line-height: 44px;
+            z-index: 2;
+            color: #666;
+            opacity: 0.5;
+            font-size: 20px;
+        }
+
+        .lv-search-list {
+            height: 44px;
+            background: #fff !important;
+
+            a {
+                height: 44px !important;
+                border-radius: 0 !important;
+                border: 0 !important;
+                background: #fff;
+                line-height: 44px !important;
+                font-size: 15px;
+                padding-left: 40px !important;
+            }
+
+            .select2-arrow {
+                background: transparent;
+                border: 0;
+                line-height: 44px;
+                padding-top: 7px;
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+
+  "dependencies": {
+   
+    "log4js": "^2.3.12"
+  },
+  "deprecated": false,
+  "devDependencies": {},
+  "name": "lv.logs",
+  "optionalDependencies": {},
+  "peerDependencies": {},
+  "scripts": {},
+  "version": "1.0.2",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "./"
+  },
+  "author": "nttlong",
+  "license": "ISC",
+  "description": ""
+  
+}

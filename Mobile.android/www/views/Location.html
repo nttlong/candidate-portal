@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div>
+        <div>
+            {{data}}
+        </div>
+        <div>
+            {{error}}
+        </div>
+        <md-button ng-click="doGetLocation()">Test</md-button>
+    </div>
+    <script>
+        (function (scope) {
+            scope.doGetLocation = function () {
+                scope.$root.getLocation()
+                    .then(function (info) {
+                        alert(JSON.stringify(info))
+                        scope.data = info;
+                        scope.$applyAsync();
+                    })
+                    .catch(function (ex) {
+                        scope.error = ex;
+                        scope.$applyAsync();
+                    });
+            };
+        });
+    </script>
+</body>
+</html>

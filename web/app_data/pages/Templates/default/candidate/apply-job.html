@@ -1,0 +1,388 @@
+﻿<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<title>page-caption:(Apply job)</title>
+	<meta charset="utf-8" />
+	<render>../commons/header.html</render>
+
+	<link href="{{Config.RootUrl}}Templates/default/resources/css/candidate_uv_apply.min.css" rel="stylesheet" />
+</head>
+<body ng-controller="app">
+	<render>../commons/navbar.html</render>
+	<div class="form-horizontal" ng-show="numberCandidate <= 0">
+		<div class="modal-dialog" id="app" ng-cloak>
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">
+						<span aria-hidden="true" tabindex="8">×</span>
+						<span class="sr-only">res:(Close)</span>
+					</button>
+
+					<h4 class="modal-title" id="myModalLabel">
+						res:(Bạn đang ứng tuyển cho vị trí)
+						<strong>{{data.requisition.Job.JobName}}</strong><br>
+						<em class="small" id="appPreferLanguage" style="display: none;">res:(Nhà tuyển dụng ưu tiên hồ sơ ứng tuyển viết bằng tiếng) <strong id="appPreferLanguageName">{{data.requisition.LanguageCV}}</strong>.</em>
+					</h4>
+				</div>
+
+				<div class="modal-body">
+					<div class="modal-body-header">
+						<div class="row">
+							<!-- Resume Avatar -->
+							<div class="col-sm-3 col-xs-4 user-pic">
+								<div class="modal-body-avatar img-circle">
+									<div class="avatar-sample">
+										<img src="{{data.candidate.Photo}}" class="img-responsive img-circle">
+									</div>
+								</div>
+							</div>
+
+							<div class="col-sm-9 col-xs-8 user-info">
+								<!-- Full Name -->
+								<h4 class="modal-body-name">
+									<span>{{data.candidate.LastName}}&nbsp;{{data.candidate.FirstName}}</span>
+								</h4>
+
+								<!-- Job Title -->
+								<div class="modal-body-job-title">
+									<a href="#" class="editable editable-click" data-placeholder="res:(Nhập chức danh của bạn)" tabindex="1" id="app-title" data-optional="1">
+										{{getName data.candidate.DesireMajor.JobName}}
+									</a>
+								</div>
+
+								<input type="hidden" name="appJobTitle" id="appJobTitle" value="Devloper">
+							</div>
+						</div>
+					</div>
+
+					<div id="resume" class="modal-body-content">
+						<!-- Email Address -->
+						<div class="form-group">
+							<label for="app-resume" class="col-sm-3 col-xs-12 control-label">res:(Email)</label>
+							<div class="col-sm-9 col-xs-12">
+								<div class="form-control-static" id="app-email">{{data.candidate.Email}}</div>
+							</div>
+						</div>
+
+						<!-- Phone Number -->
+						<div class="form-group">
+							<label for="app-resume" class="col-sm-3 col-xs-12 control-label">res:(Số điện thoại)</label>
+							<div class="col-sm-9 col-xs-12">
+								{{#if data.candidate.Mobile}}
+								<div class="form-control-static" id="app-email">{{data.candidate.Mobile}}</div>
+								{{else}}
+								<div class="form-control-static" id="app-email">res:(Chưa cập nhật sđt)</div>
+								{{/if}}
+							</div>
+						</div>
+
+						<!-- Select Resume Block -->
+						<div class="form-group select-resume">
+							<label for="app-resume" class="col-sm-3 col-xs-12 control-label">
+								res:(Resume)
+							</label>
+
+							<div class="col-sm-9 col-xs-12">
+								<div id="applyResume">
+									<div class="row select-resume__item">
+										<div class="col-sm-12">
+											<div class="radio radio-success">
+												<input type="radio" name="resumeApply" id="rad1" value="2" ng-model="picked" ng-checked="true">
+												<label for="rad1">
+													<span>res:(Hồ Sơ Trực Tuyến)</span>
+													{{#if data.candidate.LatestModifiedOn}}
+													<span class="small gray-light select-resume__hint"> (res:(Ngày cập nhật:) {{dateFormatValueFull data.candidate.LatestModifiedOn 'DD/MM/YYYY HH:mm:ss'}})</span>
+													{{else}}
+													<span class="small gray-light select-resume__hint"> (res:(Ngày cập nhật:) {{dateFormatValueFull data.candidate.CreatedOn 'DD/MM/YYYY HH:mm:ss'}})</span>
+													{{/if}}
+												</label>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div id="applyResume" ng-disabled="true">
+									<div class="row select-resume__item">
+										<div class="col-sm-12">
+											<div class="radio radio-success">
+												{{#if data.candidate.CV_Attachment.FileName}}
+												<input tabindex="5" type="radio" name="resumeApply" id="rad2" value="1" ng-model="picked">
+												<label for="rad2">
+													<span>{{data.candidate.CV_Attachment.FileName}}</span>
+													{{#if data.candidate.CV_Attachment.ModifiedOn}}
+													<span class="small gray-light select-resume__hint"> (res:(Ngày cập nhật:) {{dateFormatValueFull data.candidate.CV_Attachment.ModifiedOn 'DD/MM/YYYY HH:mm:ss'}})</span>
+													{{/if}}
+												</label>
+												{{else}}
+												<input tabindex="5" type="radio" name="resumeApply" id="rad2" value="1" ng-model="picked" ng-disabled="true">
+												<label for="rad2">
+													<span>res:(Chưa cập nhật hồ sơ)</span>
+												</label>
+												{{/if}}
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- Upload New CV -->
+								<div class="row ">
+									<div class="col-sm-12">
+										<div c-choose-file ng-model="picked" title="res:(Chọn hồ sơ mới)">
+											<!--<input tabindex="7" type="radio" name="resumeApply" id="rad3" value="3" data-type="new_attachment" ng-model="picked">
+											<label style="position: absolute;" for="resumeApply">
+												<a class="relative">
+													res:(Chọn hồ sơ mới)
+													<i class="glyphicon glyphicon-upload" data-toggle="tooltip" title="Replace" data-placement="top"></i>
+												</a>
+											</label>
+											<input for="resumeApply" type="file" name="resumeFile" id="fileAttach" ng-click="doCheckUploadFile()" value="Attach new" @change="upLoadFile">-->
+										</div>
+										<span class="small pull-left">res:(Hỗ trợ định dạng .doc, .docx, .pdf, nhỏ hơn 2048KB.)</span>
+									</div>
+								</div>
+
+								<br>
+							</div>
+						</div>
+
+						<!-- Cover Letter -->
+
+						<span id="errorAppSystem" style="display: none;" class="error-message"></span>
+					</div>
+
+					<span id="errorAppSystem" style="display: none;" class="error-message"></span>
+				</div>
+
+				<div class="modal-footer">
+					<input type="hidden" name="appliedType" id="appliedType">
+
+					<div class="pull-right">
+
+						<button type="button" class="btn btn-defautl btn-outline track-event" data-evt-type="cancel-apply" tabindex="11" ng-click="doBack()">res:(Trở Về)</button>
+
+						<button type="button" id="applySendProcessBtn" ng-click="doApply()" class="btn btn-primary " tabindex="11">res:(Nộp Đơn)</button>
+
+						<button type="submit" id="applySendingProcessBtn" style="display: none;" class="btn btn-default" tabindex="10" disabled="">
+							<img src="" alt="">res:(Đang Nộp Đơn);
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script server>
+		["./../libs/lv.utils",
+			"./../modules/node.sys.categories",
+			"./../modules/node.portal.candidate",
+			"./../libs/lv.authenticate",
+			"./../modules/lv.db",
+			"./../modules/lv.model",
+			(utils, categories, candidate, aut, Data, model, app) => {
+				app.onLoad = (event) => {
+					var clientData = utils.readData(event);
+					var user = aut.getUser(event.req);
+					var lan = utils.getCurrentLanguageCode(event);
+					event.setModel("info", event.req.routeInfo.params);
+					utils._try(() => {
+						Data.cnn((err, db) => {
+							if (err) {
+								event.done(err);
+								return;
+							}
+							utils.paralellCaller()
+								.call(emit => {
+									db.collection("ls_candidate")
+										.findOne({
+											UserEmail: {
+												$regex: new RegExp("^" + user.Email + "$", "i")
+											}
+										}, (err, item) => {
+											event.setModel("data.candidate", item);
+											event.setModel("data.candidate.FirstName", user.FirstName);
+											event.setModel("data.candidate.LastName", user.LastName);
+											event.setModel("data.candidate.Email", user.Email);
+											emit(err);
+										})
+								}).call(emit => {
+									db.collection("ls_requisition")
+										.findOne({
+											_id: utils.objectID(event.req.routeInfo.params.RequisitionID)
+										}, (err, item) => {
+											event.setModel("data.requisition.Job.JobName", item.Job.JobName[lan]);
+											emit(err);
+										})
+								}).call(emit => {
+									if (!aut.getUser(event.req)) {
+										/*Chua logi*/
+										emit();
+										return;
+									}
+									model.ls_requisition()
+										.where("(_id==id)and(CandidateApplyList.CandidateEmail==email)",
+											{
+												id: utils.objectID(event.req.routeInfo.params.RequisitionID),
+												email: aut.getUser(event.req).Email
+											})
+										.count()
+										.then(item => {
+											event.setModel('numberCandidate', item);
+											emit();
+										})
+										.catch(ex => {
+											emit(ex);
+										})
+								})
+								//.call(emit => {
+								//    db.collection("ls_requisition")
+								//        .where("(_id==id)and(CandidateApplyList.CandidateEmail==email)",
+								//        {
+								//            id: utils.objectID(clientData.id),
+								//            email: user.Email
+								//        })
+								//        .count
+								//})
+								.done(err => {
+									event.done(err);
+
+								})
+						});
+					}, event);
+				};
+
+				app.doBack = (event) => {
+					utils._try(() => {
+						var clientData = utils.readData(event);
+						try {
+							Data.cnn((err, db) => {
+								if (err) event.done(err);
+								else {
+									db.collection('ls_requisition').aggregate([
+										{
+											$match: {
+												_id: utils.objectID(clientData.id)
+											}
+										}, {
+											$lookup: {
+												from: "ls_recruiters",
+												localField: "RecruiterId",
+												foreignField: "_id",
+												as: "Recruiters"
+											}
+										}, {
+											$project: {
+												"RecruiterCode": "$Recruiters.RecruiterCode",
+												GroupCode: "$Job.GroupCode",
+												JobCode: "$Job.JobCode",
+												RequisitionId: "$_id"
+											}
+										}
+
+									]).toArray((err, lst) => {
+										utils.writeData(event, lst);
+										event.done();
+									});
+								}
+							});
+						}
+						catch (ex) {
+							event.done(ex);
+						}
+					}, event);
+
+				}
+			}
+		]
+	</script>
+
+	<script>
+		ng_app([], function (scope) {
+			scope.requisitionID = "{{info.RequisitionID}}"
+			scope.numberCandidate = "{{numberCandidate}}"
+			scope.picked = 2;
+
+			scope.doBack = function () {
+				//window.history.back();
+				var dataAjax = {};
+				dataAjax.id = scope.requisitionID;
+				var ajax = "server.page://doBack";
+				ajax.data(dataAjax).done(function (res) {
+					if (res) {
+						window.location.href = "{{Config.RootUrl}}" + 'job/' + res[0].RecruiterCode[0] + '/' + res[0].GroupCode + '/' + res[0].JobCode + '/' + res[0].RequisitionId;
+					}
+				})
+			};
+		if (scope.numberCandidate > 0) {
+			scope.doBack();
+		}
+
+
+        scope.doApply = function () {
+            //debugger
+            var type = null;
+            if (scope.picked.Error) {
+                if (scope.picked.Error == 'formatError') {
+                    toastr.error('res:(Lỗi sai định dạng file)');
+                    return
+                }
+                if (scope.picked.Error == 'sizeError') {
+                    toastr.error('res:(Lỗi, File lớn hơn quy định cho phép)');
+                    return
+                }
+                type = scope.picked.picked;
+            } else {
+                if (scope.picked.dataFile) {
+                    type = scope.picked.picked;
+                } else {
+                    type = scope.picked;
+                }
+            }
+            var dataAjax = {};
+            dataAjax.code = scope.recruiterCode;
+            dataAjax.id = scope.requisitionID;
+            dataAjax.type = type;
+
+            if (type == 3) {
+                dataAjax.dataFile = scope.picked.dataFile;
+                dataAjax.fileName = scope.picked.fileName;
+            }
+            if ('{{{data.candidate.CV_Attachment.FileName}}}') {
+                    dataAjax.dataF = true;
+                } else {
+                    dataAjax.dataF = false;
+                }
+            if (type != null) {
+                if (type.picked == 3) {
+                    if (!scope.dataFile || !scope.fileName) {
+                        toastr.error("res:(Bạn chưa upload hồ sơ)");
+                        return;
+                    }
+                }
+                var ajax = "server.api://(nodejs)modules/candidate@apply_job";
+				ajax.data(dataAjax).done(function (res) {
+					console.log(res);
+                    if (res.apiError) {
+                        if (res.apiError.errorType == 'OperatorIsAlready') {
+                            toastr.error("res:(Hồ sơ của bạn đã tồn tại)")
+                        } else if (res.apiError.errorType == 'NoCv') {
+                            toastr.error("res:(Bạn chưa update hồ sơ)")
+                        }
+                    } else {
+                        toastr.success("res:(Hồ sơ của bạn đã được apply)")
+                        setTimeout(function() {
+                            window.location.replace("{{Config.RootUrl}}candidate/uv_apply_thanks");
+                        }, 300);
+                    }
+                })
+            } else {
+                toastr.error('res:(Lỗi, Bắt buộc phải chọn 1 trong 3 Resume)');
+                return
+            }
+            }
+            scope.checkCondition = function (data) {
+                if (data)
+                    return false;
+                return true;
+            }
+        })
+	</script>
+
+</body>
+</html>

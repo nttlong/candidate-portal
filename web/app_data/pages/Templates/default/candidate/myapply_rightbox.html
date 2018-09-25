@@ -1,0 +1,112 @@
+﻿<script src="{{Config.RootUrl}}Scripts/moment.min.js"></script>
+<div class="col-xs-12 col-sm-12 col-md-3" >
+    <div class="right-box" id="app1" v-cloak>
+        <div id="profileLevel" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Mức độ hoàn chỉnh)
+                <span id="spPercentComplete" class="pull-right">60%</span>
+            </div>
+        </div>
+        <div id="allowSearchProfile" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Cài đặt)
+            </div>
+            <div class="panel-content box-sm">
+                <fieldset class="mg-tp">
+                    <div class="searchable-setting">
+                        <div class="strong-tooltip" data-searchable-tip="Bật tính năng cho phép tìm kiếm <br/> để không bỏ lỡ một cơ hội nào! <i class='fa fa-times-circle'></i>">
+                            res:(Cho phép tìm kiếm)
+                        </div>
+                        <span class="pull-right togger-switch">
+                            <label class="switch">
+                                <input v-model="checked" type="checkbox" v-on:click="SaveCandidateAllowSearch()">
+                                <span class="slider round"></span>
+                            </label>
+                        </span>
+                    </div>
+                </fieldset>
+
+            </div>
+        </div>
+        <div id="whoViewProfile" class="panel panel-default section-sidebar section-profile-level">
+            <div class="panel-heading">
+                res:(Tổng số lượt xem hồ sơ của bạn)
+            </div>
+            <div class="panel-content box-sm">
+                <fieldset class="mg-tp">
+                    <div class="searchable-setting">
+                        <span class="strong-tooltip" data-searchable-tip="Bật tính năng cho phép tìm kiếm <br/> để không bỏ lỡ một cơ hội nào! <i class='fa fa-times-circle'></i>">
+                            res:(Tổng lượt xem)
+                        </span>
+                        <span class="pull-right total-view-profile">${NumAll}</span>
+                    </div>
+                </fieldset>
+            </div>
+            <!--<hr class="divider no-margin">-->
+           
+            <div class="panel-content box-sm panel-company" v-for="item in dataItem">
+                <fieldset class="mg-tp">
+                    <div class="view-company">
+                        <div>
+                            <span>
+                                ${item.RecruiterName}
+                            </span>
+                        </div>
+                        <div class="date-and-num-view">
+                            <span class="pull-left">${convertDate(item.ViewDate)}</span>
+                            <span class="pull-right">${item.count}</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function formatDate(value, format) {
+        return moment(String(value)).format(format)
+    }
+    (function () {
+        var ajaxLoadData = "ajax.store.st_get_recruiterreviews_of_candidate";
+        var app = {
+            data: {
+                data: {},
+                checked: {},
+                numall: {}
+            },
+            doLoadData: function() {
+                ajaxLoadData.done(function (res) {
+                    console.log(123, res);
+                    app.data.data = res.user;
+                    app.data.checked = res.user[0].AllowSearch;
+                    app.data.numall = res.NumAll;
+                    new Vue({
+                        delimiters: ['${', '}'],
+                        el: '#app1',
+                        data: {
+                            dataItem: app.data.data,
+                            checked: app.data.checked,
+                            NumAll: app.data.numall
+                        },
+                        methods: {
+                            SaveCandidateAllowSearch () {
+                                var pdata = {};
+                                pdata.checked = (!this.checked).toString();
+                                pdata.email = res.user[0].UserEmail;
+                                console.log(pdata);
+                                var ajaxUpdateData = "ajax.store.st_update_allowsearch_ls_recruiters";
+                                ajaxUpdateData.data({ pdata }).done(function (res) {
+                                    console.log(res);
+                                })
+                            }, convertDate(date) {
+                                var date = new Date(date);
+                                return date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+                            }
+                        }
+                    })
+                })
+            }
+        }
+        app.doLoadData();
+    })();
+</script>

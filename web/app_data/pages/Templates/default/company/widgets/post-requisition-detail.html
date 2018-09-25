@@ -1,0 +1,822 @@
+﻿<body>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="form-group-input">res:(Mã số) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" ng-model="data.Code" disabled />
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Chức danh) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <input type="text" class="form-control" ng-model="data.JobTitle" />
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="form-group-input">res:(Ngành nghề) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <input c-select2 data-source="lookup.listOf_group_jobs" ng-model="data.Job.FullJobCode" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Cấp bậc) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <input c-select2 data-source="lookup.listOfLevels" ng-model="data.ExperienceLevel.Code" />
+            </div>
+        </div>
+
+        <div class="form-group" lang="vi">
+            <label class="col-sm-4 control-label">res:(Nơi làm việc) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <input c-select2 data-source="lookup.listOf_locations" ng-model="data.LocationFullCode" multiple="multiple" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Số lượng)</label>
+			<div class="col-sm-7">
+				<!--<input type="number" class="form-control" id="numberNumOfStaff" c-is-number
+		   ng-change="textChangeNumOfStaff($event)" placeholder="res:(Số lượng)" ng-model="data.NumOfStaff"
+		   min="1"/>-->
+				<div c-is-number ng-model="data.NumOfStaff"></div>
+			</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="form-group-input">res:(Hình thức lương) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <!--<select class="form-control" id="opHinhThuc" ng-model="data.SalaryType"
+                       ng-options="it.id as it.value for it in dataHinhThuc">
+                </select>-->
+                <input c-select2 data-source="dataHinhThuc" ng-model="data.SalaryType" />
+            </div>
+        </div>
+        <div class="form-group" ng-if="data.SalaryType==1">
+            <label class="col-sm-4 control-label" for="form-group-input">res:(Mức lương) <span style="color: red">*</span></label>
+			<div class="col-sm-7">
+				<!--<input type="number" class="form-control" id="form-group-input" placeholder="res:(Số lượng)" ng-model="data.Salary"/>-->
+				<input type="text" class="form-control" ng-model="data.Salary" />
+			</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label" for="form-group-input">res:(Hình ảnh cho tuyển dụng này)</label>
+            <div class="col-sm-7">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div c-photo-upload ng-model="data.Photo">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Mô tả) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <div data-c-html-box ng-model="data.Description.{{Language.Current.Code}}" style="height:300px">
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Yêu cầu)</label>
+            <div class="col-sm-7">
+                <div data-c-html-box ng-model="data.Requirements.{{Language.Current.Code}}" style="height:300px">
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Kỹ năng)</label>
+            <div class="col-sm-7">
+                <div data-c-html-box ng-model="data.Skills.{{Language.Current.Code}}" style="height:300px">
+
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Nhận Hồ Sơ Bằng Ngôn Ngữ)</label>
+            <div class="col-sm-7">
+                <select class="form-control" ng-model="data.LanguageCV">
+                    <option value="any">Bất kì</option>
+                    <option value="vn">Tiếng Việt</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Người Liên Hệ)</label>
+            <div class="col-sm-7">
+                <input class="form-control" id="focusedInput" type="text" placeholder="res:(HR Department)" ng-model="data.RecieverContact">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Địa Chỉ Email Nhận Hồ Sơ)</label>
+            <div class="col-sm-7">
+                <input class="form-control" id="focusedInput" type="text" placeholder="res:(tuyendung@lacviet.com.vn)" ng-model="data.RecieverEmail">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Thời gian nhận hồ sơ)</label>
+            <div class="col-sm-7">
+                <input c-date-picker ng-model="data.ReceiveFrom" />
+                <!--<input class="form-control edit-control datepicker" id="DateReceipt" ng-model="data.ReceiveFrom">-->
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Thời gian kết thúc nhận hồ sơ) <span style="color: red">*</span></label>
+            <div class="col-sm-7">
+                <input c-date-picker ng-model="data.ReceiveTo" />
+                <!--<input class="form-control edit-control datepicker" id="EndDateReceipt" ng-model="data.ReceiveTo">-->
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Hot)</label>
+            <div class="col-sm-7">
+                <label class="control-label">
+                    <input type="checkbox" id="form-group-input" ng-model="data.IsHot">
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Tạm dừng)</label>
+            <div class="col-sm-7">
+                <label class="control-label">
+                    <input type="checkbox" id="form-group-input" ng-model="data.IsLocked">
+                </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">res:(Xuất bản)</label>
+            <div class="col-sm-7">
+                <label class="control-label">
+                    <input type="checkbox" id="form-group-input" ng-model="data.IsPublished">
+                </label>
+            </div>
+        </div>
+    </form>
+    <!--<form class="form-horizontal" ng-show="isPrint">
+        <p><span>res:(Mã số): </span>${data.Code}<span></span></p>
+        <p><span>res:(Chức danh): </span>${data.JobTitle}<span></span></p>
+        <p><span>res:(Ngành nghề): </span>${onLoadDataNN(lookup.listOf_group_jobs, data.Job.FullJobCode)}<span></span></p>
+        <p><span>res:(Cấp bậc): </span>${onLoadDataCB(lookup.listOfLevels, data.ExperienceLevel.Code)}<span></span></p>
+        <p><span>res:(Nơi làm việc): </span>${onLoadDataNLV(lookup.listOf_locations, data.LocationFullCode)}<span></span></p>
+        <p><span>res:(Số lượng): </span>${data.NumOfStaff}<span></span></p>
+        <p><span>res:(Hình thức lương): </span>${onLoadDataHTL(dataHinhThuc, data.SalaryType)}<span></span></p>
+        <p ng-if="data.SalaryType==1"><span>res:(Mức lương): </span>${data.SalaryType}<span></span></p>
+        <p><span>res:(Hình ảnh cho tuyển dụng này): </span>${data.Photo}<span></span></p>
+        <p><span>res:(Mô tả): </span>${data.Description[lang]}<span></span></p>
+        <p><span>res:(Yêu cầu): </span>${data.Requirements[lang]}<span></span></p>
+        <p><span>res:(Kỹ năng): </span>${data.Skills[lang]}<span></span></p>
+        <p><span>res:(Nhận Hồ Sơ Bằng Ngôn Ngữ): </span>${data.Skills.lang}<span></span></p>
+        <p><span>res:(Người Liên Hệ): </span>${data.RecieverContact}<span></span></p>
+        <p><span>res:(Địa Chỉ Email Nhận Hồ Sơ): </span>${data.RecieverEmail}<span></span></p>
+        <p><span>res:(Thời gian nhận hồ sơ): </span>${data.ReceiveFrom}<span></span></p>
+        <p><span>res:(Thời gian kết thúc nhận hồ sơ): </span>${data.ReceiveTo}<span></span></p>
+    </form>-->
+    <script server>
+        [
+            "./../libs/lv.utils",
+            "./../modules/node.sys.customer",
+            "./../libs/lv.authenticate",
+            "./../modules/lv.db",
+            "./../modules/lv.model",
+            (utils, customer, aut, Data, models, app) => {
+                utils.debug();
+
+
+                app.getCandidatesByCustomerAdminEmailAndRequisitionID = (event) => {
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        customer.getCandidatesByCustomerAdminEmailAndRequisitionID(aut.getUser(event.req).Email, clientData.id, (err, data) => {
+                            if (err) event.done(err);
+                            else {
+                                utils.writeData(event, data);
+                                event.done();
+                            }
+                        })
+                    }, event);
+                }
+
+                app.doLoadLeval = (event) => {
+                    customer.get_ls_experience_levels(event.req.currentLanguageCode, (err, list) => {
+                        if (err) event.done(err);
+                        else {
+                            var ret = [];
+                            list.forEach(item => {
+                                ret.push({
+                                    id: item.Code,
+                                    text: item["Name"][event.req.currentLanguageCode]
+                                })
+                            })
+                            utils.writeData(event, ret);
+                        }
+                    })
+                }
+                app.doLoad_group_jobs = (event) => {
+                    customer.get_ls_group_jobs(event.req.currentLanguageCode, (err, list) => {
+                        if (err) event.done(err);
+                        else {
+                            var ret = [];
+                            list.forEach(item => {
+                                var retItem = {
+                                    id: item.Code,
+                                    text: item["Name"][event.req.currentLanguageCode],
+                                    children: []
+                                };
+                                ret.push(retItem);
+                                item.Jobs.forEach(cItem => {
+                                    retItem.children.push({
+                                        id: item.Code + "::" + cItem.Code,
+                                        text: cItem["Name"][event.req.currentLanguageCode]
+                                    })
+                                })
+                            })
+                            utils.writeData(event, ret);
+                            event.done();
+                        }
+                    })
+                };
+                app.doLoad_locations = (event) => {
+                    customer.get_ls_locations(event.req.currentLanguageCode, (err, list) => {
+                        if (err) event.done(err);
+                        else {
+                            var ret = [];
+                            list.forEach(item => {
+                                var retItem = {
+                                    id: item.Code,
+                                    text: item["Name"][event.req.currentLanguageCode],
+                                    children: []
+                                };
+                                ret.push(retItem);
+                                item.Provinces.forEach(cItem => {
+                                    retItem.children.push({
+                                        id: item.Code + "::" + cItem.Code,
+                                        text: cItem["Name"][event.req.currentLanguageCode]
+                                    })
+                                })
+                            })
+                            utils.writeData(event, ret);
+                            event.done();
+                        }
+                    })
+                };
+                app.doDeleteRequisition = (event) => {
+                    utils._try(() => {
+                        try {
+                            var clientData = utils.readData(event);
+
+                            var item = models.ls_requisition()
+                                .where("_id==id", { id: utils.objectID(clientData.id) })
+                                .toItem.sync();
+                            if (!item) {
+                                utils.writeData(event, { errorApi: "NoItem" });
+                                event.done();
+                            } else {
+                                if (item.IsPublished && item.PublishDate) {
+                                    utils.writeData(event, { errorApi: "IsPubErr" });
+                                    event.done();
+                                } else {
+                                    models.ls_requisition()
+                                        .where("_id==id", { id: utils.objectID(clientData.id) })
+                                        .delete()
+                                        .commit.sync();
+                                    utils.writeData(event, {});
+                                    event.done();
+                                }
+                            }
+                        }
+                        catch (ex) {
+                            event.done(ex);
+                        }
+                    }, event)
+                }
+                app.doNewAddRequisition = (event) => {
+                    utils._try(() => {
+                        var user = aut.getUser(event.req);
+                        var recruiter;
+                        var totalRequisition;
+                        utils.sequences()
+                            .then(next => {
+                                models.ls_recruiters()
+                                    .where("UserEmail", user.Email)
+                                    .toItem((err, item) => {
+                                        recruiter = item;
+                                        next(err);
+
+                                    });
+                            })
+                            .then(next => {
+                                if (recruiter == null) { next(); return; }
+                                models.ls_requisition()
+                                    .count((err, result) => {
+                                        totalRequisition = result || 0;
+                                        next(err);
+                                    })
+                            })
+                            .done(err => {
+                                var data = {
+                                    Code: totalRequisition
+                                }
+                                if (recruiter) {
+									data.RecieverEmail = (recruiter && recruiter.RecieverEmail) ? recruiter.RecieverEmail : recruiter.ContactInfo.Email
+									data.RecieverContact = (recruiter && recruiter.ContactName) ? recruiter.ContactName : recruiter.ContactInfo.ContactName
+                                }
+                                utils.writeData(event, data);
+                                event.done(err);
+                            })
+
+                    }, event)
+                };
+
+                app.doGetExportLink = (event) => {
+                    utils._try(() => {
+                        var operators;
+                        var source = "ls_requisition";
+                        var lang = "vn";
+                        var operators;
+                        var dataOpe = [];
+                        var operator = {};
+                        var clientData = utils.readData(event);
+                        var idRequisition = clientData.idRequisition;
+                        var dataCandidate = clientData.dataCandidate;
+                        //
+                        operator = {};
+                        operator["$match"] = {};
+                        operator["$match"]["_id"] = utils.objectID(idRequisition);
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$unwind"] = "$CandidateApplyList";
+                        dataOpe.push(operator);
+                        // tìm ứng viên có email giống
+                        if (dataCandidate.length > 0) {
+                            var or = [];
+                            for (var i = 0; i < dataCandidate.length; i++) {
+                                var obj = {};
+                                obj["CandidateApplyList.CandidateEmail"] = dataCandidate[i].CandidateEmail;
+                                or.push(obj);
+                            }
+
+                            operator = {};
+                            operator["$match"] = {};
+                            operator["$match"]["$or"] = or;
+                            dataOpe.push(operator);
+                        }
+                        //
+                        operator = {};
+                        operator["$project"] = {};
+                        operator["$project"]["EmailUser"] = "$CandidateApplyList.CandidateEmail";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$lookup"] = {};
+                        operator["$lookup"]["from"] = "ls_candidate";
+                        operator["$lookup"]["localField"] = "EmailUser";
+                        operator["$lookup"]["foreignField"] = "UserEmail";
+                        operator["$lookup"]["as"] = "userData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$unwind"] = "$userData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$replaceRoot"] = {};
+                        operator["$replaceRoot"]["newRoot"] = "$userData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$lookup"] = {};
+                        operator["$lookup"]["from"] = "sys_Users";
+                        operator["$lookup"]["localField"] = "UserEmail";
+                        operator["$lookup"]["foreignField"] = "Email";
+                        operator["$lookup"]["as"] = "sysuserData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$unwind"] = "$sysuserData";
+                        dataOpe.push(operator);
+                        //
+                        operator = {};
+                        operator["$project"] = {};
+                        operator["$project"]["_id"] = 0;
+                        operator["$project"]["Họ"] = "$sysuserData.LastName";
+                        operator["$project"]["Tên"] = "$sysuserData.FirstName";
+                        operator["$project"]["Email"] = "$Email";
+                        operator["$project"]["Giới thiệu chung"] = "$Overview";
+                        operator["$project"]["Công việc hiện tại"] = "$RecentInfo.Job.JobName." + lang;
+                        operator["$project"]["Số năm kinh nghiệm"] = "$TotalExpYear";
+                        operator["$project"]["Bằng cấp cao nhất"] = "$TopDegree";
+                        operator["$project"]["Công ty gần đây nhất"] = "$RecentInfo.CompanyName";
+                        operator["$project"]["Ngày sinh"] = "$BirthDate";
+                        operator["$project"]["Giới tính"] = "$Sex";
+                        operator["$project"]["Điện Thoại"] = "$Mobile";
+                        operator["$project"]["Địa Chỉ"] = "$FullAddress";
+                        operator["$project"]["Quốc Tịch"] = "$Nationality.Name.vn";
+                        operator["$project"]["Tình Trạng Hôn Nhân"] = "$MarriageStatus.Name." + lang;
+                        operator["$project"]["Tỉnh/Thành Phố"] = "$Location.Province.Name." + lang;
+                        dataOpe.push(operator);
+                        //
+                        //operator = {};
+                        //operator["$project"] = {};
+                        //operator["$project"]["_id"] = 0;
+                        //operator["$project"]["Họ"] = "$userData.FirstName";
+                        //operator["$project"]["Tên"] = "$userData.LastName";
+                        //operator["$project"]["Số năm kinh nghiệm"] = "TotalExpYear";
+                        //operator["$project"]["Công ty gần đây nhất"] = "RecentInfo.CompanyName";
+                        //operator["$project"]["Bằng cấp cao nhất"] = "TopDegree";
+                        //operator["$project"]["Email"] = "$userData.Email";
+                        //operator["$project"]["Điện Thoại"] = "$Mobile";
+                        //operator["$project"]["Ngày sinh"] = "$BirthDate";
+                        //operator["$project"]["Quốc Tịch"] = "$Nationality.Name.vn";
+                        //operator["$project"]["Giới tính"] = "$Sex";
+                        //operator["$project"]["Tình Trạng Hôn Nhân"] = "$MarriageStatus.Name.vn";
+                        //operator["$project"]["Tỉnh/Thành Phố"] = "$Location.Province.Name.vn";
+                        //operator["$project"]["Địa Chỉ"] = "$FullAddress";
+                        //operator["$project"]["Nguyện vọng"] = "$Desire";
+
+                        //dataOpe.push(operator);
+                        operators = JSON.stringify(dataOpe);
+                        var ret = models.sys_export_token()
+                            .insert({
+                                Type: "excel",
+                                Source: source,
+                                Language: 'vn',
+                                FileName: 'test',
+                                Operators: JSON.stringify(operators)
+                            }).commit.sync();
+                        utils.writeData(event, { id: ret._id });
+                        event.done();
+
+                    }, event);
+                }
+                app.getRequisitionById = (event) => {
+                   
+                    utils._try(() => {
+                        var clientData = utils.readData(event);
+                        if (!clientData.id) {
+                            utils.writeData(event, { data: {} });
+                            event.done();
+                            return;
+                        }
+                        models.ls_requisition()
+                            .where("_id", utils.objectID(clientData.id))
+                            .select({
+                                _id: 1,
+                                Code: 1,
+                                JobTitle: 1,
+                                Job: 1,
+                                ExperienceLevel: 1,
+                                LocationFullCode: 1,
+                                NumOfStaff: 1,
+                                SalaryType: 1,
+                                Photo: 1,
+                                Description: 1,
+                                Requirements: 1,
+                                Skills: 1,
+                                LanguageCV: 1,
+                                RecieverContact: 1,
+                                RecieverEmail: 1,
+                                ReceiveFrom: 1,
+                                ReceiveTo: 1,
+                                IsHot: 1,
+                                IsLocked: 1,
+								IsPublished: 1,
+								Salary: 1
+                            })
+                            .toItem((err, result) => {
+
+                                utils.writeData(event, { data: result });
+                                event.done(err);
+
+                            })
+
+
+                    }, event);
+                }
+
+            }
+        ]
+    </script>
+    <script>
+            (function (scope) {
+                //window.opener.LoadXong();
+                scope.$root.defaultDateFormat = "dd/mm/yyyy";
+                scope.$root.isCandidate = false;
+
+                scope.data = {};
+                scope.lookup = {};
+                scope.lang = "{{Language.Current.Code}}";
+                //scope.data.SalaryType = 0;
+                scope.dataHinhThuc = [{
+                    "id": 0,
+                    "text": "res:(Thỏa thuận)"
+                }, {
+                    "id": 1,
+                    "text": "res:(Khởi điểm)"
+                }, {
+                    "id": 2,
+                    "text": "res:(Cạnh tranh)"
+                }]
+                scope.isShowRequsition = true;
+
+                scope.doLoadRequisitionById = function () {
+                    
+                    var ajaxLoadById = "server.page://getRequisitionById"
+                    ajaxLoadById.data({
+                        id: scope.id
+                    })
+                        .done(function (res) {
+                            if (!res.data.ExperienceLevel) {
+                                res.data.ExperienceLevel = {};
+                                res.data.ExperienceLevel.Code = "undefined";
+                            }
+                            if (!res.data.Job) {
+                                res.data.Job = {};
+                                res.data.Job.FullJobCode = "undefined";
+                            }
+                            if (res && res.data && ((!res.data.Code) || (res.data.Code == null))) {
+                                res.data.Code = res.data._id;
+                            }
+
+                            scope.data = res.data;
+
+                            scope.data.Photo = res.data.Photo || "";
+
+                            if (scope.data.PublishDate != null) {
+                                scope.data.IsPublished = res.data.IsPublished;
+                            }
+                            if (scope.$root.isFirst) {
+                                $($(".item_left_box")[0]).addClass("active_item");
+                            }
+                            scope.isPrint = scope.$root.isPrint == 'true';
+
+                            if (scope.isPrint == true) {
+                                $("#boxleft").hide();
+                            }
+
+                            scope.$apply();
+                        });
+                };
+            });
+                </script>
+    <script>
+        (function (scope) {
+            var ajaxLoadlevel = "server.page://doLoadLeval";
+            ajaxLoadlevel.done(function (res) {
+                var data = [];
+                data.push({
+                    "id": "undefined",
+                    "text": "res:(Vui lòng chọn)"
+                })
+                if (res.length > 0) {
+                    for (var i = 0; i < res.length; i++) {
+                        data.push(res[i]);
+                    }
+                    scope.lookup.listOfLevels = data;
+                }
+                scope.$apply();
+            });
+            var ajax_doLoad_group_jobs = "server.page://doLoad_group_jobs";
+            ajax_doLoad_group_jobs.done(function (res) {
+                var data = [];
+                data.push({
+                    "id": "undefined",
+                    "text": "res:(Vui lòng chọn)"
+                })
+                if (res.length > 0) {
+                    for (var i = 0; i < res.length; i++) {
+                        data.push(res[i]);
+                    }
+                    scope.lookup.listOf_group_jobs = data;
+                }
+                scope.$apply();
+            });
+            var ajaxLoad_listOf_locations = "server.page://doLoad_locations";
+            ajaxLoad_listOf_locations.done(function (res) {
+                scope.lookup.listOf_locations = res;
+                scope.$apply();
+            });
+
+            scope.$root.onDelete(function () {
+                var data = scope.$root.dataLoad;
+                var ajax = "server.page://doDeleteRequisition";
+                ajax.data({
+                    id: scope.data._id
+                }).done(function (res) {
+                    if (res.errorApi) {
+                        if (res.errorApi == "NoItem") {
+                            $(".is-visible").removeClass("is-visible")
+                            toastr.error("res:(Chưa chọn việc làm để xóa)");
+                            return;
+                        } else if (res.errorApi == "IsPubErr") {
+                            $(".is-visible").removeClass("is-visible")
+                            toastr.error("res:(Không xóa việc làm đang tuyển dụng)");
+                            return;
+                        }
+                    } else {
+                        scope.$root.loadList(data.index, data.sortBy, data.year, data.status);
+                        $(".is-visible").removeClass("is-visible")
+                    }
+                    scope.$apply();
+                })
+            })
+
+            scope.$root.onNew(function () {
+                $(".item_left_box").removeClass("active_item");
+                var ajax = "server.page://doNewAddRequisition";
+                ajax.done(function (res) {
+                    res.SalaryType = "0";
+                    res.NumOfStaff = 1;
+                    res.ExperienceLevel = {};
+                    res.ExperienceLevel.Code = "undefined";
+                    res.Job = {};
+                    res.Job.FullJobCode = "undefined";
+                    scope.data = res;
+                    scope.$root.currentRequisitionID = undefined;
+                    scope.$applyAsync();
+                })
+
+            });
+            scope.$root.onSave(function () {
+                if (scope.data.Photo && scope.data.Photo.Error) {
+                    if (scope.data.Photo.Error == "nameError") {
+                        toastr.error('res:(Vui lòng chọn file có định dạng png, jpg)');
+                    } else if (scope.data.Photo.Error == "sizeError") {
+                        toastr.error('res:(Vui lòng chọn file nhỏ hơn 200 KB)');
+                    }
+                    return
+                } else {
+                    toastrError = function (error, model) {
+                        toastr.error(error);
+                        $("[ng-model='" + model + "']").focus(
+                            function () {
+                                $(this).css({ "border-color": "red" })
+                            }
+                        );
+                        $("[ng-model='" + model + "']").blur(
+                            function () {
+                                $(this).css({ "border-color": "#ccc" })
+                            }
+                        );
+                        $("[ng-model='" + model + "']").trigger("click");
+                        $("[ng-model='" + model + "']").select();
+                    }
+                    var dataload = scope.$root.dataLoad;
+                    var isAddNew = (!scope.data._id) || (scope.data._id == null);
+                    var ajax = "server.api://(nodejs)modules/requisition@saveRequisition";
+                    scope.data.Job.FullJobCodeF = scope.data.Job.FullJobCode;
+                    if (scope.data.Job.FullJobCode == "undefined") {
+                        scope.data.Job.FullJobCodeF = null;
+                    } else {
+                        scope.data.Job.FullJobCodeF = scope.data.Job.FullJobCode;
+                    }
+                    if (scope.data.ExperienceLevel.Code == "undefined") {
+                        scope.data.ExperienceLevel.CodeF = null;
+                    } else {
+                        scope.data.ExperienceLevel.CodeF = scope.data.ExperienceLevel.Code;
+                    }
+                    ajax.data({
+                        data: scope.data,
+                        lang: scope.lang
+                    }).done(function (res) {
+                        if (res.apiError) {
+                            if (res.apiError.errorType == "CodeIsEmpty") {
+                                toastrError("res:(Xin nhập mã số)", "data.Code");
+                                return
+                            } else if (res.apiError.errorType == "SalaryTypeIsEmpty") {
+                                toastrError("res:(Xin chọn hình thức lương)", "data.SalaryType");
+                                return
+                            } else if (res.apiError.errorType == "ExperienceLevel.CodeFIsEmpty") {
+                                toastrError("res:(Xin chọn cấp bậc)", "data.ExperienceLevel.CodeF");
+                                return
+                            } else if (res.apiError.errorType == "LocationFullCodeIsEmpty") {
+                                toastrError("res:(Xin chọn nơi làm việc)", "data.LocationFullCode");
+                                return
+                            } else if (res.apiError.errorType == "JobTitleIsEmpty") {
+                                toastrError("res:(Xin nhập chức danh)", "data.JobTitle");
+                                return
+                            } else if (res.apiError.errorType == "Job.FullJobCodeFIsEmpty") {
+                                toastrError("res:(Xin chọn ngành nghề)", "data.Job.FullJobCodeF");
+                                return;
+                            } else if (res.apiError.errorType == "ReceiveToIsEmpty") {
+                                toastrError("res:(Xin chọn Thời gian kết thúc nhận hồ sơ)", "data.ReceiveTo");
+                                return;
+                            } else if (res.apiError.errorType == "DescriptionIsEmpty") {
+                                toastrError("res:(Xin nhập mô tả)", "data.Description");
+                                return;
+                            } else if (res.apiError.errorType == "SalaryIsNull") {
+                                toastrError("res:(Xin nhập mức lương)", "data.Salary");
+                                return;
+                            }
+                        }
+                        else {
+                            scope.data._id = res._id;
+                            scope.$root.currentRequisitionID = res._id;
+                            toastr.success("res:(Đã lưu xong)");
+                            scope.$root.loadList(dataload.index, dataload.sortBy, dataload.year, dataload.status);
+                        }
+
+                    })
+                }
+            });
+        });
+        </script>
+    <script>
+        (function(scope){
+                scope.$root.onSelectRequisition(function (id) {
+                    scope.$root.currentRequisitionID = id;
+                    scope.id = id;
+                    if (scope.doLoadRequisitionById) {
+                        try {
+                            scope.doLoadRequisitionById();
+                        }
+                        catch (ex) {
+                        }
+
+                    }
+                });
+                if (scope.$root.currentRequisitionID) {
+                    scope.id = scope.$root.currentRequisitionID;
+                    if (scope.doLoadRequisitionById) {
+                        try {
+                            scope.doLoadRequisitionById();
+                        }
+                        catch (ex) {
+                        }
+
+                    }
+                }
+                var number = document.getElementById('number');
+
+                scope.$root.onExportExcel(function (data, idReq) {
+                    var a = "server.page://doGetExportLink";
+                    a.data({
+                        dataCandidate: data,
+                        idRequisition: idReq
+                    }).done(function (res) {
+                        var url = "{{Config.RootUrl}}export/excel/" + res.id;
+                        window.open(url, '_blank');
+                        app.$applyAsync();
+                    })
+                })
+
+                scope.onLoadDataNN = function (source, code) {
+                    if (source && code) {
+                        if (source[1].children) {
+                            for (var i = 1; i < source.length; i++) {
+                                if (source[i].children) {
+                                    for (var j = 0; j < source[i].children.length; j++) {
+                                        if (source[i].children[j].id.toString() == code.toString()) {
+                                            return source[i].children[j].text;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                scope.onLoadDataCB = function (source, code) {
+                    if (source && code) {
+                        for (var i = 0; i < source.length; i++) {
+                            if (source[i].id == code) {
+                                return source[i].text;
+                            }
+                        }
+                    }
+                }
+                scope.onLoadDataNLV = function (source, code) {
+                    if (source && code) {
+                        var str = "";
+                        code = code.split(',');
+                        for (var i = 0; i < source.length; i++) {
+                            if (source[i].children) {
+                                for (var j = 0; j < source[i].children.length; j++) {
+                                    for (var z = 0; z < code.length; z++) {
+                                        if (code[z] == source[i].children[j].id) {
+                                            str += source[i].children[j].text + ', ';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return str.slice(0, -2);
+                    }
+                }
+                scope.onLoadDataHTL = function (source, code) {
+                    console.log(source, code);
+                    if (source && code) {
+                        for (var i = 0; i < source.length; i++) {
+                            if (source[i].id == code) {
+                                return source[i].text;
+                            }
+                        }
+                    }
+                }
+            })
+    </script>
+    
+</body>

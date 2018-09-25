@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <div style="width:100%;float:left" id="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div id="sheet" style="width:100%;float:left">
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <input type="button" class="btn btn-primary pull-right" value="res:(Save)" ng-click="doSaveData()" />
+            </div>
+        </div>
+        
+    </div>
+    <script>
+        (app=> {
+            app.doLoadData = () => {
+                var ajax = "ajax.store.st_admin_category_load_sheet_items";
+                ajax.data({
+                    category: app.$root.$history.data().category,
+                    language: window.currentLanguage
+                }).done(res=> {
+                    
+                    app.childList = res.childList;
+                    app.items = res.items;
+                    var container = document.getElementById('sheet');
+
+                    var hot = new Handsontable(container, {
+                        data: res.items,
+                        
+                        width: $("#container").width(),
+                        height:$(window).height()-220,
+                        autoWrapRow: true,
+                        manualColumnResize: true,
+                        manualRowResize: true,
+                      
+                        rowHeaders: true,
+                        columns: res.columns,
+
+                        colHeaders: res.colHeaders
+                    });
+                    $(window).resize(() => {
+                        hot.updateSettings({
+                            width: $("#container").width(),
+                            height: $("#container").height() - 220,
+                        });
+                    });
+                    app.columns = res.columns;
+                    app.hot = hot;
+                });
+               
+              
+            };
+            app.doLoadData();
+            app.doSaveData = () => {
+                var ajax = "ajax.store.st_admin_category_save_sheet_items";
+                ajax.data({
+                    category: app.$root.$history.data().category,
+                    language: window.currentLanguage,
+                    columns: app.columns,
+                    data: app.hot.getData()
+                })
+                    .done(res => {
+                        toastr.success("res:(Cập nhật thành công)")
+                });
+                
+            }
+        });
+    </script>
+</body>
+</html>
